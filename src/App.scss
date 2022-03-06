@@ -1,0 +1,65 @@
+@font-face {
+  font-family: "basic";
+  src: url("assets/fonts/BMEULJIROTTF.ttf") format("truetype");
+}
+
+* {
+  font-family: 'basic';
+}
+
+
+.wrap {
+  position: relative;
+  padding: 30px;
+  font-size: 18px;
+  line-height: 1.6;
+  background: lightgray;
+}
+
+.topBtn {
+  position: fixed; 
+  opacity: 0.5; 
+  bottom: 20px; 
+  right: 40px;
+  width: 2em!important;
+  height: 2em!important;
+  z-index: -10; 
+  letter-spacing: -0.06em;
+  cursor: pointer;
+  fill-opacity: 0.6;
+  transition: opacity 0.3s ease-in;
+
+}
+
+.topBtn.active {
+  z-index: 10; 
+  opacity: 1; 
+}
+
+.topBtn:hover { 
+  fill-opacity: 1;
+}
+
+.purchaseBox {
+  background-color: #fff;
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 20%), 0px 1px 1px 0px rgba(0, 0, 0, 14%), 0px 1px 3px 0px rgba(0, 0, 0, 12%);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.purchaseBox-header {
+  color: gray;
+}
+
+.deleteIcon:hover {
+  opacity: 1;
+}
+
+.createIcon:hover {
+  opacity: 1;
+}
+/* 소비생활 Tab 내부 선택 항목 스타일 */
+.navSelect.Mui-selected {
+  color: rgb(255, 255, 255)!important; 
+  font-weight: bold; 
+}
