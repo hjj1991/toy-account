@@ -31,6 +31,7 @@ import Budget from '../../assets/img/budget.png';
 import outMoney from '../../assets/img/out-money.png';
 import inMoney from '../../assets/img/in-money.png';
 import allMoney from '../../assets/img/all-money.png';
+import { textAlign } from '@mui/system';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -47,9 +48,10 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function Body() {
 
-    const [navSelect, setNavSelect] = React.useState<number>(1);
+    const [navSelect, setNavSelect] = React.useState<number>(0);
     const [isAddPurchase, setIsAddPurchase] = React.useState<boolean>(false);
     const [purchaseList, setPurchaseList] = React.useState<any>([]);
+    const [totalPrice, setTotalPrice] = React.useState<any>([]);
     const [filterPurchaseList, setfilterPurchaseList] = React.useState<any>([]);
     const [cardList, setCardList] = React.useState<any>([]);
     const [storeList, setStoreList] = React.useState<any>([]);
@@ -64,6 +66,10 @@ export default function Body() {
         reason: "",
         storeName: "",
         storeNo: 0
+    })
+    const [searchForm, setSerachForm] = React.useState<any>({
+        storeTypeName: "ALL",
+        searchValue: ""
     })
 
     const [startDate, setStartDate] = React.useState<string | null>(
@@ -90,19 +96,36 @@ export default function Body() {
 
 
 
-      const handleChangeNav = (event: React.SyntheticEvent, navSelect: number) => {
-        setNavSelect(navSelect);
+    const handleChangeNav = (event: React.SyntheticEvent, navSelectValue: number) => {
+        setNavSelect(navSelectValue);
+    };
 
+    const searchChangeResult = () => {
+
+        let tempPurchaseList = purchaseList;
         /* 들어온 돈의 필터 */
         if(navSelect === 1){
-            setfilterPurchaseList(purchaseList.filter( (purchase:any) => {return purchase.purchaseType === "INCOME"}))
-        /* 나간돈의 필터 */
-        }else if(navSelect === 2){
-            setfilterPurchaseList(purchaseList.filter( (purchase:any) => {return purchase.purchaseType === "OUTGOING"}))
-        }else{
-            setfilterPurchaseList(purchaseList);
+            tempPurchaseList = tempPurchaseList.filter( (purchase:any) => {return purchase.purchaseType === "INCOME"});
         }
-      };
+        /* 나간돈의 필터 */
+        if(navSelect === 2){
+            tempPurchaseList = tempPurchaseList.filter( (purchase:any) => {return purchase.purchaseType === "OUTGOING"});
+        }
+
+        /* 지출항목 필터 */
+        if(navSelect === 2 && searchForm.storeTypeName !== "ALL"){
+            tempPurchaseList = tempPurchaseList.filter( (purchase:any) => {return purchase.storeInfo.storeTypeName.includes(searchForm.storeTypeName)});
+            console.log(tempPurchaseList);
+        }
+
+        if(searchForm.searchValue !== ""){
+            tempPurchaseList = tempPurchaseList.filter( (purchase:any) => {return purchase.reason.includes(searchForm.searchValue)});
+        }
+
+
+        setfilterPurchaseList(tempPurchaseList);
+           
+    }
       
     const handleSubmitAddPurchase = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -149,16 +172,25 @@ export default function Body() {
                 setCardList(res.data.response.cardList);
                 setStoreList(res.data.response.storeList);
                 setPurchaseList(res.data.response.purchaseList);
-            /* 들어온 돈의 필터 */
-            if(navSelect === 1){
-                setfilterPurchaseList(res.data.response.purchaseList.filter( (purchase:any) => {return purchase.purchaseType === "INCOME"}))
-            /* 나간돈의 필터 */
-            }else if(navSelect === 2){
-                setfilterPurchaseList(res.data.response.purchaseList.filter( (purchase:any) => {return purchase.purchaseType === "OUTGOING"}))
-            }else{
+                setSerachForm({
+                    storeTypeName: "ALL",
+                    searchValue: ""
+                });
+                setNavSelect(0);
                 setfilterPurchaseList(res.data.response.purchaseList);
-            }
-
+                let totalValue = 0;
+                for(let purchase of res.data.response.purchaseList){
+                    
+                    if(purchase.purchaseType === "OUTGOING"){
+                        totalValue -= purchase.price;
+                    }
+                    if(purchase.purchaseType === "INCOME"){
+                        totalValue += purchase.price;
+                    }
+                }
+                
+                setTotalPrice(totalValue);
+                
             }
         }
 
@@ -201,6 +233,21 @@ export default function Body() {
 
     }
     
+    /* 검색 관련 함수 */
+    const handleChangeSearch = (e: any) => {
+        if(e.target.name === "searchStoreSelect"){
+            setSerachForm({
+                ...searchForm,
+                storeTypeName: e.target.value
+            })
+        }
+        if(e.target.name === "searchValue"){
+            setSerachForm({
+                ...searchForm,
+                searchValue: e.target.value
+            })
+        }
+    }
     
     const handleChangeDate = (newValue: string | null, type: string) => {
         if(type === "start" && newValue != null && endDate != null && moment(endDate, "YYYY-MM-DD").isBefore(moment(newValue, "YYYY-MM-DD"))){
@@ -259,7 +306,13 @@ export default function Body() {
 
         getPurchaseList();
 
+
     }, [startDate, endDate])
+
+    React.useEffect(() => {
+        searchChangeResult();
+      }, [navSelect, searchForm]);
+
     return (
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -286,16 +339,11 @@ export default function Body() {
                                 mask={"____-__-__"}
                                 onChange={(value) => {handleChangeDate(value, 'start')}}
                                 renderInput={(params) => 
-                                    <TextField  {...params} 
+                                    <TextField  
+                                        {...params} 
+                                            className="purchase-datePicker"
                                                 type="string"
-                                                sx={{
-                                                    width: 150,
-                                                    m: 1,
-                                                    color: "rgb(0,0,0)",
-                                                    input: "red",
-                                                    fontSize: 50,
-                                                    label: "red"
-                                                }} />}
+                                    />}
                                 />
                 
                             <DesktopDatePicker
@@ -304,23 +352,27 @@ export default function Body() {
                                 value={endDate}
                                 mask={"____-__-__"}
                                 onChange={(value) => {handleChangeDate(value, 'end')}}
-                                renderInput={(params) => <TextField  sx={{
-                                    width: 150,
-                                    m: 1,
-                                    color: "rgb(0,0,0)",
-                                    input: "red",
-                                    fontSize: 50,
-                                    label: "red"
-                                }}{...params} type="string" />}
+                                renderInput={(params) => 
+                                <TextField 
+                                    className="purchase-datePicker" 
+                                    {...params} type="string" />}
                                 />
                         </LocalizationProvider>
                         </div>
                         <Typography gutterBottom variant="h5" component="div" style={{fontWeight: "bold", textAlign: "center"}}>
                            안녕하세요. {authenticatedValue.data?.nickName}님!
                         </Typography>
+                        <Typography gutterBottom  component="div" style={{fontWeight: "bold", textAlign: "center", color: totalPrice < 0? "red": "green"}}>
+                           총 소비 내역: {totalPrice.toLocaleString()}원
+                        </Typography>
                         <Typography variant="body2" color="text.secondary" style={{textAlign: "center"}}>
                             지난 거래내역을 확인하세요.
                         </Typography>
+                        <FormControl 
+                            margin='normal'
+                            fullWidth >
+                            <TextField id="demo-helper-text-misaligned-no-helper" name="searchValue" label="검색어" onChange={handleChangeSearch} value={searchForm.searchValue} />
+                        </FormControl>
                     </CardContent>
             </Card>
             <Tabs value={navSelect} onChange={handleChangeNav}  aria-label="icon label tabs example"
@@ -331,14 +383,41 @@ export default function Body() {
                         <Tab className="navSelect" icon={<img src={allMoney} />} label="전체" />
                         <Tab className="navSelect" icon={<img src={inMoney} />} label="들어온 돈" />
                         <Tab className="navSelect" icon={<img src={outMoney} />} label="나간돈" />
+                        {navSelect === 2?                        
+                        <FormControl 
+                            margin='normal'
+                            fullWidth >
+                            <InputLabel focused={false} id='storeSelect-label'>지출항목</InputLabel>
+                            <Select
+                                fullWidth
+                                labelId='storeSelect-label'
+                                label='지출항목'
+                                name="searchStoreSelect"
+                                id="searchStoreSelect"
+                                value={searchForm.storeTypeName}
+                                onChange={handleChangeSearch}
+                                sx={{
+                                    ".MuiOutlinedInput-notchedOutline": { borderColor: 'rgba(0, 0, 0, 0.23)!important', borderWidth: "1px!important" }
+                                }}
+                            >
+                                <MenuItem value="ALL">전체</MenuItem>
+                                {storeList.map((store: any)=>(
+                                    <MenuItem key={store.storeNo} value={store.storeTypeName}>{store.storeTypeName}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>: null}
             </Tabs>
-              <Box
+              <Box 
                 sx={{
                   p: 1,
                   bgcolor: 'white',
                   display: 'grid',
                   border: 1,
-                  gridTemplateColumns: { md: '1fr 1fr' },
+                  gridTemplateColumns: { 
+                      xs: 'repeat(1, 1fr)',
+                      sm: 'repeat(1, 1fr)',
+                      md: 'repeat(2, 1fr)'
+                    },
                   gap: 1,
                 }}
               >
@@ -347,7 +426,7 @@ export default function Body() {
                     <Grid className='purchaseBox' item xs={12}>
                     <Grid container  spacing={0}>
                         <Grid item xs={11} className="purchaseBox-header">{elevation.purchaseDate}</Grid>
-                        <Grid item xs={1}>
+                        <Grid item xs={1} style={{textAlign: 'right'}}>
                             <DeleteForeverOutlinedIcon
                                     className='deleteIcon'
                                     onClick={() => {
@@ -396,22 +475,21 @@ export default function Body() {
             >
                 <form name="purchaseForm" id="purchaseForm" onSubmit={handleSubmitAddPurchase}>
                 <DialogContent>
-                    <DialogContentText
-                        style={{textAlign: "center"}}
-                        id="alert-dialog-description">
+                    
+                       <div style={{textAlign: 'center'}}>
                         <FormControl 
                             margin='normal'
                             fullWidth >
-                        <ToggleButtonGroup
-                            color="primary"
-                            fullWidth
-                            value={purchaseForm.purchaseType}
-                            exclusive
-                            
-                            onChange={handleChangeFormValue}
-                            >
-                            <ToggleButton name="purchaseType" value="INCOME">들어온 돈</ToggleButton>
-                            <ToggleButton name="purchaseType" value="OUTGOING">나간 돈</ToggleButton>
+                            <ToggleButtonGroup
+                                color="primary"
+                                fullWidth
+                                value={purchaseForm.purchaseType}
+                                exclusive
+                                
+                                onChange={handleChangeFormValue}
+                                >
+                                <ToggleButton name="purchaseType" value="INCOME">들어온 돈</ToggleButton>
+                                <ToggleButton name="purchaseType" value="OUTGOING">나간 돈</ToggleButton>
                             </ToggleButtonGroup>
                         </FormControl>
                         <FormControl margin='normal' >
@@ -450,17 +528,17 @@ export default function Body() {
                         <FormControl 
                             margin='normal'
                             fullWidth >
-                            <InputLabel id="demo-simple-select-required-label">업종</InputLabel>
+                            <InputLabel id="demo-simple-select-required-label">항목</InputLabel>
                             <Select
                                 fullWidth
                                 name="storeSelect"
                                 labelId="demo-simple-select-required-label"
                                 id="demo-simple-select-required"
                                 value={purchaseForm.storeNo}
-                                label="업종 *"
+                                label="항목"
                                 onChange={handleChangeFormValue}
                             >
-                                <MenuItem value={0}>--업종 선택--</MenuItem>
+                                <MenuItem value={0}>--항목 선택--</MenuItem>
                                 {storeList.map((store: any)=>(
                                     <MenuItem value={store.storeNo}>{store.storeTypeName}</MenuItem>
                                 ))}
@@ -468,7 +546,7 @@ export default function Body() {
                         </FormControl>
                         </>
                         ):(<></>)}
-                        <FormControl margin='normal' >
+                        <FormControl margin='normal' fullWidth >
                             <InputLabel htmlFor="component-helper">금액</InputLabel>
                             <NumberFormat
                                 value={purchaseForm.price}
@@ -482,8 +560,9 @@ export default function Body() {
                                 displayType={"input"}
                             />
                         </FormControl>
-                        <FormControl margin='normal' >
+                        <FormControl margin='normal' fullWidth >
                             <TextField
+
                                 id="outlined-name"
                                 label="내용"
                                 name="reason"
@@ -494,7 +573,7 @@ export default function Body() {
                         </FormControl>
                         
                         
-                    </DialogContentText>
+                        </div>
                 </DialogContent>
                 <DialogActions>
                     <Button autoFocus type="submit">확인</Button>
