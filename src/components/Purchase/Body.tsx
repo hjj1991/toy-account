@@ -15,8 +15,8 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import * as service from '../../services/axiosList';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { authenticatedState, isAddCardState, isCardListReloadState, isModifyModalShowState } from '../../recoil/recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import { AuthenticatedInfo, authenticatedState, isAddCardState, isCardListReloadState, isModifyModalShowState } from '../../recoil/recoil';
 import DateAdapter from '@mui/lab/AdapterMoment';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
@@ -48,6 +48,8 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function Body() {
 
+    
+
     const [navSelect, setNavSelect] = React.useState<number>(0);
     const [isAddPurchase, setIsAddPurchase] = React.useState<boolean>(false);
     const [purchaseList, setPurchaseList] = React.useState<any>([]);
@@ -56,8 +58,9 @@ export default function Body() {
     const [cardList, setCardList] = React.useState<any>([]);
     const [storeList, setStoreList] = React.useState<any>([]);
     const [selectedIndx, setSelectedIndx] = React.useState<number>(0);
-    const authenticatedValue = useRecoilValue(authenticatedState);
     const [isOpenDeleteModal, setIsOpenDeleteModal] = React.useState<boolean>(false);
+    const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
+    const resetAuthenticated = useResetRecoilState(authenticatedState);
     const [purchaseForm, setPurchaseForm] = React.useState<service.PurchaseAddForm>({
         cardNo: 0,
         price: "0",
@@ -145,7 +148,7 @@ export default function Body() {
         
 
 
-        const res = await service.postPurchaseAdd(authenticatedValue.data?.accessToken!, purchaseAddForm);
+        const res = await service.postPurchaseAdd(purchaseAddForm);
 
         if (res.data.success) {
             setPurchaseForm({
@@ -166,33 +169,32 @@ export default function Body() {
 
       
     async function getPurchaseList() {
-        if (authenticatedValue.data?.accessToken !== undefined) {
-            const res = await service.getPurchaseList(authenticatedValue.data?.accessToken, startDate, endDate);
-            if (res.status === 200 && res.data.success) {
-                setCardList(res.data.response.cardList);
-                setStoreList(res.data.response.storeList);
-                setPurchaseList(res.data.response.purchaseList);
-                setSerachForm({
-                    storeTypeName: "ALL",
-                    searchValue: ""
-                });
-                setNavSelect(0);
-                setfilterPurchaseList(res.data.response.purchaseList);
-                let totalValue = 0;
-                for(let purchase of res.data.response.purchaseList){
-                    
-                    if(purchase.purchaseType === "OUTGOING"){
-                        totalValue -= purchase.price;
-                    }
-                    if(purchase.purchaseType === "INCOME"){
-                        totalValue += purchase.price;
-                    }
+        const res = await service.getPurchaseList(startDate, endDate);
+        if (res.status === 200 && res.data.success) {
+            setCardList(res.data.response.cardList);
+            setStoreList(res.data.response.storeList);
+            setPurchaseList(res.data.response.purchaseList);
+            setSerachForm({
+                storeTypeName: "ALL",
+                searchValue: ""
+            });
+            setNavSelect(0);
+            setfilterPurchaseList(res.data.response.purchaseList);
+            let totalValue = 0;
+            for(let purchase of res.data.response.purchaseList){
+                
+                if(purchase.purchaseType === "OUTGOING"){
+                    totalValue -= purchase.price;
                 }
-                
-                setTotalPrice(totalValue);
-                
+                if(purchase.purchaseType === "INCOME"){
+                    totalValue += purchase.price;
+                }
             }
+            
+            setTotalPrice(totalValue);
+            
         }
+    
 
     }
 
@@ -278,13 +280,12 @@ export default function Body() {
     const handleClickRemovePurchaseOk = async (indx:number) => {
 
 
-        if (authenticatedValue.data?.accessToken !== undefined && indx !== 0) {
-            const res = await service.postPurchaseDelete(authenticatedValue.data?.accessToken, indx);
-            if (res.status === 200 && res.data.success) {
-                
-                getPurchaseList();
-            }
+        const res = await service.postPurchaseDelete(indx);
+        if (res.status === 200 && res.data.success) {
+            
+            getPurchaseList();
         }
+        
         setSelectedIndx(0);
         setIsOpenDeleteModal(false);
 
@@ -360,7 +361,7 @@ export default function Body() {
                         </LocalizationProvider>
                         </div>
                         <Typography gutterBottom variant="h5" component="div" style={{fontWeight: "bold", textAlign: "center"}}>
-                           안녕하세요. {authenticatedValue.data?.nickName}님!
+                           안녕하세요. {authenticated.data?.nickName}님!
                         </Typography>
                         <Typography gutterBottom  component="div" style={{fontWeight: "bold", textAlign: "center", color: totalPrice < 0? "red": "green"}}>
                            총 소비 내역: {totalPrice.toLocaleString()}원
@@ -405,7 +406,7 @@ export default function Body() {
                                     <MenuItem key={store.storeNo} value={store.storeTypeName}>{store.storeTypeName}</MenuItem>
                                 ))}
                             </Select>
-                        </FormControl>: null}
+                        </FormControl>: undefined}
             </Tabs>
               <Box 
                 sx={{
@@ -521,7 +522,7 @@ export default function Body() {
                             >
                                     <MenuItem value={0}>현금</MenuItem>
                                 {cardList.map((card: any)=>(
-                                    <MenuItem value={card.cardNo}>{card.cardName}</MenuItem>
+                                    <MenuItem key={card.cardNo} value={card.cardNo}>{card.cardName}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
@@ -540,7 +541,7 @@ export default function Body() {
                             >
                                 <MenuItem value={0}>--항목 선택--</MenuItem>
                                 {storeList.map((store: any)=>(
-                                    <MenuItem value={store.storeNo}>{store.storeTypeName}</MenuItem>
+                                    <MenuItem key={store.storeNo} value={store.storeNo}>{store.storeTypeName}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>

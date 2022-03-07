@@ -1,10 +1,42 @@
-import axios from 'axios';
+import { StorageTwoTone } from '@mui/icons-material';
+import axios, { AxiosRequestConfig } from 'axios';
+import moment from 'moment';
+import storage from '../lib/storage';
 
 const siteUrl = "http://localhost:8080";
 // const siteUrl = "http://dognas.ipdisk.co.kr:8080";
 
+
 axios.defaults.baseURL = siteUrl;
 
+export const authAxios = () => {
+    const tempAxios = axios.create({
+        headers:  { 'access_token': storage.get('accessToken') }
+    });
+
+    tempAxios.interceptors.request.use(refreshConfig);
+    return tempAxios;
+}
+
+export const refreshConfig = async (config: AxiosRequestConfig): Promise<AxiosRequestConfig> => {
+    let expireTime = storage.get('expireTime');
+    if(expireTime < moment().valueOf()){
+        const res = await postReIssueeToken();
+        if(res.status === 200 && res.data.success){
+            config.headers['access_token'] = res.data.response.accessToken;
+            storage.set('loginInfo', { isAuthenticated: true, data: res.data.response });
+            storage.set('accessToken', res.data.response.accessToken);
+            storage.set('refreshToken', res.data.response.refreshToken);
+            storage.set('expireTime', res.data.response.expireTime);
+        }else{
+            sessionStorage.clear();
+            alert("세션이 만료되었습니다. \n 다시 로그인해주세요.");
+            window.location.href = '/';
+        }
+    }
+
+    return config;
+  };
 
 /* 로그인 요청 interface */
 export interface SignInForm {
@@ -42,7 +74,10 @@ export interface PurchaseAddForm {
 
 /* 중복 ID check API */
 export function getCheckUserIdDuplicate(userId: string) {
-    return axios.get(`/user/${userId}/exists`);
+    return axios.get(`/user/${userId}/exists`,
+    {
+        headers: {}
+    });
 }
 
 
@@ -57,106 +92,72 @@ export function postSignIn(data: SignInForm) {
         });
 }
 
-/* 카드목록 불러오기 API */
-export function getCardList(accessToken: string) {
-    return axios.get('/card',
+/* 액세스 토큰 재발급 API */
+export function postReIssueeToken() {
+    return axios.post('/user/oauth/token',
         {
-            headers: { 'access_token': accessToken }
-        })
+            refreshToken: storage.get('refreshToken') 
+        });
+}
+
+/* 카드목록 불러오기 API */
+export function getCardList() {
+
+    return authAxios().get('/card');
 }
 
 /* 카드상세 불러오기 API */
-export function getCardDetail(accessToken: string, cardNo: number) {
-    return axios.get(`/card/${cardNo}`,
-        {
-            headers: { 'access_token': accessToken }
-        })
+export function getCardDetail(cardNo: number) {
+    return authAxios().get(`/card/${cardNo}`);
 }
 
 /* 카드 추가 API */
-export function postCardAdd(accessToken: string, cardAddForm: CardAddForm) {
-    return axios(
-        {
-            url: '/card',
-            method: 'post',
-            headers: { 'access_token': accessToken },
-            data: {
-                cardName: cardAddForm.cardName,
-                cardType: cardAddForm.cardType,
-                cardDesc: cardAddForm.cardDesc,
-            }
-        }
-    )
+export function postCardAdd(cardAddForm: CardAddForm) {
+    return authAxios().post('/card',{
+        cardName: cardAddForm.cardName,
+        cardType: cardAddForm.cardType,
+        cardDesc: cardAddForm.cardDesc,
+    });
 }
 
 /* 카드 수정 API */
-export function updateCardModify(accessToken: string, cardUpdateForm: CardUpdateForm) {
-    return axios(
-        {
-            url: `/card/${cardUpdateForm.cardNo}`,
-            method: 'put',
-            headers: { 'access_token': accessToken },
-            data: {
-                cardName: cardUpdateForm.cardName,
-                cardType: cardUpdateForm.cardType,
-                cardDesc: cardUpdateForm.cardDesc,
-            }
-        }
-    )
+export function updateCardModify(cardUpdateForm: CardUpdateForm) {
+    return authAxios().put( `/card/${cardUpdateForm.cardNo}`,{
+        cardName: cardUpdateForm.cardName,
+        cardType: cardUpdateForm.cardType,
+        cardDesc: cardUpdateForm.cardDesc,
+    });
 }
 
 /* 카드 삭제 API */
-export function deleteCardDelete(accessToken: string, cardNo: number) {
-    return axios(
-        {
-            url: `/card/${cardNo}`,
-            method: 'DELETE',
-            headers: { 'access_token': accessToken }
-        }
-    )
+export function deleteCardDelete( cardNo: number) {
+    return authAxios().delete(`/card/${cardNo}`);
 }
 
 /* 지출 내역 불러오기 */
-export function getPurchaseList(accessToken: string, starDate: any, endDate: any) {
-    return axios(
-        {
-            url: `/purchase`,
-            method: 'GET',
-            headers: { 'access_token': accessToken },
-            params: {
-                startDate: starDate,
-                endDate: endDate
-            }
+export function getPurchaseList(starDate: any, endDate: any) {
+    return authAxios().get('/purchase',{
+        params:{
+            startDate: starDate,
+            endDate: endDate
         }
-    )
+    });
 }
 
 /* 지출 추가 API */
-export function postPurchaseAdd(accessToken: string, purchaseAddForm: PurchaseAddForm) {
-    return axios(
-        {
-            url: '/purchase',
-            method: 'post',
-            headers: { 'access_token': accessToken },
-            data: {
-                cardNo: purchaseAddForm.cardNo === 0? null : purchaseAddForm.cardNo,
-                price: purchaseAddForm.price.replace(/,/gi, ""),
-                purchaseDate: purchaseAddForm.purchaseDate,
-                purchaseType: purchaseAddForm.purchaseType,
-                reason: purchaseAddForm.reason,
-                storeNo: purchaseAddForm.storeNo === 0? null: purchaseAddForm.storeNo
-            }
-        }
-    )
+export function postPurchaseAdd(purchaseAddForm: PurchaseAddForm) {
+    return authAxios().post('/purchase',{
+        cardNo: purchaseAddForm.cardNo === 0? null : purchaseAddForm.cardNo,
+        price: purchaseAddForm.price.replace(/,/gi, ""),
+        purchaseDate: purchaseAddForm.purchaseDate,
+        purchaseType: purchaseAddForm.purchaseType,
+        reason: purchaseAddForm.reason,
+        storeNo: purchaseAddForm.storeNo === 0? null: purchaseAddForm.storeNo
+    });
+
 }
 
 /* 지출 삭제 API */
-export function postPurchaseDelete(accessToken: string, purchaseNo: number) {
-    return axios(
-        {
-            url: `/purchase/${purchaseNo}`,
-            method: 'DELETE',
-            headers: { 'access_token': accessToken }
-        }
-    )
+export function postPurchaseDelete(purchaseNo: number) {
+    return authAxios().delete(`/purchase/${purchaseNo}`);
 }

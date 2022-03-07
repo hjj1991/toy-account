@@ -37,7 +37,7 @@ export function ModifyCard(props:Iprops) {
       React.useEffect(() => {
         async function getCardDetail() {
             if (authenticatedValue.data?.accessToken !== undefined) {
-                const res = await service.getCardDetail(authenticatedValue.data?.accessToken!, props.cardNo);
+                const res = await service.getCardDetail(props.cardNo);
                 if (res.status === 200 && res.data.success) {
                     setCardForm(res.data.response);
                 }
@@ -66,7 +66,7 @@ export function ModifyCard(props:Iprops) {
             cardDesc: e.currentTarget["cardDesc"].value
         }
 
-        const res = await service.updateCardModify(authenticatedValue.data?.accessToken!, cardUpdateForm);
+        const res = await service.updateCardModify(cardUpdateForm);
 
         if (res.data.success) {
             setCardForm({

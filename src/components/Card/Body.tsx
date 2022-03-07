@@ -27,7 +27,7 @@ export default function Body() {
 
     const handleClickRemoveCard = async () => {
         if (authenticatedValue.data?.accessToken !== undefined && selectedIndx !== 0) {
-            const res = await service.deleteCardDelete(authenticatedValue.data?.accessToken, selectedIndx);
+            const res = await service.deleteCardDelete(selectedIndx);
             if (res.status === 200 && res.data.success) {
                 
                 setIsCardListReload(!isCardListReload);
@@ -52,15 +52,11 @@ export default function Body() {
 
     React.useEffect(() => {
         async function getCardList() {
-            console.log(authenticatedValue.data?.accessToken !== undefined);
-            if (authenticatedValue.data?.accessToken !== undefined) {
-                const res = await service.getCardList(authenticatedValue.data?.accessToken);
-                if (res.status === 200 && res.data.success) {
-                    setData(res.data.response);
-                }
-
-
+            const res = await service.getCardList();
+            if (res.status === 200 && res.data.success) {
+                setData(res.data.response);
             }
+
 
         }
 

@@ -34,7 +34,7 @@ export function AddPurchase() {
 
         setLoading(false);
 
-        const res = await service.postCardAdd(authenticated.data?.accessToken!, cardAddForm);
+        const res = await service.postCardAdd(cardAddForm);
 
         console.log(res);
         if (res.data.success) {
