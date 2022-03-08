@@ -2,17 +2,18 @@ import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Button, CardActionArea, CardActions, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton } from '@mui/material';
+import { CardHeader, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import * as service from '../../services/axiosList';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { authenticatedState, isAddCardState, isCardListReloadState, isModifyModalShowState } from '../../recoil/recoil';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import { AddCard } from './AddCard';
 import CreateIcon from '@mui/icons-material/Create';
 import { ModifyCard } from './ModifyCard';
+import CommonModal from '../common/CommonModal';
 
 export default function Body() {
 
@@ -38,7 +39,12 @@ export default function Body() {
         setSelectedIndx(0);
         setIsOpenRemoveCardModal(false);
 
+    }
 
+    
+    const handleClickRemoveCardCancel = () => {
+        setSelectedIndx(0);
+        setIsOpenRemoveCardModal(false);
     }
     
     const handleClickModifyCard = (cardNo:number) => {
@@ -75,11 +81,15 @@ export default function Body() {
                             <CardHeader
                                 title={card.cardName}
                                 action={
+                                        <>
+                                    <IconButton onClick={() => {handleClickModifyCard(card.cardNo)}}>
+                                        <EditIcon color='primary' />
+                                    </IconButton>
                                     <IconButton onClick={() => { setIsOpenRemoveCardModal(true); setSelectedIndx(card.cardNo); }}>
                                         <CloseIcon color="error" />
                                     </IconButton>
+                                    </>
                                 } />
-                            <CardActionArea>
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">
                                         ({card.cardType === "CREDIT_CARD"? "신용카드": "체크카드"})
@@ -88,18 +98,13 @@ export default function Body() {
                                         {card.cardDesc}
                                     </Typography>
                                 </CardContent>
-                            </CardActionArea>
-                            <CardActions>
-                                <Button size="small" color="primary" onClick={() => {handleClickModifyCard(card.cardNo)}}>
-                                    수정
-                                </Button>
-                            </CardActions>
                         </Card>
                     </Grid>
                 ))}
 
             </Grid>
             <CreateIcon onClick={() => { setIsAddCard(true); }}
+                className="createIcon"
                 sx={{
                     position: 'fixed',
                     bottom: '80px',
@@ -108,31 +113,20 @@ export default function Body() {
                     height: '2em',
                     zIndex: '10px',
                     cursor: 'pointer',
-                    backgroundColor: 'burlywood'
+                    opacity: '0.5'
                 }} />
-            <Dialog
-                open={isOpenRemoveCardModal}
-                onClose={() => { setIsOpenRemoveCardModal(false); setSelectedIndx(0); }}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        정말 삭제하시겠습니까?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClickRemoveCard} autoFocus>확인</Button>
-                    <Button onClick={() => { setIsOpenRemoveCardModal(false) }}>
-                        취소
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <CommonModal 
+                showModal={isOpenRemoveCardModal}
+                selectedIndx={selectedIndx}
+                title=""
+                contents="삭제 하실건가요?"
+                clickOkHandle = {handleClickRemoveCard}
+                clickCancelHandle = {handleClickRemoveCardCancel}
+            />
             {isModifyModalShow?
             <ModifyCard
             cardNo={selectedIndx}
-        />:
-        <></>}
+        />:undefined}
             
             
         </Container>

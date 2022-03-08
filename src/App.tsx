@@ -180,7 +180,6 @@ function App() {
 
   /* 세션에서 로그인정보가 있을 경우 Recoil State에 넣어준다. */
   useEffect(() => {
-    console.log("안뇽하세여!?")
     const loginInfo = storage.get('loginInfo'); // 로그인 정보를 로컬스토리지에서 가져옵니다.
 
     if(loginInfo && authenticated.isAuthenticated === false){

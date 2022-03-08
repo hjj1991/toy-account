@@ -118,7 +118,6 @@ export default function Body() {
         /* 지출항목 필터 */
         if(navSelect === 2 && searchForm.storeTypeName !== "ALL"){
             tempPurchaseList = tempPurchaseList.filter( (purchase:any) => {return purchase.storeInfo.storeTypeName.includes(searchForm.storeTypeName)});
-            console.log(tempPurchaseList);
         }
 
         if(searchForm.searchValue !== ""){
@@ -200,7 +199,6 @@ export default function Body() {
 
 
     const handleChangeFormValue = (e: any) => {
-        console.log(e.target.name);
         if (e.target.name === "cardSelect") {
             setPurchaseForm({
                 ...purchaseForm,
@@ -369,28 +367,14 @@ export default function Body() {
                         <Typography variant="body2" color="text.secondary" style={{textAlign: "center"}}>
                             지난 거래내역을 확인하세요.
                         </Typography>
+                        <div style={{textAlign: "center"}}>
+                        {navSelect === 2?   
                         <FormControl 
-                            margin='normal'
-                            fullWidth >
-                            <TextField id="demo-helper-text-misaligned-no-helper" name="searchValue" label="검색어" onChange={handleChangeSearch} value={searchForm.searchValue} />
-                        </FormControl>
-                    </CardContent>
-            </Card>
-            <Tabs value={navSelect} onChange={handleChangeNav}  aria-label="icon label tabs example"
-                    sx={{
-                        m: 0,
-                        backgroundColor: '#009be5'
-                    }}>
-                        <Tab className="navSelect" icon={<img src={allMoney} />} label="전체" />
-                        <Tab className="navSelect" icon={<img src={inMoney} />} label="들어온 돈" />
-                        <Tab className="navSelect" icon={<img src={outMoney} />} label="나간돈" />
-                        {navSelect === 2?                        
-                        <FormControl 
-                            margin='normal'
-                            fullWidth >
+                        margin='normal'
+                             >
                             <InputLabel focused={false} id='storeSelect-label'>지출항목</InputLabel>
                             <Select
-                                fullWidth
+                                
                                 labelId='storeSelect-label'
                                 label='지출항목'
                                 name="searchStoreSelect"
@@ -406,7 +390,23 @@ export default function Body() {
                                     <MenuItem key={store.storeNo} value={store.storeTypeName}>{store.storeTypeName}</MenuItem>
                                 ))}
                             </Select>
-                        </FormControl>: undefined}
+                        </FormControl>: null}
+                        <FormControl 
+                            margin='normal'
+                             >
+                            <TextField id="demo-helper-text-misaligned-no-helper" name="searchValue" label="검색어" onChange={handleChangeSearch} value={searchForm.searchValue} />
+                        </FormControl>
+                        </div>
+                    </CardContent>
+            </Card>
+            <Tabs value={navSelect} onChange={handleChangeNav}  aria-label="icon label tabs example"
+                    sx={{
+                        m: 0,
+                        backgroundColor: '#009be5'
+                    }}>
+                        <Tab className="navSelect" icon={<img src={allMoney} />} label="전체" />
+                        <Tab className="navSelect" icon={<img src={inMoney} />} label="들어온 돈" />
+                        <Tab className="navSelect" icon={<img src={outMoney} />} label="나간돈" />
             </Tabs>
               <Box 
                 sx={{

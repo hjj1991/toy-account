@@ -114,7 +114,6 @@ export function ModifyCard(props:Iprops) {
                 {"카드 수정"}
             </DialogTitle>
             <DialogContent>
-                <DialogContentText>
                     <Card>
                         <CardContent>
                             <Grid container spacing={5} rowSpacing={4}>
@@ -159,7 +158,6 @@ export function ModifyCard(props:Iprops) {
                             </Grid>
                         </CardContent>
                     </Card>
-                </DialogContentText>
             </DialogContent>
             <DialogActions>
                 <Button type="submit" >
