@@ -1,8 +1,8 @@
-import { Button, Fab, IconButton, TextField } from "@mui/material";
+import { Button, IconButton, TextField } from "@mui/material";
 import { Grid, Card, Box, CardHeader, CardContent, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { authenticatedState, isAddCardState, isCardListReloadState } from "../../recoil/recoil";
+import { useRecoilState} from "recoil";
+import { isAddCardState, isCardListReloadState } from "../../recoil/recoil";
 import CloseIcon from '@mui/icons-material/Close';
 import * as service from '../../services/axiosList';
 
@@ -14,14 +14,12 @@ import * as service from '../../services/axiosList';
 export function AddCard() {
 
     const [isAddCard, setIsAddCard] = useRecoilState(isAddCardState);
-    const [loading, setLoading] = useState(true);
     const [isCardListReload, setIsCardListReload] = useRecoilState<boolean>(isCardListReloadState);
     const [cardForm, setCardForm] = useState({
         cardName: "",
         cardType: "",
         cardDesc: ""
     })
-    const authenticated = useRecoilValue(authenticatedState);
 
 
     const handleSubmitAddCard = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -32,7 +30,7 @@ export function AddCard() {
             cardDesc: e.currentTarget["cardDesc"].value
         }
 
-        setLoading(false);
+
 
         const res = await service.postCardAdd(cardAddForm);
 
@@ -44,7 +42,6 @@ export function AddCard() {
             })
         }
         setIsAddCard(false);
-        setLoading(true);
         setIsCardListReload(!isCardListReload);
 
     }

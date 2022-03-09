@@ -1,13 +1,11 @@
 import React from 'react';
-import clsx from 'clsx';
 import PeopleIcon from '@mui/icons-material/People';
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 import StoreIcon from '@mui/icons-material/Store';
 import HomeIcon from '@mui/icons-material/Home';
 import { useRecoilValue } from 'recoil';
 import { menuState } from '../../recoil/recoil';
-import { Link, NavLink } from 'react-router-dom';
-import { NONAME } from 'dns';
+import { NavLink } from 'react-router-dom';
 import { Divider, Drawer, DrawerProps, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { Box } from '@mui/system';
 

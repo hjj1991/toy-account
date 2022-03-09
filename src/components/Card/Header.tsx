@@ -1,13 +1,10 @@
 import { AppBar, Grid, Toolbar, Typography } from '@mui/material';
 import React from 'react';
 
-const lightColor = 'rgba(255, 255, 255, 0.7)';
-
 interface HeaderProps {
   onDrawerToggle: () => void;
 }
 function Header(props: HeaderProps) {
-  const { onDrawerToggle } = props;
 
   return (
     <React.Fragment>
