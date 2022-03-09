@@ -5,7 +5,6 @@ import { useSetRecoilState } from 'recoil';
 import { menuState } from '../recoil/recoil';
 
 function Purchase ( props:any){
-    const { classes } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const setMenuState = useSetRecoilState(menuState);
 
