@@ -1,14 +1,10 @@
 import * as React from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Fab, IconButton, TextField, useMediaQuery } from "@mui/material";
-import { Grid, Card, Box, CardHeader, CardContent, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent,DialogTitle, TextField } from "@mui/material";
+import { Grid, Card, Box, CardContent, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { authenticatedState, isAddCardState, isCardListReloadState, isModifyModalShowState } from "../../recoil/recoil";
-import CloseIcon from '@mui/icons-material/Close';
+import { authenticatedState, isCardListReloadState, isModifyModalShowState } from "../../recoil/recoil";
 import * as service from '../../services/axiosList';
-import { useTheme } from '@mui/material/styles';
-import { cpuUsage } from "process";
-import PropTypes from 'prop-types';
 
 
 // props 받아올 값의 type 을 선언
@@ -21,9 +17,6 @@ interface Iprops {
 
 export function ModifyCard(props:Iprops) {
 
-    const [isAddCard, setIsAddCard] = useRecoilState(isAddCardState);
-    const [loading, setLoading] = useState(false);
-    const [data, setData] = React.useState<any>([]);
     const [isCardListReload, setIsCardListReload] = useRecoilState<boolean>(isCardListReloadState);
     const [isModifyModalShow, setIsModifyModalShow] = useRecoilState<boolean>(isModifyModalShowState);
     const [cardForm, setCardForm] = useState({
@@ -48,7 +41,7 @@ export function ModifyCard(props:Iprops) {
         }
 
         getCardDetail();
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [])
 
     const handleClose = () => {

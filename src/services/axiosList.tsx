@@ -1,4 +1,3 @@
-import { StorageTwoTone } from '@mui/icons-material';
 import axios, { AxiosRequestConfig } from 'axios';
 import moment from 'moment';
 import storage from '../lib/storage';

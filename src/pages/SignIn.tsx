@@ -13,7 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import * as service from '../services/axiosList';
-import { RecoilRootProps, useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { AuthenticatedInfo, authenticatedState } from '../recoil/recoil';
 import { Redirect } from 'react-router';
 import storage from '../lib/storage';
@@ -39,7 +39,6 @@ export default function SignIn() {
 
   const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
   const [loading, setLoading] = React.useState(true);
-  const [data, setData] = React.useState<any>(null);
 
 
 

@@ -7,7 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import * as service from '../../services/axiosList';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { authenticatedState, isAddCardState, isCardListReloadState, isModifyModalShowState } from '../../recoil/recoil';
 import CloseIcon from '@mui/icons-material/Close';
 import { AddCard } from './AddCard';
@@ -17,9 +17,8 @@ import CommonModal from '../common/CommonModal';
 
 export default function Body() {
 
-    const [loading, setLoading] = React.useState<boolean>(false);
     const [isModifyModalShow, setIsModifyModalShow] = useRecoilState<boolean>(isModifyModalShowState);
-    const [isAddCard, setIsAddCard] = useRecoilState(isAddCardState);
+    const setIsAddCard = useSetRecoilState(isAddCardState);
     const [isCardListReload, setIsCardListReload] = useRecoilState<boolean>(isCardListReloadState);
     const [data, setData] = React.useState<any>([]);
     const [isOpenRemoveCardModal, setIsOpenRemoveCardModal] = React.useState<boolean>(false);

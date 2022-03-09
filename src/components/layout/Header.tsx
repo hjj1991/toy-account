@@ -12,8 +12,6 @@ import { authenticatedState } from '../../recoil/recoil';
 import { AppBar, Avatar, Grid, IconButton, ListItemText, Toolbar, Tooltip } from '@mui/material';
 import storage from '../../lib/storage';
 
-const lightColor = 'rgba(255, 255, 255, 0.7)';
-
 interface HeaderProps {
   onDrawerToggle: () => void;
 }
