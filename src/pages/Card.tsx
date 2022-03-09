@@ -12,7 +12,6 @@ function Card ( props:any){
             setMenuState({activeNav:props.match.path});
     });
 
-    console.log(props);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);

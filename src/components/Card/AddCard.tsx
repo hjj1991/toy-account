@@ -34,9 +34,8 @@ export function AddCard() {
 
         setLoading(false);
 
-        const res = await service.postCardAdd(authenticated.data?.accessToken!, cardAddForm);
+        const res = await service.postCardAdd(cardAddForm);
 
-        console.log(res);
         if (res.data.success) {
             setCardForm({
                 cardName: "",
@@ -51,7 +50,6 @@ export function AddCard() {
     }
 
     const handleChangeFormValue = (e: any) => {
-        console.log(e.target.name);
         if (e.target.name === "cardName") {
             setCardForm({
                 ...cardForm,

@@ -66,6 +66,9 @@ export default function SignIn() {
     if (res.data.success) {
       setAuthenticated({ isAuthenticated: true, data: res.data.response });
       storage.set('loginInfo', { isAuthenticated: true, data: res.data.response });
+      storage.set('accessToken', res.data.response.accessToken);
+      storage.set('refreshToken', res.data.response.refreshToken);
+      storage.set('expireTime', res.data.response.expireTime);
     }
 
     setLoading(true);

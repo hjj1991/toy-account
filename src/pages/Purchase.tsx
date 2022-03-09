@@ -14,7 +14,6 @@ function Purchase ( props:any){
     })
 
 
-    console.log(props);
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
       };

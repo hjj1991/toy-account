@@ -175,7 +175,6 @@ const drawerWidth = 256;
 function App() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
-
   const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
 
 

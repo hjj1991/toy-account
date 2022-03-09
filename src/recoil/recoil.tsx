@@ -4,6 +4,7 @@ export interface AuthenticatedInfo {
     isAuthenticated: boolean
     data?:{
             accessToken: string;
+            refreshToken: string;
             createDate: string;
             expireTime: number;
             loginDateTime: string;
@@ -24,6 +25,7 @@ export const authenticatedState = atom<AuthenticatedInfo>({
         isAuthenticated: false,
         data: {
             accessToken: "",
+            refreshToken: "",
             createDate: "",
             expireTime: 0,
             loginDateTime: "",
