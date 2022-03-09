@@ -9,14 +9,12 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Input from '@mui/material/Input';
 import Typography from '@mui/material/Typography';
-import { Button, CardActionArea, CardActions, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField } from '@mui/material';
+import { Button, CardHeader, Dialog, DialogActions, DialogContent, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import * as service from '../../services/axiosList';
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
-import { AuthenticatedInfo, authenticatedState, isAddCardState, isCardListReloadState, isModifyModalShowState } from '../../recoil/recoil';
+import { useRecoilValue } from 'recoil';
+import { AuthenticatedInfo, authenticatedState,} from '../../recoil/recoil';
 import DateAdapter from '@mui/lab/AdapterMoment';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
@@ -24,27 +22,15 @@ import CreateIcon from '@mui/icons-material/Create';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import moment from 'moment';
 import CommonModal from '../common/CommonModal';
 import Budget from '../../assets/img/budget.png';
 import outMoney from '../../assets/img/out-money.png';
 import inMoney from '../../assets/img/in-money.png';
 import allMoney from '../../assets/img/all-money.png';
-import { textAlign } from '@mui/system';
 
 
-const Item = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    height: 60,
-    lineHeight: '60px',
-  }));
-  
-  const darkTheme = createTheme({ palette: { mode: 'dark' } });
-  const lightTheme = createTheme({ palette: { mode: 'light' } });
-  
 
 export default function Body() {
 
@@ -59,8 +45,7 @@ export default function Body() {
     const [storeList, setStoreList] = React.useState<any>([]);
     const [selectedIndx, setSelectedIndx] = React.useState<number>(0);
     const [isOpenDeleteModal, setIsOpenDeleteModal] = React.useState<boolean>(false);
-    const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
-    const resetAuthenticated = useResetRecoilState(authenticatedState);
+    const authenticated = useRecoilValue<AuthenticatedInfo>(authenticatedState);
     const [purchaseForm, setPurchaseForm] = React.useState<service.PurchaseAddForm>({
         cardNo: 0,
         price: "0",
@@ -304,12 +289,12 @@ export default function Body() {
 
 
         getPurchaseList();
-
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [startDate, endDate])
 
     React.useEffect(() => {
         searchChangeResult();
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
       }, [navSelect, searchForm]);
 
     return (
@@ -323,7 +308,7 @@ export default function Body() {
                     style={{textAlign: "center"}}
                     title={
                     <>
-                    <img width={100} src={Budget} />
+                    <img width={100} src={Budget} alt={"없다"} />
                     <div>소비생활</div>
                     </>
                         }
@@ -404,9 +389,9 @@ export default function Body() {
                         m: 0,
                         backgroundColor: '#009be5'
                     }}>
-                        <Tab className="navSelect" icon={<img src={allMoney} />} label="전체" />
-                        <Tab className="navSelect" icon={<img src={inMoney} />} label="들어온 돈" />
-                        <Tab className="navSelect" icon={<img src={outMoney} />} label="나간돈" />
+                        <Tab className="navSelect" icon={<img src={allMoney} alt={"없다"}  />} label="전체" />
+                        <Tab className="navSelect" icon={<img src={inMoney} alt={"없다"}  />} label="들어온 돈" />
+                        <Tab className="navSelect" icon={<img src={outMoney} alt={"없다"}  />} label="나간돈" />
             </Tabs>
               <Box 
                 sx={{
