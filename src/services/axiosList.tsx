@@ -2,8 +2,8 @@ import axios, { AxiosRequestConfig } from 'axios';
 import moment from 'moment';
 import storage from '../lib/storage';
 
-const siteUrl = "http://localhost:8080";
-// const siteUrl = "http://dognas.ipdisk.co.kr:8080";
+// const siteUrl = "http://localhost:8080";
+const siteUrl = "http://dognas.ipdisk.co.kr:8080";
 
 
 axios.defaults.baseURL = siteUrl;
