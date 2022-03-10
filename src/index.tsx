@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { RecoilRoot } from 'recoil';
 import { BrowserRouter } from 'react-router-dom';
 
-
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"></meta>
 ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
