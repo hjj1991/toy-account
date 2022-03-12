@@ -42,6 +42,15 @@ export interface SignInForm {
     userPw: FormDataEntryValue | null;
 }
 
+/* 회원 가입 insertface */
+export interface SignUpForm {
+    userId: string,
+    name: string,
+    nickName: string,
+    userEmail: string,
+    userPw: string
+}
+
 /* 카드 추가 API */
 export interface CardAddForm {
     cardName: string,
@@ -72,12 +81,14 @@ export interface PurchaseAddForm {
 
 /* 중복 ID check API */
 export function getCheckUserIdDuplicate(userId: string) {
-    return axios.get(`/user/${userId}/exists`,
-    {
-        headers: {}
-    });
+    return axios.get(`/user/${userId}/exists`);
 }
 
+/* 회원 가입 API */
+export function postSignUp(data: SignInForm) {
+    return axios.post('/user/signup',
+        data);
+}
 
 
 

@@ -40,6 +40,12 @@ export const authenticatedState = atom<AuthenticatedInfo>({
     }
 })
 
+/* 로딩 스피너 OPEN 여부 true: 노출 false: 미노출 */
+export const loadingState = atom<boolean>({
+    key: 'loadingState',
+    default: false
+})
+
 /* 좌측 메뉴 Active 정보 Recoil */
 export const menuState = atom<any>({
     key: 'menuState',
