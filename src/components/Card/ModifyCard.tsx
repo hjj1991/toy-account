@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Button, Dialog, DialogActions, DialogContent,DialogTitle, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { Grid, Card, Box, CardContent, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { authenticatedState, isCardListReloadState, isModifyModalShowState } from "../../recoil/recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isCardListReloadState, isModifyModalShowState, loadingState } from "../../recoil/recoil";
 import * as service from '../../services/axiosList';
 
 
@@ -15,30 +15,37 @@ interface Iprops {
 
 
 
-export function ModifyCard(props:Iprops) {
+export function ModifyCard(props: Iprops) {
 
     const [isCardListReload, setIsCardListReload] = useRecoilState<boolean>(isCardListReloadState);
     const [isModifyModalShow, setIsModifyModalShow] = useRecoilState<boolean>(isModifyModalShowState);
+    const setLoading = useSetRecoilState<boolean>(loadingState);
     const [cardForm, setCardForm] = useState({
         cardName: "",
         cardType: "",
         cardDesc: ""
     })
-    const authenticatedValue = useRecoilValue(authenticatedState);
 
+    async function getCardDetail() {
 
-      React.useEffect(() => {
-        async function getCardDetail() {
-            if (authenticatedValue.data?.accessToken !== undefined) {
-                const res = await service.getCardDetail(props.cardNo);
-                if (res.status === 200 && res.data.success) {
-                    setCardForm(res.data.response);
-                }
-
-
+        try {
+            setLoading(true);
+            const res = await service.getCardDetail(props.cardNo);
+            if (res.status === 200 && res.data.success) {
+                setCardForm(res.data.response);
             }
-
+        } catch (err) {
+            alert("서버 에러입니다." + err);
+        } finally {
+            setLoading(false);
         }
+
+
+
+    }
+
+
+    React.useEffect(() => {
 
         getCardDetail();
         // eslint-disable-next-line react-hooks/exhaustive-deps 
@@ -46,8 +53,8 @@ export function ModifyCard(props:Iprops) {
 
     const handleClose = () => {
         setIsModifyModalShow(false);
-      };
-      
+    };
+
 
 
     const handleSubmitModifyCard = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,15 +66,23 @@ export function ModifyCard(props:Iprops) {
             cardDesc: e.currentTarget["cardDesc"].value
         }
 
-        const res = await service.updateCardModify(cardUpdateForm);
+        try{
+            setLoading(true);
+            const res = await service.updateCardModify(cardUpdateForm);
 
-        if (res.data.success) {
-            setCardForm({
-                cardName: "",
-                cardDesc: "",
-                cardType: ""
-            })
+            if (res.data.success) {
+                setCardForm({
+                    cardName: "",
+                    cardDesc: "",
+                    cardType: ""
+                })
+            }
+        }catch(err){
+            alert("서버 에러입니다." + err);
+        }finally{
+            setLoading(false);
         }
+
         setIsModifyModalShow(false);
         setIsCardListReload(!isCardListReload);
 
@@ -96,17 +111,17 @@ export function ModifyCard(props:Iprops) {
     }
 
     return (
-       
-            <Dialog
-                open={isModifyModalShow}
-                onClose={handleClose}
-                aria-labelledby="responsive-dialog-title"
-            >
-                 <form name="cardForm" id="cardForm" onSubmit={handleSubmitModifyCard}>
-            <DialogTitle id="responsive-dialog-title" sx={{textAlign: 'center'}}>
-                {"카드 수정"}
-            </DialogTitle>
-            <DialogContent>
+
+        <Dialog
+            open={isModifyModalShow}
+            onClose={handleClose}
+            aria-labelledby="responsive-dialog-title"
+        >
+            <form name="cardForm" id="cardForm" onSubmit={handleSubmitModifyCard}>
+                <DialogTitle id="responsive-dialog-title" sx={{ textAlign: 'center' }}>
+                    {"카드 수정"}
+                </DialogTitle>
+                <DialogContent>
                     <Card>
                         <CardContent>
                             <Grid container spacing={5} rowSpacing={4}>
@@ -151,19 +166,19 @@ export function ModifyCard(props:Iprops) {
                             </Grid>
                         </CardContent>
                     </Card>
-            </DialogContent>
-            <DialogActions>
-                <Button type="submit" >
-                    수정
-                </Button>
-                <Button onClick={handleClose}>
-                    취소
-                </Button>
-            </DialogActions>
+                </DialogContent>
+                <DialogActions>
+                    <Button type="submit" >
+                        수정
+                    </Button>
+                    <Button onClick={handleClose}>
+                        취소
+                    </Button>
+                </DialogActions>
             </form>
         </Dialog>
-      
-        
+
+
     )
 
 }

@@ -20,9 +20,9 @@ import { LoadingModal } from './components/common/LoadingModal';
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
+            {'Copyright © 재정'}
             <Link color="inherit" href="https://material-ui.com/">
-                Your Website
+                재정스홈
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -223,7 +223,6 @@ function App() {
                             <Header onDrawerToggle={handleDrawerToggle} />
                             <Box sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1', padding: 0 }}>
                                 <Switch>
-                                    <Route path="/signup" component={SignUp} />
                                     <PrivateRoute isAuthenticated={authenticated.isAuthenticated} authenticationPath="/" exact path="/" component={Home} />
                                     <PrivateRoute isAuthenticated={authenticated.isAuthenticated} authenticationPath="/" path="/card" component={Card} />
                                     <PrivateRoute isAuthenticated={authenticated.isAuthenticated} authenticationPath="/" exact path="/purchase" component={Purchase} />
@@ -243,6 +242,7 @@ function App() {
                 <Switch>
                     <Route exact path={["/signin", "/"]} component={SignIn} />
                     <Route path="/signup" component={SignUp} />
+                    <Route path={"*"} component={SignIn} />
                 </Switch>
                 {loading && <LoadingModal />}
                 </>

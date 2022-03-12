@@ -13,8 +13,8 @@ import { Button, CardHeader, Dialog, DialogActions, DialogContent, TextField } f
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import * as service from '../../services/axiosList';
-import { useRecoilValue } from 'recoil';
-import { AuthenticatedInfo, authenticatedState,} from '../../recoil/recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { AuthenticatedInfo, authenticatedState, loadingState,} from '../../recoil/recoil';
 import DateAdapter from '@mui/lab/AdapterMoment';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
@@ -46,6 +46,7 @@ export default function Body() {
     const [selectedIndx, setSelectedIndx] = React.useState<number>(0);
     const [isOpenDeleteModal, setIsOpenDeleteModal] = React.useState<boolean>(false);
     const authenticated = useRecoilValue<AuthenticatedInfo>(authenticatedState);
+    const setLoading = useSetRecoilState<boolean>(loadingState);
     const [purchaseForm, setPurchaseForm] = React.useState<service.PurchaseAddForm>({
         cardNo: 0,
         price: "0",
@@ -131,52 +132,67 @@ export default function Body() {
         purchaseForm.purchaseDate = purchaseDate;
         
 
+        try{
+            setLoading(true);
+            const res = await service.postPurchaseAdd(purchaseAddForm);
 
-        const res = await service.postPurchaseAdd(purchaseAddForm);
-
-        if (res.data.success) {
-            setPurchaseForm({
-                cardNo: 0,
-                price: "0",
-                purchaseDate:  moment().format("yyyy-MM-DD"),
-                purchaseType: "",
-                reason: "",
-                storeName: "",
-                storeNo: 0
-            })
+            if (res.data.success) {
+                setPurchaseForm({
+                    cardNo: 0,
+                    price: "0",
+                    purchaseDate:  moment().format("yyyy-MM-DD"),
+                    purchaseType: "",
+                    reason: "",
+                    storeName: "",
+                    storeNo: 0
+                })
+            }
+            setIsAddPurchase(false);
+            getPurchaseList();
+        }catch(err) {
+            alert("서버에러입니다." + err);
+        }finally{
+            setLoading(false);
         }
-        setIsAddPurchase(false);
-        getPurchaseList();
+
+
      
 
     }
 
       
     async function getPurchaseList() {
-        const res = await service.getPurchaseList(startDate, endDate);
-        if (res.status === 200 && res.data.success) {
-            setCardList(res.data.response.cardList);
-            setStoreList(res.data.response.storeList);
-            setPurchaseList(res.data.response.purchaseList);
-            setSerachForm({
-                storeTypeName: "ALL",
-                searchValue: ""
-            });
-            setNavSelect(0);
-            setfilterPurchaseList(res.data.response.purchaseList);
-            let totalValue = 0;
-            for(let purchase of res.data.response.purchaseList){
+        try{
+            setLoading(true);
+            const res = await service.getPurchaseList(startDate, endDate);
+            if (res.status === 200 && res.data.success) {
+                setCardList(res.data.response.cardList);
+                setStoreList(res.data.response.storeList);
+                setPurchaseList(res.data.response.purchaseList);
+                setSerachForm({
+                    storeTypeName: "ALL",
+                    searchValue: ""
+                });
+                setNavSelect(0);
+                setfilterPurchaseList(res.data.response.purchaseList);
+                let totalValue = 0;
+                for(let purchase of res.data.response.purchaseList){
+                    
+                    if(purchase.purchaseType === "OUTGOING"){
+                        totalValue -= purchase.price;
+                    }
+                    if(purchase.purchaseType === "INCOME"){
+                        totalValue += purchase.price;
+                    }
+                }
                 
-                if(purchase.purchaseType === "OUTGOING"){
-                    totalValue -= purchase.price;
-                }
-                if(purchase.purchaseType === "INCOME"){
-                    totalValue += purchase.price;
-                }
+                setTotalPrice(totalValue);
+                
             }
-            
-            setTotalPrice(totalValue);
-            
+        }catch(err){
+            alert("서버 오류입니다." + err);
+        }finally{
+            setLoading(false);
         }
     
 
@@ -263,14 +279,22 @@ export default function Body() {
     const handleClickRemovePurchaseOk = async (indx:number) => {
 
 
-        const res = await service.postPurchaseDelete(indx);
-        if (res.status === 200 && res.data.success) {
+        try{
+            setLoading(true);
+            const res = await service.postPurchaseDelete(indx);
+            if (res.status === 200 && res.data.success) {
+                
+                getPurchaseList();
+            }
             
-            getPurchaseList();
+            setSelectedIndx(0);
+            setIsOpenDeleteModal(false);
+        }catch(err){
+            console.log("서버에러 입니다. " + err);
+        }finally{
+            setLoading(false);
         }
-        
-        setSelectedIndx(0);
-        setIsOpenDeleteModal(false);
+
 
 
     }
