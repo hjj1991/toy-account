@@ -1,70 +1,171 @@
 @font-face {
-  font-family: "basic";
-  src: url("assets/fonts/BMEULJIROTTF.ttf") format("truetype");
+    font-family: "basic";
+    src: url("assets/fonts/BMEULJIROTTF.ttf") format("truetype");
 }
 
 * {
-  font-family: 'basic';
+    font-family: 'basic';
 }
 
 
 .wrap {
-  position: relative;
-  padding: 30px;
-  font-size: 18px;
-  line-height: 1.6;
-  background: lightgray;
+    position: relative;
+    padding: 30px;
+    font-size: 18px;
+    line-height: 1.6;
+    background: lightgray;
 }
 
 .topBtn {
-  position: fixed; 
-  opacity: 0.5; 
-  bottom: 20px; 
-  right: 40px;
-  width: 2em!important;
-  height: 2em!important;
-  z-index: -10; 
-  letter-spacing: -0.06em;
-  cursor: pointer;
-  fill-opacity: 0.6;
-  transition: opacity 0.3s ease-in;
-
+    position: fixed; 
+    opacity: 0.5; 
+    bottom: 20px; 
+    right: 40px;
+    width: 2em!important;
+    height: 2em!important;
+    z-index: -10; 
+    letter-spacing: -0.06em;
+    cursor: pointer;
+    fill-opacity: 0.6;
+    transition: opacity 0.3s ease-in;
 }
 
 .topBtn.active {
-  z-index: 10; 
-  opacity: 1; 
+    z-index: 10; 
+    opacity: 1; 
 }
 
 .topBtn:hover { 
-  fill-opacity: 1;
+    fill-opacity: 1;
 }
 
 .purchaseBox {
-  background-color: #fff;
-  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 20%), 0px 1px 1px 0px rgba(0, 0, 0, 14%), 0px 1px 3px 0px rgba(0, 0, 0, 12%);
-  border-radius: 8px;
-  padding: 16px;
+    background-color: #fff;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 20%), 0px 1px 1px 0px rgba(0, 0, 0, 14%), 0px 1px 3px 0px rgba(0, 0, 0, 12%);
+    border-radius: 8px;
+    padding: 16px;
 }
 
 .purchaseBox-header {
-  color: gray;
+    color: gray;
 }
 
 .deleteIcon:hover {
-  opacity: 1;
+    opacity: 1;
 }
 
 .createIcon:hover {
-  opacity: 1;
+    opacity: 1;
 }
 /* 소비생활 Tab 내부 선택 항목 스타일 */
 .navSelect.Mui-selected {
-  color: rgb(255, 255, 255)!important; 
-  font-weight: bold; 
+    color: rgb(255, 255, 255)!important; 
+    font-weight: bold; 
 }
 /* 소비생활 datepicker 스타일 */
 .purchase-datePicker {
-  width: 150px;
-  margin: 5px!important;
+    width: 150px;
+    margin: 5px!important;
+}
+
+/* 로딩화면 CSS */
+.loading-container {
+    z-index: 5;
+    position: fixed;
+    animation: fadein 0.15s;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    content: "";
+    background-color: rgba(0, 0, 0, 0.3);
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+#loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -2.7em;
+    margin-left: -2.7em;
+    width: 5.4em;
+    height: 5.4em;
+}
+#loadingText {
+    position: absolute;
+    color: white;
+    font-size: 40px;
+    top: 57%;
+}
+
+#hill {
+    position: absolute;
+    width: 7.1em;
+    height: 7.1em;
+    top: 1.7em;
+    left: 1.7em;
+    background-color: transparent;
+    border-left: .25em solid whitesmoke;
+    transform: rotate(45deg);
+}
+
+#hill:after {
+    content: '';
+    position: absolute;
+    width: 7.1em;
+    height: 7.1em;
+    left: 0;
+}
+
+#box {
+    position: absolute;
+    left: 0;
+    bottom: -.1em;
+    width: 1em;
+    height: 1em;
+    background-color: transparent;
+    border: .25em solid whitesmoke;
+    border-radius: 15%;
+    transform: translate(0, -1em) rotate(-45deg);
+    animation: push 2.5s cubic-bezier(.79, 0, .47, .97) infinite;
+}
+
+@keyframes push {
+    0% {
+        transform: translate(0, -1em) rotate(-45deg);
+    }
+    5% {
+        transform: translate(0, -1em) rotate(-50deg);
+    }
+    20% {
+        transform: translate(1em, -2em) rotate(47deg);
+    }
+    25% {
+        transform: translate(1em, -2em) rotate(45deg);
+    }
+    30% {
+        transform: translate(1em, -2em) rotate(40deg);
+    }
+    45% {
+        transform: translate(2em, -3em) rotate(137deg);
+    }
+    50% {
+        transform: translate(2em, -3em) rotate(135deg);
+    }
+    55% {
+        transform: translate(2em, -3em) rotate(130deg);
+    }
+    70% {
+        transform: translate(3em, -4em) rotate(217deg);
+    }
+    75% {
+        transform: translate(3em, -4em) rotate(220deg);
+    }
+    100% {
+        transform: translate(0, -1em) rotate(-225deg);
+    }
 }
