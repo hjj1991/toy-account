@@ -11,19 +11,18 @@ import { AuthenticatedInfo, authenticatedState, loadingState } from './recoil/re
 import storage from './lib/storage';
 import Purchase from './pages/Purchase';
 import { Box } from '@mui/system';
-import { createTheme, CssBaseline, Link, ThemeProvider, Typography, useMediaQuery } from '@mui/material';
+import { createTheme, CssBaseline, ThemeProvider, Typography, useMediaQuery } from '@mui/material';
 import { UpButton } from './components/common/UpButton';
 import './App.scss'
 import SignUp from './pages/Signup';
 import { LoadingModal } from './components/common/LoadingModal';
+import { SocialSignIn } from './components/common/SocialSignIn';
 
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright © 재정'}
-            <Link color="inherit" href="https://material-ui.com/">
-                재정스홈
-            </Link>{' '}
+            {' '}
             {new Date().getFullYear()}
             {'.'}
         </Typography>
@@ -180,7 +179,6 @@ function App() {
     const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
     const loading = useRecoilValue<boolean>(loadingState);
 
-
     /* 세션에서 로그인정보가 있을 경우 Recoil State에 넣어준다. */
     useEffect(() => {
         const loginInfo = storage.get('loginInfo'); // 로그인 정보를 로컬스토리지에서 가져옵니다.
@@ -241,7 +239,8 @@ function App() {
                 <>
                 <Switch>
                     <Route exact path={["/signin", "/"]} component={SignIn} />
-                    <Route path="/signup" component={SignUp} />
+                    <Route path={"/social/signin"} component={SocialSignIn} />
+                    <Route path={"/signup"} component={SignUp} />
                     <Route path={"*"} component={SignIn} />
                 </Switch>
                 {loading && <LoadingModal />}

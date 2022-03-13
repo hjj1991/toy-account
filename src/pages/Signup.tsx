@@ -45,9 +45,6 @@ export interface signUpValidationForm {
     userPw2Check: boolean,
     userPw2CheckMessage?: string,
     userPw2FontColor?: string,
-    nameCheck: boolean,
-    nameCheckMessage: string,
-    nameFontColor: string,
     nickNameCheck: boolean,
     nickNameCheckMessage: string,
     nickNameFontColor: string
@@ -65,9 +62,6 @@ export default function SignUp() {
         userPwCheck: false,
         userPwFontColor: "red",
         userPw2Check: false,
-        nameCheck: false,
-        nameCheckMessage: "※ 공백제외 한글, 영문, 숫자 2 ~ 10자로 입력해주세요.",
-        nameFontColor: "red",
         nickNameCheck: false,
         nickNameCheckMessage: "※ 공백제외 한글, 영문, 숫자 2 ~ 10자로 입력해주세요.",
         nickNameFontColor: "red"
@@ -76,7 +70,6 @@ export default function SignUp() {
         userId: "",
         userPw: "",
         userEmail: "",
-        name: "",
         nickName: ""
     });
     const setLoading = useSetRecoilState<boolean>(loadingState);
@@ -84,8 +77,8 @@ export default function SignUp() {
     const [signUpOk, setSignUpOk] = React.useState<boolean>(false);
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const {nickNameCheck, nameCheck, userPwCheck, userPw2Check, userIdCheck} = signUpValidationForm;
-        if(nickNameCheck && nameCheck && userPwCheck && userPw2Check && userIdCheck){
+        const {nickNameCheck, userPwCheck, userPw2Check, userIdCheck} = signUpValidationForm;
+        if(nickNameCheck && userPwCheck && userPw2Check && userIdCheck){
             try{
                 setLoading(true);
                 const res = await service.postSignUp(signUpForm);
@@ -188,32 +181,6 @@ export default function SignUp() {
             }
         }
 
-        if (targetId === "name") {
-            let pattern = /([^가-힣\x20^a-z^A-Z^0-9])/i;
-            let blank_pattern = /[\s]/g;
-            let name = event.currentTarget.value;
-
-            if ((!pattern.test(name)) && name.length >= 2 && name.length <= 10 && (!blank_pattern.test(name))) {
-                setSignUpValidationForm({
-                    ...signUpValidationForm,
-                    nameCheck: true,
-                    nameFontColor: "green",
-                    nameCheckMessage: "사용가능합니다.",
-                });
-            } else {
-                setSignUpValidationForm({
-                    ...signUpValidationForm,
-                    nameCheck: false,
-                    nameFontColor: "red",
-                    nameCheckMessage: "※ 공백제외 한글, 영문, 숫자 2 ~ 10자로 입력해주세요.",
-                });
-            }
-            setSignUpForm({
-                ...signUpForm,
-                name: event.currentTarget.value
-            })
-        }
-
         if (targetId === "nickName") {
             let pattern = /([^가-힣\x20^a-z^A-Z^0-9])/i;
             let blank_pattern = /[\s]/g;
@@ -279,21 +246,6 @@ export default function SignUp() {
                             />
                             <div style={{ "color": signUpValidationForm.userIdFontColor }}>
                                 {signUpValidationForm.userIdCheckMessage}
-                            </div>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                name="name"
-                                required
-                                fullWidth
-                                id="name"
-                                label="이름"
-                                autoFocus
-                                onChange={handleChangeCheckValue}
-                                value={signUpForm.name}
-                            />
-                            <div style={{ "color": signUpValidationForm.nameFontColor }}>
-                                {signUpValidationForm.nameCheckMessage}
                             </div>
                         </Grid>
                         <Grid item xs={12} >
