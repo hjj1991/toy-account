@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -9,7 +8,6 @@ import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import * as service from '../services/axiosList';
@@ -17,6 +15,10 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { AuthenticatedInfo, authenticatedState, loadingState } from '../recoil/recoil';
 import { Redirect } from 'react-router';
 import storage from '../lib/storage';
+import SignInImg from '../assets/img/signin.png'
+import kakaoLogin from '../assets/img/kakao_login.png'
+import naverLogin from '../assets/img/naver_login.png'
+import { Divider } from '@mui/material';
 
 function Copyright(props: any) {
     return (
@@ -34,12 +36,37 @@ function Copyright(props: any) {
 
 const theme = createTheme();
 
+
 export default function SignIn() {
+
+    console.log("dgdg");
+
+    React.useEffect(() =>{
+        
+        window.addEventListener("message", (e:any) =>
+        {
+            if(e.data.hasOwnProperty('code')){
+                console.log(e)
+            }
+        }, false);
+        return () => {
+            window.removeEventListener("message", () =>{
+    
+        });
+          };
+    },[])
 
 
     const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
+    
     const setLoading = useSetRecoilState<boolean>(loadingState);
-
+    const handleSocialLogin = (e:any) => {
+        window.name = 'parentForm'; 
+        if(e.currentTarget.id === "socialNaver"){
+            window.open("https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sUyp7Y2KoOfRvdsAEdCc&redirect_uri=http://localhost:3000/social/signin?provider=naver&state=hLiDdL2uhPtsftcU", "popup", "location=no,resizable=no");
+        }
+        
+    }
 
 
     const HandleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -48,10 +75,7 @@ export default function SignIn() {
         // eslint-disable-next-line no-console
 
         const newSignInForm: service.SignInForm = { userId: data.get('userId'), userPw: data.get('userPw') };
-
-
         setLoading(true);
-
 
         await service.postSignIn(newSignInForm)
             .then((res) => {
@@ -67,13 +91,6 @@ export default function SignIn() {
             }).finally(() => {
                 setLoading(false);
             });
-
-
-
-            
-
-
-
 
     }
 
@@ -109,13 +126,10 @@ export default function SignIn() {
                             alignItems: 'center',
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                            <LockOutlinedIcon />
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
-                            Sign in
-                        </Typography>
-                        <Box component="form" noValidate onSubmit={HandleSubmit} sx={{ mt: 1 }}>
+                        <div style={{ textAlign: 'center' }}>
+                            <img src={SignInImg} alt="로그인" />
+                        </div>
+                        <Box component="form" noValidate={false} onSubmit={HandleSubmit} sx={{ mt: 1 }}>
                             <TextField
                                 margin="normal"
                                 required
@@ -145,8 +159,21 @@ export default function SignIn() {
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
                             >
-                                Sign In
+                                로그인
                             </Button>
+                            <Divider sx={{ my: 3 }}>
+                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                    간편 로그인
+                                </Typography>
+                            </Divider>
+                            <Grid container spacing={2} justifyContent="center">
+                                <Grid item>
+                                    <img src={naverLogin} id="socialNaver" onClick={handleSocialLogin} width={50} alt="네이버 로그인" />
+                                </Grid>
+                                <Grid item>
+                                    <img src={kakaoLogin} id="socialKakao" onClick={handleSocialLogin} width={50} alt="카카오 로그인" />
+                                </Grid>
+                            </Grid>
                             <Grid container>
                                 <Grid item xs>
                                     <Link href="#" variant="body2">

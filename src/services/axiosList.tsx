@@ -45,7 +45,6 @@ export interface SignInForm {
 /* 회원 가입 insertface */
 export interface SignUpForm {
     userId: string,
-    name: string,
     nickName: string,
     userEmail: string,
     userPw: string
