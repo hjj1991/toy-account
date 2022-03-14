@@ -89,6 +89,15 @@ export function postSignUp(data: SignInForm) {
         data);
 }
 
+/* 소셜 로그인 API */
+export function postSocialSignIn(data: URLSearchParams) {
+    return axios.post('/user/social/signin',
+        {
+            provider: data.get("provider"),
+            code: data.get("code"),
+            state: data.get("state")
+        });
+}
 
 
 /* 로그인 API */
