@@ -31,7 +31,7 @@ export default function Body() {
                 setLoading(true);
                 const res = await service.deleteCardDelete(selectedIndx);
                 if (res.status === 200 && res.data.success) {
-                    setIsCardListReload(!isCardListReload);
+                    alert("정상 삭제 되었습니다.");
                 }
             }
         }catch(err){
@@ -39,11 +39,9 @@ export default function Body() {
         }finally{
             setLoading(false);
         }
-  
-
-
         setSelectedIndx(0);
         setIsOpenRemoveCardModal(false);
+        setIsCardListReload(!isCardListReload);
 
     }
 
