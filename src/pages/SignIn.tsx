@@ -39,21 +39,26 @@ const theme = createTheme();
 
 export default function SignIn() {
 
-    console.log("dgdg");
 
     React.useEffect(() =>{
         
         window.addEventListener("message", (e:any) =>
         {
-            if(e.data.hasOwnProperty('code')){
-                console.log(e)
+            if(e.data.hasOwnProperty('isAuthenticated') && e.data.hasOwnProperty('isAuthenticated')){
+                const data = e.data.data;
+                setAuthenticated({ isAuthenticated: true, data: data });
+                storage.set('loginInfo', { isAuthenticated: true, data: data });
+                storage.set('accessToken', data.accessToken);
+                storage.set('refreshToken', data.refreshToken);
+                storage.set('expireTime', data.expireTime);
             }
         }, false);
         return () => {
             window.removeEventListener("message", () =>{
     
-        });
-          };
+            });
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     },[])
 
 
@@ -61,9 +66,15 @@ export default function SignIn() {
     
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const handleSocialLogin = (e:any) => {
+         // 랜덤이기 때문에 결과값이 다를 수 있음.
+        let state = Math.random().toString(36).substr(2,11); // "twozs5xfni"
+        const redirectUri = process.env.REACT_APP_SOCIAL_HOST;
         window.name = 'parentForm'; 
         if(e.currentTarget.id === "socialNaver"){
-            window.open("https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sUyp7Y2KoOfRvdsAEdCc&redirect_uri=http://localhost:3000/social/signin?provider=naver&state=hLiDdL2uhPtsftcU", "popup", "location=no,resizable=no");
+            window.open(`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sUyp7Y2KoOfRvdsAEdCc&redirect_uri=${redirectUri}?provider=naver&state=${state}`, "popup", "location=no,resizable=no");
+        }
+        if(e.currentTarget.id === "socialKakao"){
+            window.open(`https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=656c5afa5455de8f5ad9eb51e09e3720&redirect_uri=${redirectUri}?provider=kakao`, "popup", "location=no,resizable=no");
         }
         
     }
@@ -168,10 +179,10 @@ export default function SignIn() {
                             </Divider>
                             <Grid container spacing={2} justifyContent="center">
                                 <Grid item>
-                                    <img src={naverLogin} id="socialNaver" onClick={handleSocialLogin} width={50} alt="네이버 로그인" />
+                                    <img src={naverLogin} id="socialNaver" style={{cursor: 'pointer'}} onClick={handleSocialLogin} width={50} alt="네이버 로그인" />
                                 </Grid>
                                 <Grid item>
-                                    <img src={kakaoLogin} id="socialKakao" onClick={handleSocialLogin} width={50} alt="카카오 로그인" />
+                                    <img src={kakaoLogin} id="socialKakao" style={{cursor: 'pointer'}} onClick={handleSocialLogin} width={50} alt="카카오 로그인" />
                                 </Grid>
                             </Grid>
                             <Grid container>
