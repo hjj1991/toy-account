@@ -131,7 +131,6 @@ export default function Body() {
         const purchaseAddForm: service.PurchaseAddForm = purchaseForm;
         purchaseForm.purchaseDate = purchaseDate;
         
-
         try{
             setLoading(true);
             const res = await service.postPurchaseAdd(purchaseAddForm);
@@ -148,7 +147,6 @@ export default function Body() {
                 })
             }
             setIsAddPurchase(false);
-            getPurchaseList();
         }catch(err) {
             alert("서버에러입니다." + err);
         }finally{
@@ -156,6 +154,7 @@ export default function Body() {
         }
 
 
+        getPurchaseList();
      
 
     }
@@ -277,16 +276,12 @@ export default function Body() {
     };
     
     const handleClickRemovePurchaseOk = async (indx:number) => {
-
-
         try{
             setLoading(true);
             const res = await service.postPurchaseDelete(indx);
             if (res.status === 200 && res.data.success) {
-                
-                getPurchaseList();
+                alert("정상 삭제되었습니다.");
             }
-            
             setSelectedIndx(0);
             setIsOpenDeleteModal(false);
         }catch(err){
@@ -294,9 +289,7 @@ export default function Body() {
         }finally{
             setLoading(false);
         }
-
-
-
+        getPurchaseList();
     }
 
     const handleClickRemovePurchaseCancel = () => {
