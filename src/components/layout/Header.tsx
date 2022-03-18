@@ -60,7 +60,7 @@ function Header(props: HeaderProps) {
             </Grid>
             <Grid item>
               <IconButton onClick={handleClick} color="inherit" sx={{ p: 0.5 }}>
-                <Avatar src="/static/images/avatar/1.jpg" alt="My Avatar" />
+                <Avatar src={process.env.REACT_APP_API_HOST + "/user/profile?picture=" + authenticated.data?.picture + "&access_token=" + authenticated.data?.accessToken} alt="My Avatar" />
               </IconButton>
             </Grid>
           </Grid>
