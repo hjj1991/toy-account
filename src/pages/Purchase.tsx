@@ -1,8 +1,8 @@
-import Header from '../components/Purchase/Header';
 import Body from '../components/Purchase/Body';
 import React, { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { menuState } from '../recoil/recoil';
+import CommonHeader from '../components/common/CommonHeader';
 
 function Purchase ( props:any){
     const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -19,7 +19,7 @@ function Purchase ( props:any){
 
     return (
         <>
-        <Header onDrawerToggle={handleDrawerToggle} />
+        <CommonHeader headerTitle='소비생활' onDrawerToggle={handleDrawerToggle} />
         <Body />
         </>
     )

@@ -22,7 +22,6 @@ export const refreshConfig = async (config: AxiosRequestConfig): Promise<AxiosRe
         const res = await postReIssueeToken();
         if(res.status === 200 && res.data.success){
             config.headers['access_token'] = res.data.response.accessToken;
-            storage.set('loginInfo', { isAuthenticated: true, data: res.data.response });
             storage.set('accessToken', res.data.response.accessToken);
             storage.set('refreshToken', res.data.response.refreshToken);
             storage.set('expireTime', res.data.response.expireTime);
@@ -49,6 +48,7 @@ export interface SignUpForm {
     userEmail: string,
     userPw: string
 }
+
 
 /* 카드 추가 API */
 export interface CardAddForm {
@@ -106,6 +106,17 @@ export function postSignIn(data: SignInForm) {
         {
             userId: data.userId,
             userPw: data.userPw
+        });
+}
+
+/* 유저정보 수정 API */
+export function patchUserModify(data: FormData) {
+    return authAxios().patch(`/user`,
+        data,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
         });
 }
 

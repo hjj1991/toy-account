@@ -7,7 +7,7 @@ export interface AuthenticatedInfo {
             refreshToken: string;
             createdDate: string;
             expireTime: number;
-            loginDateTime: string;
+            lastLoginDateTime: string;
             nickName: string;
             picture: string;
             provider: string;
@@ -27,7 +27,7 @@ export const authenticatedState = atom<AuthenticatedInfo>({
             refreshToken: "",
             createdDate: "",
             expireTime: 0,
-            loginDateTime: "",
+            lastLoginDateTime: "",
             nickName: "",
             picture: "",
             provider: "",

@@ -17,6 +17,7 @@ import './App.scss'
 import SignUp from './pages/Signup';
 import { LoadingModal } from './components/common/LoadingModal';
 import { SocialSignIn } from './components/common/SocialSignIn';
+import { MyInfo } from './pages/MyInfo';
 
 function Copyright() {
     return (
@@ -117,6 +118,7 @@ theme = {
                 },
             },
         },
+        
         MuiTooltip: {
             styleOverrides: {
                 tooltip: {
@@ -163,8 +165,8 @@ theme = {
         MuiAvatar: {
             styleOverrides: {
                 root: {
-                    width: 32,
-                    height: 32,
+                    width: 40,
+                    height: 40,
                 },
             },
         },
@@ -182,6 +184,8 @@ function App() {
     /* 세션에서 로그인정보가 있을 경우 Recoil State에 넣어준다. */
     useEffect(() => {
         const loginInfo = storage.get('loginInfo'); // 로그인 정보를 로컬스토리지에서 가져옵니다.
+        console.log(loginInfo);
+        console.log(authenticated);
 
         if (loginInfo && authenticated.isAuthenticated === false) {
             setAuthenticated(loginInfo);
@@ -202,7 +206,7 @@ function App() {
                         <CssBaseline />
                         <Box
                             component="nav"
-                            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+                            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0} }}
                         >
                             {isSmUp ? null : (
                                 <Navigator
@@ -221,9 +225,10 @@ function App() {
                             <Header onDrawerToggle={handleDrawerToggle} />
                             <Box sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1', padding: 0 }}>
                                 <Switch>
-                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} authenticationPath="/" exact path="/" component={Home} />
-                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} authenticationPath="/" path="/card" component={Card} />
-                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} authenticationPath="/" exact path="/purchase" component={Purchase} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/" component={Home} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/card" component={Card} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/purchase" component={Purchase} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/myinfo" component={MyInfo} />
                                 </Switch>
                             </Box>
                             <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
