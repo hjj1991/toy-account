@@ -1,46 +1,62 @@
 import { Avatar, Box, Button, Card, CardActions, CardContent, Container, Divider, Grid, Typography } from '@mui/material';
 import { useCallback, useRef, useState } from 'react';
 import Cropper from 'react-easy-crop';
-import { Area, Point } from 'react-easy-crop/types';
-import { useRecoilValue } from 'recoil';
+import { Point } from 'react-easy-crop/types';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import storage from '../../lib/storage';
-import { authenticatedState } from '../../recoil/recoil';
-import { getCroppedImg } from '../common/canvasUtils';
+import { authenticatedState, loadingState } from '../../recoil/recoil';
+import { DataURIToBlob, getCroppedImg } from '../common/canvasUtils';
 import * as service from '../../services/axiosList';
-import { CountertopsOutlined } from '@mui/icons-material';
 
 export function Profile(props: any) {
     const authenticated = useRecoilValue(authenticatedState);
     const profileUrl = process.env.REACT_APP_API_HOST + "/user/profile?picture=" + authenticated.data?.picture + "&access_token=" + storage.get('accessToken');
-    //파일 미리볼 url을 저장해줄 state
-    const [fileImage, setFileImage] = useState("");
+    const hiddenFileInput = useRef<HTMLInputElement>(null);    //파일 input 커스터마이징을 위한 Ref
+    const [fileImage, setFileImage] = useState(""); //파일 미리볼 url을 저장해줄 state
     const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(2);
+    const setLoading = useSetRecoilState<boolean>(loadingState);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
     const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
         setCroppedAreaPixels(croppedAreaPixels)
-      }, []);
+    }, []);
 
     const postCroppedImage = useCallback(async () => {
         try {
-          const croppedImage = await getCroppedImg( fileImage, croppedAreaPixels);
+            const croppedImage = await getCroppedImg(fileImage, croppedAreaPixels);
+
+            const formData = new FormData();
+            formData.append("pictureFile", DataURIToBlob(croppedImage), "test.jpeg");
+            onSubmitProfileImg(formData);
 
 
-          console.log(croppedImage);
 
-          var file = new File([croppedImage], "tempImg.jpeg");
-          const formData = new FormData();
-          formData.append("pictureFile", croppedImage);
-          console.log(file);
-
-          const res = await service.patchUserModify(formData);
-
-          console.log(res);
         } catch (e) {
-          console.error(e)
+            alert("변경에 실패하였습니다.");
         }
-      }, [fileImage, croppedAreaPixels])
-    
+    }, [fileImage, croppedAreaPixels])
+
+    const onSubmitProfileImg = async (formData: any) => {
+        try {
+            setLoading(true);
+            const res = await service.patchUserModify(formData);
+
+            if (res.data.success) {
+                alert("변경에 성공하였습니다.");
+            }
+        } catch {
+            alert("변경에 실패하였습니다.");
+        } finally {
+            deleteFileImage();
+            setLoading(false);
+        }
+    }
+
+    const handleClickInputFileButton = () => {
+        if (hiddenFileInput.current) {
+            hiddenFileInput.current.click();
+        }
+    };
 
     // 파일 저장
     const saveFileImage = (e: any) => {
@@ -99,12 +115,13 @@ export function Profile(props: any) {
                         container
                         spacing={0}
                     >
-                        <Grid
-                            item
-                            xs={12}
-                            position="relative"
-                            height={300}
-                        >
+                        {fileImage !== "" ? (
+                            <Grid
+                                item
+                                xs={12}
+                                position="relative"
+                                height={300}
+                            >
                                 <Cropper
                                     image={fileImage}
                                     crop={crop}
@@ -114,28 +131,39 @@ export function Profile(props: any) {
                                     onCropComplete={onCropComplete}
                                     onZoomChange={setZoom}
                                 />
-               
-                        </Grid>
-                        <Grid
-                            item
-                            lg={8}
-                            md={6}
-                            xs={12}
-                        >
-                            <input
-                                name="imgUpload"
-                                type="file"
-                                accept="image/*"
-                                onChange={saveFileImage}
-                            />
-                            <Button
-                                onClick={postCroppedImage}
-                                variant="contained"
-                                color="primary"
-                                >
-                                Show Result
-                                </Button>
 
+                            </Grid>
+                        ) : null}
+
+                        <Grid
+                            container
+                            xs={12}
+                            spacing={0}
+                            justifyContent="space-evenly"
+                        >
+                         
+                                <Button onClick={handleClickInputFileButton}>
+                                    이미지 선택
+                                </Button>
+                                <input
+                                    name="imgUpload"
+                                    ref={hiddenFileInput}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={saveFileImage}
+                                    style={{ display: 'none' }}
+                                />
+                                {fileImage !== "" ? (
+                                <Button
+                                    onClick={postCroppedImage}
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    프로필 변경
+                                </Button>
+                                ):null}
+                         
+                           
                         </Grid>
                     </Grid>
                 </Container>

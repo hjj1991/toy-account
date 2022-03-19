@@ -55,6 +55,8 @@ export async function getCroppedImg(
   canvas.width = bBoxWidth
   canvas.height = bBoxHeight
 
+
+
   // translate canvas context to a central location to allow rotating and flipping around the center
   ctx.translate(bBoxWidth / 2, bBoxHeight / 2)
   ctx.rotate(rotRad)
@@ -81,14 +83,14 @@ export async function getCroppedImg(
   ctx.putImageData(data, 0, 0)
 
   // As Base64 string
-  // return canvas.toDataURL('image/jpeg');
+  return canvas.toDataURL('image/jpeg');
 
   // As a blob
-  return new Promise((resolve, reject) => {
-    canvas.toBlob((file) => {
-      resolve(URL.createObjectURL(file))
-    }, 'image/jpeg')
-  })
+  // return new Promise((resolve, reject) => {
+  //   canvas.toBlob((file) => {
+  //     resolve(URL.createObjectURL(file))
+  //   }, 'image/jpeg')
+  // })
 }
 
 export async function getRotatedImage(imageSrc, rotation = 0) {
@@ -115,4 +117,17 @@ export async function getRotatedImage(imageSrc, rotation = 0) {
       resolve(URL.createObjectURL(file))
     }, 'image/png')
   })
+}
+
+
+export function DataURIToBlob(dataURI) {
+  const splitDataURI = dataURI.split(',')
+  const byteString = splitDataURI[0].indexOf('base64') >= 0 ? atob(splitDataURI[1]) : decodeURI(splitDataURI[1])
+  const mimeString = splitDataURI[0].split(':')[1].split(';')[0]
+
+  const ia = new Uint8Array(byteString.length)
+  for (let i = 0; i < byteString.length; i++)
+      ia[i] = byteString.charCodeAt(i)
+
+  return new Blob([ia], { type: mimeString })
 }

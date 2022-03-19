@@ -12,7 +12,7 @@ import { Box } from '@mui/system';
 
 const categories = [
   {
-    id: 'Develop',
+    id: '가계부',
     children: [
       { id: '카드목록', icon: <PeopleIcon />, uri: "/card" },
       { id: '소비목록', icon: <ShoppingBasketIcon />, uri: "/purchase" },
@@ -20,11 +20,10 @@ const categories = [
     ],
   },
   {
-    id: 'Quality',
+    id: '예/적금',
     children: [
-      { id: 'Analytics', icon: <StoreIcon />, uri: "" },
-      { id: 'Performance', icon: <StoreIcon />, uri: "" },
-      { id: 'Test Lab', icon: <StoreIcon />, uri: "" },
+      { id: '예금', icon: <StoreIcon />, uri: "" },
+      { id: '적금', icon: <StoreIcon />, uri: "" }
     ],
   },
 ];
@@ -51,13 +50,13 @@ function Navigator(props: DrawerProps) {
     <Drawer variant="permanent" {...other}>
       <List disablePadding>
       <ListItem sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}>
-          Paperbase
+          뜨끔한 가계부
         </ListItem>
         <ListItem sx={{ ...item, ...itemCategory }}>
         <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
-          <ListItemText>Project Overview</ListItemText>
+          <ListItemText>홈</ListItemText>
         </ListItem>
         {categories.map(({ id, children }) => (
           <Box key={id} sx={{ bgcolor: '#101F33' }}>

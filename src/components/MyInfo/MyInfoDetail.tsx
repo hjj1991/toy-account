@@ -42,8 +42,8 @@ export function MyInfoDetail(props:any) {
         >
             <Card>
                 <CardHeader
-                    subheader="The information can be edited"
-                    title="Profile"
+                    subheader="변경이 필요 할"
+                    title="회원정보"
                 />
                 <Divider />
                 <CardContent>
