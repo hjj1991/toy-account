@@ -41,12 +41,19 @@ export interface SignInForm {
     userPw: FormDataEntryValue | null;
 }
 
-/* 회원 가입 insertface */
+/* 회원 가입 interface */
 export interface SignUpForm {
     userId: string,
     nickName: string,
     userEmail: string,
     userPw: string
+}
+
+/* 회원 정보 수정 interface */ 
+export interface UserModifyForm {
+    nickName: string | null,
+    userEmail: string | null,
+    userPw: string | null
 }
 
 
@@ -80,7 +87,17 @@ export interface PurchaseAddForm {
 
 /* 중복 ID check API */
 export function getCheckUserIdDuplicate(userId: string) {
-    return axios.get(`/user/${userId}/exists`);
+    return axios.get(`/user/${userId}/exists-id`);
+}
+
+/* 중복 닉네임 check API */
+export function getCheckNickNameDuplicate(nickName: string, auth:boolean) {
+    if(auth){
+        return authAxios().get(`/user/${nickName}/exists-nickname`);
+    }else{
+        return axios.get(`/user/${nickName}/exists-nickname`);
+    }
+    
 }
 
 /* 회원 가입 API */
@@ -99,6 +116,16 @@ export function postSocialSignIn(data: URLSearchParams) {
         });
 }
 
+/* 소셜 계정 연동 */
+export function postSocialMapping(data: URLSearchParams) {
+    return authAxios().patch('/user/social/mapping',
+    {
+        provider: data.get("provider"),
+        code: data.get("code"),
+        state: data.get("state") 
+    });
+}
+
 
 /* 로그인 API */
 export function postSignIn(data: SignInForm) {
@@ -109,15 +136,25 @@ export function postSignIn(data: SignInForm) {
         });
 }
 
-/* 유저정보 수정 API */
-export function patchUserModify(data: FormData) {
-    return authAxios().patch(`/user`,
+/* 유저프로필사진 수정 API */
+export function patchUserProfileModify(data: FormData) {
+    return authAxios().patch('/user/profile',
         data,
         {
             headers: {
                 "Content-Type": "multipart/form-data"
             }
         });
+}
+
+/* 유저정보 수정 API */
+export function patchUserModify(data: UserModifyForm){
+    return authAxios().patch('/user',
+    {
+        nickName: data.nickName,
+        userEmail: data.userEmail,
+        userPw: data.userPw
+    });
 }
 
 /* 액세스 토큰 재발급 API */
@@ -189,3 +226,5 @@ export function postPurchaseAdd(purchaseAddForm: PurchaseAddForm) {
 export function postPurchaseDelete(purchaseNo: number) {
     return authAxios().delete(`/purchase/${purchaseNo}`);
 }
+
+

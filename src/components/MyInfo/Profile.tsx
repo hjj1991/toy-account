@@ -1,15 +1,17 @@
 import { Avatar, Box, Button, Card, CardActions, CardContent, Container, Divider, Grid, Typography } from '@mui/material';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Cropper from 'react-easy-crop';
 import { Point } from 'react-easy-crop/types';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import storage from '../../lib/storage';
-import { authenticatedState, loadingState } from '../../recoil/recoil';
+import { AuthenticatedInfo, authenticatedState, loadingState } from '../../recoil/recoil';
 import { DataURIToBlob, getCroppedImg } from '../common/canvasUtils';
 import * as service from '../../services/axiosList';
+import kakaoLogin from '../../assets/img/kakao_login.png'
+import naverLogin from '../../assets/img/naver_login.png'
 
 export function Profile(props: any) {
-    const authenticated = useRecoilValue(authenticatedState);
+    const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
     const profileUrl = process.env.REACT_APP_API_HOST + "/user/profile?picture=" + authenticated.data?.picture + "&access_token=" + storage.get('accessToken');
     const hiddenFileInput = useRef<HTMLInputElement>(null);    //파일 input 커스터마이징을 위한 Ref
     const [fileImage, setFileImage] = useState(""); //파일 미리볼 url을 저장해줄 state
@@ -21,6 +23,41 @@ export function Profile(props: any) {
         setCroppedAreaPixels(croppedAreaPixels)
     }, []);
 
+    useEffect(() => {
+        
+        const receiveMessage = (e:any) =>{
+            if (e.data.hasOwnProperty('returnData')) {
+                const provider = e.data.returnData;
+                switch (provider) {
+                    case "NAVER":
+                        setAuthenticated({
+                            ...authenticated,
+                            data: {
+                                ...authenticated.data!,
+                                provider: provider
+                            }
+                        })
+                        break;
+                    case "KAKAO":
+                        setAuthenticated({
+                            ...authenticated,
+                            data: {
+                                ...authenticated.data!,
+                                provider: provider
+                            }
+                        })
+                        break;
+                }
+            }
+        }
+        
+
+        window.addEventListener("message", receiveMessage , false);
+        return () => window.removeEventListener("message", receiveMessage);
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
+    });
+
+    /* 이미지 크롭 */
     const postCroppedImage = useCallback(async () => {
         try {
             const croppedImage = await getCroppedImg(fileImage, croppedAreaPixels);
@@ -29,20 +66,20 @@ export function Profile(props: any) {
             formData.append("pictureFile", DataURIToBlob(croppedImage), "test.jpeg");
             onSubmitProfileImg(formData);
 
-
-
         } catch (e) {
             alert("변경에 실패하였습니다.");
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [fileImage, croppedAreaPixels])
 
     const onSubmitProfileImg = async (formData: any) => {
         try {
             setLoading(true);
-            const res = await service.patchUserModify(formData);
+            const res = await service.patchUserProfileModify(formData);
 
             if (res.data.success) {
                 alert("변경에 성공하였습니다.");
+                window.location.reload();
             }
         } catch {
             alert("변경에 실패하였습니다.");
@@ -69,6 +106,21 @@ export function Profile(props: any) {
         setFileImage("");
     };
 
+    const handleSocialMapping = (e: any) => {
+        // 랜덤이기 때문에 결과값이 다를 수 있음.
+        let state = Math.random().toString(36).substr(2, 11); // "twozs5xfni"
+        const redirectUri = process.env.REACT_APP_HOST + "/social/mapping";
+        console.log(redirectUri);
+        window.name = 'parentForm';
+        if (e.currentTarget.id === "socialNaver") {
+            window.open(`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sUyp7Y2KoOfRvdsAEdCc&redirect_uri=${redirectUri}?provider=NAVER&state=${state}`, "popup", "location=no,resizable=no");
+        }
+        if (e.currentTarget.id === "socialKakao") {
+            window.open(`https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=656c5afa5455de8f5ad9eb51e09e3720&redirect_uri=${redirectUri}?provider=KAKAO`, "popup", "location=no,resizable=no");
+        }
+
+    }
+
     return (
         <Card {...props}>
             <CardContent>
@@ -90,9 +142,32 @@ export function Profile(props: any) {
                     <Typography
                         color="textPrimary"
                         gutterBottom
-                        variant="h5"
+                        variant="h3"
                     >
                         {authenticated.data!.nickName}
+                    </Typography>
+                    <Typography
+                        color="textPrimary"
+                        gutterBottom
+                        variant="subtitle1"
+                    >
+                        {authenticated.data?.provider != null ? (
+                            authenticated.data?.provider + "연동 회원"
+                        ) : (
+                            <>
+                                SNS계정 연동하기
+                                <Grid container
+                                    direction="row"
+                                    justifyContent="space-evenly"
+                                    alignItems="center">
+
+                                    <img src={naverLogin} id="socialNaver" style={{ cursor: 'pointer' }} onClick={handleSocialMapping} width={50} alt="네이버 로그인" />
+
+                                    <img src={kakaoLogin} id="socialKakao" style={{ cursor: 'pointer' }} onClick={handleSocialMapping} width={50} alt="카카오 로그인" />
+
+                                </Grid>
+                            </>
+                        )}
                     </Typography>
                     <Typography
                         color="textSecondary"
@@ -137,23 +212,24 @@ export function Profile(props: any) {
 
                         <Grid
                             container
+                            item
                             xs={12}
                             spacing={0}
                             justifyContent="space-evenly"
                         >
-                         
-                                <Button onClick={handleClickInputFileButton}>
-                                    이미지 선택
-                                </Button>
-                                <input
-                                    name="imgUpload"
-                                    ref={hiddenFileInput}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={saveFileImage}
-                                    style={{ display: 'none' }}
-                                />
-                                {fileImage !== "" ? (
+
+                            <Button onClick={handleClickInputFileButton}>
+                                이미지 선택
+                            </Button>
+                            <input
+                                name="imgUpload"
+                                ref={hiddenFileInput}
+                                type="file"
+                                accept="image/*"
+                                onChange={saveFileImage}
+                                style={{ display: 'none' }}
+                            />
+                            {fileImage !== "" ? (
                                 <Button
                                     onClick={postCroppedImage}
                                     variant="contained"
@@ -161,9 +237,7 @@ export function Profile(props: any) {
                                 >
                                     프로필 변경
                                 </Button>
-                                ):null}
-                         
-                           
+                            ) : null}
                         </Grid>
                     </Grid>
                 </Container>

@@ -18,6 +18,8 @@ import SignUp from './pages/Signup';
 import { LoadingModal } from './components/common/LoadingModal';
 import { SocialSignIn } from './components/common/SocialSignIn';
 import { MyInfo } from './pages/MyInfo';
+import { SocialMapping } from './components/common/SocialMapping';
+import { SocialSignUp } from './components/common/SocialSignUp';
 
 function Copyright() {
     return (
@@ -184,8 +186,6 @@ function App() {
     /* 세션에서 로그인정보가 있을 경우 Recoil State에 넣어준다. */
     useEffect(() => {
         const loginInfo = storage.get('loginInfo'); // 로그인 정보를 로컬스토리지에서 가져옵니다.
-        console.log(loginInfo);
-        console.log(authenticated);
 
         if (loginInfo && authenticated.isAuthenticated === false) {
             setAuthenticated(loginInfo);
@@ -229,6 +229,7 @@ function App() {
                                     <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/card" component={Card} />
                                     <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/purchase" component={Purchase} />
                                     <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/myinfo" component={MyInfo} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/social/mapping" component={SocialMapping} />
                                 </Switch>
                             </Box>
                             <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
@@ -245,6 +246,7 @@ function App() {
                 <Switch>
                     <Route exact path={["/signin", "/"]} component={SignIn} />
                     <Route path={"/social/signin"} component={SocialSignIn} />
+                    <Route path={"/social/signup"} component={SocialSignUp} />
                     <Route path={"/signup"} component={SignUp} />
                     <Route path={"*"} component={SignIn} />
                 </Switch>

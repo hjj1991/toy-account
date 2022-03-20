@@ -8,11 +8,11 @@ export interface AuthenticatedInfo {
             createdDate: string;
             expireTime: number;
             lastLoginDateTime: string;
-            nickName: string;
+            nickName: string | null;
             picture: string;
-            provider: string;
-            userEmail: string;
-            userId: string;
+            provider: string | null;
+            userEmail: string | null;
+            userId: string | null;
         }
 }
 
@@ -30,7 +30,7 @@ export const authenticatedState = atom<AuthenticatedInfo>({
             lastLoginDateTime: "",
             nickName: "",
             picture: "",
-            provider: "",
+            provider: null,
             userEmail: "",
             userId: ""
         }

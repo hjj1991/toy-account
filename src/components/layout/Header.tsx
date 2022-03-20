@@ -117,12 +117,14 @@ function Header(props: HeaderProps) {
                         내정보
                     </MenuItem>
                 </Link>
-                <MenuItem onClick={handleClickLogout}>
+                <Link to="/" onClick={handleClickLogout} style={{textDecoration: 'none'}}>
+                <MenuItem >
                     <ListItemIcon>
                         <Logout fontSize="small" />
                     </ListItemIcon>
                     로그아웃
                 </MenuItem>
+                </Link>
             </Menu>
         </React.Fragment>
     );
