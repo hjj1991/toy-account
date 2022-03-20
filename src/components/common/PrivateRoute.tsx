@@ -3,10 +3,10 @@ import { Route, Redirect, RouteProps } from "react-router-dom";
 
 export type ProtectedRouteProps = {
     isAuthenticated: boolean;
-    authenticationPath: string;
+    // authenticationPath: string;
 } & RouteProps;
 
-function PrivateRoute({ isAuthenticated, authenticationPath, ...routeProps }: ProtectedRouteProps) {
+function PrivateRoute({ isAuthenticated , ...routeProps }: ProtectedRouteProps) {
     if (isAuthenticated) {
         return <Route {...routeProps} />;
     } else {

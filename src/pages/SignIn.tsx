@@ -41,10 +41,8 @@ export default function SignIn() {
 
 
     React.useEffect(() =>{
-        
-        window.addEventListener("message", (e:any) =>
-        {
-            if(e.data.hasOwnProperty('isAuthenticated') && e.data.hasOwnProperty('isAuthenticated')){
+        const receiveMessage = (e:any) =>{
+            if(e.data.hasOwnProperty('isAuthenticated') && e.data.isAuthenticated){
                 const data = e.data.data;
                 setAuthenticated({ isAuthenticated: true, data: data });
                 storage.set('loginInfo', { isAuthenticated: true, data: data });
@@ -52,14 +50,12 @@ export default function SignIn() {
                 storage.set('refreshToken', data.refreshToken);
                 storage.set('expireTime', data.expireTime);
             }
-        }, false);
-        return () => {
-            window.removeEventListener("message", () =>{
-    
-            });
-        };
+        }
+        
+        window.addEventListener("message", receiveMessage, false);
+        return () => window.removeEventListener("message", receiveMessage);
         // eslint-disable-next-line react-hooks/exhaustive-deps 
-    },[])
+    })
 
 
     const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
@@ -96,6 +92,8 @@ export default function SignIn() {
                     storage.set('accessToken', res.data.response.accessToken);
                     storage.set('refreshToken', res.data.response.refreshToken);
                     storage.set('expireTime', res.data.response.expireTime);
+                }else{
+                    alert(res.data.apiError.message);
                 }
             }).catch((error) => {
                 alert("서버 오류입니다.");

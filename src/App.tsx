@@ -17,6 +17,9 @@ import './App.scss'
 import SignUp from './pages/Signup';
 import { LoadingModal } from './components/common/LoadingModal';
 import { SocialSignIn } from './components/common/SocialSignIn';
+import { MyInfo } from './pages/MyInfo';
+import { SocialMapping } from './components/common/SocialMapping';
+import { SocialSignUp } from './components/common/SocialSignUp';
 
 function Copyright() {
     return (
@@ -117,6 +120,7 @@ theme = {
                 },
             },
         },
+        
         MuiTooltip: {
             styleOverrides: {
                 tooltip: {
@@ -163,8 +167,8 @@ theme = {
         MuiAvatar: {
             styleOverrides: {
                 root: {
-                    width: 32,
-                    height: 32,
+                    width: 40,
+                    height: 40,
                 },
             },
         },
@@ -202,7 +206,7 @@ function App() {
                         <CssBaseline />
                         <Box
                             component="nav"
-                            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+                            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0} }}
                         >
                             {isSmUp ? null : (
                                 <Navigator
@@ -221,9 +225,11 @@ function App() {
                             <Header onDrawerToggle={handleDrawerToggle} />
                             <Box sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1', padding: 0 }}>
                                 <Switch>
-                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} authenticationPath="/" exact path="/" component={Home} />
-                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} authenticationPath="/" path="/card" component={Card} />
-                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} authenticationPath="/" exact path="/purchase" component={Purchase} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/" component={Home} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/card" component={Card} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/purchase" component={Purchase} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/myinfo" component={MyInfo} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/social/mapping" component={SocialMapping} />
                                 </Switch>
                             </Box>
                             <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
@@ -240,6 +246,7 @@ function App() {
                 <Switch>
                     <Route exact path={["/signin", "/"]} component={SignIn} />
                     <Route path={"/social/signin"} component={SocialSignIn} />
+                    <Route path={"/social/signup"} component={SocialSignUp} />
                     <Route path={"/signup"} component={SignUp} />
                     <Route path={"*"} component={SignIn} />
                 </Switch>

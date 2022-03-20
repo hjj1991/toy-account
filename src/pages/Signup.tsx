@@ -35,6 +35,15 @@ const getCheckExistsUserId = (userId: string) => {
         });
 }
 
+const getCheckExistsNickName = (nickName: string) => {
+    return service.getCheckNickNameDuplicate(nickName, false)
+        .then((res) => {
+            return res.data.success;
+        }).catch((error) => {
+            return false;
+        });
+}
+
 export interface signUpValidationForm {
     userIdCheckMessage: string,
     userIdCheck: boolean,
@@ -101,7 +110,7 @@ export default function SignUp() {
 
         if (targetId === "userId") {
             if (re.test(event.currentTarget.value) && event.type === "blur") {
-                if (await getCheckExistsUserId(event.currentTarget.value) === true) {
+                if (await getCheckExistsUserId(event.currentTarget.value)) {
                     setSignUpValidationForm({
                         ...signUpValidationForm,
                         userIdCheckMessage: "사용가능한 아이디입니다.",
@@ -186,13 +195,23 @@ export default function SignUp() {
             let blank_pattern = /[\s]/g;
             let name = event.currentTarget.value;
 
-            if ((!pattern.test(name)) && name.length >= 2 && name.length <= 10 && (!blank_pattern.test(name))) {
-                setSignUpValidationForm({
-                    ...signUpValidationForm,
-                    nickNameCheck: true,
-                    nickNameFontColor: "green",
-                    nickNameCheckMessage: "사용가능합니다.",
-                });
+            if ((!pattern.test(name)) && name.length >= 2 && name.length <= 10 && !blank_pattern.test(name) && event.type === "blur") {
+                if (await getCheckExistsNickName(event.currentTarget.value)) {
+                    setSignUpValidationForm({
+                        ...signUpValidationForm,
+                        nickNameCheck: true,
+                        nickNameFontColor: "green",
+                        nickNameCheckMessage: "사용가능합니다.",
+                    });
+                } else {
+                    setSignUpValidationForm({
+                        ...signUpValidationForm,
+                        nickNameCheckMessage: "※ 해당 닉네임이 존재합니다.",
+                        nickNameFontColor: "red",
+                        nickNameCheck: false
+                    });
+                }
+
             } else {
                 setSignUpValidationForm({
                     ...signUpValidationForm,
@@ -255,6 +274,7 @@ export default function SignUp() {
                                 id="nickName"
                                 label="닉네임"
                                 name="nickName"
+                                onBlur={handleChangeCheckValue}
                                 onChange={handleChangeCheckValue}
                                 value={signUpForm.nickName}
                             />
