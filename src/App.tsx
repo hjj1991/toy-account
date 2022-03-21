@@ -11,7 +11,7 @@ import { AuthenticatedInfo, authenticatedState, loadingState } from './recoil/re
 import storage from './lib/storage';
 import Purchase from './pages/Purchase';
 import { Box } from '@mui/system';
-import { createTheme, CssBaseline, ThemeProvider, Typography, useMediaQuery } from '@mui/material';
+import { createTheme, CssBaseline, ThemeProvider,useMediaQuery } from '@mui/material';
 import { UpButton } from './components/common/UpButton';
 import './App.scss'
 import SignUp from './pages/Signup';
@@ -20,17 +20,13 @@ import { SocialSignIn } from './components/common/SocialSignIn';
 import { MyInfo } from './pages/MyInfo';
 import { SocialMapping } from './components/common/SocialMapping';
 import { SocialSignUp } from './components/common/SocialSignUp';
+import CommonSnackBar from './components/common/CommonSnackBar';
+import { Privacy } from './pages/Privacy';
+import { Policy } from './pages/Policy';
+import { Bottom } from './components/layout/Bottom';
 
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © 재정'}
-            {' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+
+
 let theme = createTheme({
     palette: {
         primary: {
@@ -40,6 +36,7 @@ let theme = createTheme({
         },
     },
     typography: {
+        fontFamily:'원모바일POP',
         h5: {
             fontWeight: 500,
             fontSize: 26,
@@ -199,7 +196,8 @@ function App() {
 
 
     return (
-        authenticated.isAuthenticated ?
+        <>
+        {authenticated.isAuthenticated ?
             (
                 <ThemeProvider theme={theme}>
                     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -230,10 +228,12 @@ function App() {
                                     <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/purchase" component={Purchase} />
                                     <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/myinfo" component={MyInfo} />
                                     <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/social/mapping" component={SocialMapping} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/privacy" component={Privacy} />
+                                    <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/policy" component={Policy} />
                                 </Switch>
                             </Box>
                             <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
-                                <Copyright />
+                                <Bottom />
                             </Box>
                         </Box>
                     </Box>
@@ -242,17 +242,26 @@ function App() {
                 </ThemeProvider>
             ) :
             (
-                <>
+                <Box>
                 <Switch>
-                    <Route exact path={["/signin", "/"]} component={SignIn} />
-                    <Route path={"/social/signin"} component={SocialSignIn} />
-                    <Route path={"/social/signup"} component={SocialSignUp} />
-                    <Route path={"/signup"} component={SignUp} />
-                    <Route path={"*"} component={SignIn} />
+                    <Route exact path={["/signin", "/"]}    component={SignIn} />
+                    <Route path={"/social/signin"}          component={SocialSignIn} />
+                    <Route path={"/social/signup"}          component={SocialSignUp} />
+                    <Route path={"/privacy"}                component={Privacy} />
+                    <Route path={"/policy"}                 component={Policy} />
+                    <Route path={"/social/signup"}          component={SocialSignUp} />
+                    <Route path={"/signup"}                 component={SignUp} />
+                    <Route path={"*"}                       component={SignIn} />
                 </Switch>
                 {loading && <LoadingModal />}
-                </>
-            )
+                <Box component="footer" sx={{ p: 2, bgcolor: '#fffff' }}>
+                                <Bottom />
+                            </Box>
+                            </Box>
+            )}
+            <CommonSnackBar />
+
+            </>
     );
 }
 

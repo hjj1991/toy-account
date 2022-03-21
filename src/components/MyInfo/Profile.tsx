@@ -4,7 +4,7 @@ import Cropper from 'react-easy-crop';
 import { Point } from 'react-easy-crop/types';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import storage from '../../lib/storage';
-import { AuthenticatedInfo, authenticatedState, loadingState } from '../../recoil/recoil';
+import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snackBarState } from '../../recoil/recoil';
 import { DataURIToBlob, getCroppedImg } from '../common/canvasUtils';
 import * as service from '../../services/axiosList';
 import kakaoLogin from '../../assets/img/kakao_login.png'
@@ -17,6 +17,7 @@ export function Profile(props: any) {
     const [fileImage, setFileImage] = useState(""); //파일 미리볼 url을 저장해줄 state
     const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(2);
+    const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
     const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
@@ -78,11 +79,23 @@ export function Profile(props: any) {
             const res = await service.patchUserProfileModify(formData);
 
             if (res.data.success) {
-                alert("변경에 성공하였습니다.");
+                setSnackBarInfo({
+                    ...snackBarInfo,
+                    message: "프로필 변경이 완료되었습니다.",
+                    severity:'success',
+                    title: "성공",
+                    open: true
+                })
                 window.location.reload();
             }
         } catch {
-            alert("변경에 실패하였습니다.");
+            setSnackBarInfo({
+                ...snackBarInfo,
+                message: "프로필 변경이 실패하였습니다.",
+                severity:'error',
+                title: "실패",
+                open: true
+            })
         } finally {
             deleteFileImage();
             setLoading(false);
@@ -134,9 +147,9 @@ export function Profile(props: any) {
                     <Avatar
                         src={profileUrl}
                         sx={{
-                            height: 64,
+                            height: 100,
                             mb: 2,
-                            width: 64
+                            width: 100
                         }}
                     />
                     <Typography

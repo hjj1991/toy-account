@@ -2,7 +2,7 @@ import { Button, IconButton, TextField } from "@mui/material";
 import { Grid, Card, Box, CardHeader, CardContent, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { useState } from "react";
 import { useRecoilState, useSetRecoilState} from "recoil";
-import { isAddCardState, isCardListReloadState, loadingState } from "../../recoil/recoil";
+import { isAddCardState, isCardListReloadState, loadingState, SnackBarInfo, snackBarState } from "../../recoil/recoil";
 import CloseIcon from '@mui/icons-material/Close';
 import * as service from '../../services/axiosList';
 
@@ -16,6 +16,7 @@ export function AddCard() {
     const [isAddCard, setIsAddCard] = useRecoilState(isAddCardState);
     const [isCardListReload, setIsCardListReload] = useRecoilState<boolean>(isCardListReloadState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
+    const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const [cardForm, setCardForm] = useState({
         cardName: "",
         cardType: "",
@@ -42,11 +43,24 @@ export function AddCard() {
                     cardDesc: "",
                     cardType: ""
                 })
+                setSnackBarInfo({
+                    ...snackBarInfo,
+                    message: "추가되었습니다.",
+                    severity:'success',
+                    title: "성공",
+                    open: true
+                })
             }
             setIsAddCard(false);
             setIsCardListReload(!isCardListReload);
         }catch(err){
-            alert("서버에러입니다." + err);
+            setSnackBarInfo({
+                ...snackBarInfo,
+                message: "서버에러입니다.",
+                severity:'error',
+                title: "에러",
+                open: true
+            });
         }finally{
             setLoading(false);
         }

@@ -13,8 +13,8 @@ import { Button, CardHeader, Dialog, DialogActions, DialogContent, TextField } f
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import * as service from '../../services/axiosList';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { AuthenticatedInfo, authenticatedState, loadingState,} from '../../recoil/recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snackBarState,} from '../../recoil/recoil';
 import DateAdapter from '@mui/lab/AdapterMoment';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
@@ -44,12 +44,13 @@ export default function Body() {
     const [cardList, setCardList] = React.useState<any>([]);
     const [storeList, setStoreList] = React.useState<any>([]);
     const [selectedIndx, setSelectedIndx] = React.useState<number>(0);
+    const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const [isOpenDeleteModal, setIsOpenDeleteModal] = React.useState<boolean>(false);
     const authenticated = useRecoilValue<AuthenticatedInfo>(authenticatedState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const [purchaseForm, setPurchaseForm] = React.useState<service.PurchaseAddForm>({
         cardNo: 0,
-        price: "0",
+        price: "",
         purchaseDate: moment().format("YYYY-MM-DD"),
         purchaseType: "",
         reason: "",
@@ -119,12 +120,24 @@ export default function Body() {
         e.preventDefault();
 
         if(purchaseForm.purchaseType === ""){
-            alert("유형을 선택해주세요.");
+            setSnackBarInfo({
+                ...snackBarInfo,
+                message: "유형을 선택해주세요.",
+                severity:'error',
+                title: "에러",
+                open: true
+            })
             return;
         }
 
         if(purchaseForm.price === "0" || purchaseForm.price === ""){
-            alert("금액은 필수값 입니다.");
+            setSnackBarInfo({
+                ...snackBarInfo,
+                message: "금액은 필수값 입니다.",
+                severity:'error',
+                title: "에러",
+                open: true
+            })
             return;
         }
 
@@ -138,17 +151,30 @@ export default function Body() {
             if (res.data.success) {
                 setPurchaseForm({
                     cardNo: 0,
-                    price: "0",
+                    price: "",
                     purchaseDate:  moment().format("yyyy-MM-DD"),
                     purchaseType: "",
                     reason: "",
                     storeName: "",
                     storeNo: 0
                 })
+                setSnackBarInfo({
+                    ...snackBarInfo,
+                    message: "추가 되었습니다.",
+                    severity:'success',
+                    title: "성공",
+                    open: true
+                })
             }
             setIsAddPurchase(false);
         }catch(err) {
-            alert("서버에러입니다." + err);
+            setSnackBarInfo({
+                ...snackBarInfo,
+                message: "서버에러입니다.",
+                severity:'error',
+                title: "에러",
+                open: true
+            })
         }finally{
             setLoading(false);
         }
@@ -199,6 +225,7 @@ export default function Body() {
 
 
     const handleChangeFormValue = (e: any) => {
+        console.log(e);
         if (e.target.name === "cardSelect") {
             setPurchaseForm({
                 ...purchaseForm,
@@ -229,8 +256,8 @@ export default function Body() {
                 storeNo: e.target.value
             })
         }
+        console.log(purchaseForm);
         
-
     }
     
     /* 검색 관련 함수 */
@@ -280,7 +307,13 @@ export default function Body() {
             setLoading(true);
             const res = await service.postPurchaseDelete(indx);
             if (res.status === 200 && res.data.success) {
-                alert("정상 삭제되었습니다.");
+                setSnackBarInfo({
+                    ...snackBarInfo,
+                    message: "정상 삭제되었습니다.",
+                    severity:'success',
+                    title: "성공",
+                    open: true
+                })
             }
             setSelectedIndx(0);
             setIsOpenDeleteModal(false);
@@ -466,7 +499,7 @@ export default function Body() {
                 onClose={() => { setIsAddPurchase(false);
                     setPurchaseForm({
                         cardNo: 0,
-                        price: "0",
+                        price: "",
                         purchaseDate: "",
                         purchaseType: "",
                         reason: "",
@@ -584,7 +617,7 @@ export default function Body() {
                         setIsAddPurchase(false);
                         setPurchaseForm({
                             cardNo: 0,
-                            price: "0",
+                            price: "",
                             purchaseDate: purchaseDate,
                             purchaseType: "",
                             reason: "",
