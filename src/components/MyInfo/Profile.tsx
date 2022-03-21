@@ -147,9 +147,9 @@ export function Profile(props: any) {
                     <Avatar
                         src={profileUrl}
                         sx={{
-                            height: 64,
+                            height: 100,
                             mb: 2,
-                            width: 64
+                            width: 100
                         }}
                     />
                     <Typography

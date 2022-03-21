@@ -50,7 +50,7 @@ export default function Body() {
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const [purchaseForm, setPurchaseForm] = React.useState<service.PurchaseAddForm>({
         cardNo: 0,
-        price: "0",
+        price: "",
         purchaseDate: moment().format("YYYY-MM-DD"),
         purchaseType: "",
         reason: "",
@@ -151,7 +151,7 @@ export default function Body() {
             if (res.data.success) {
                 setPurchaseForm({
                     cardNo: 0,
-                    price: "0",
+                    price: "",
                     purchaseDate:  moment().format("yyyy-MM-DD"),
                     purchaseType: "",
                     reason: "",
@@ -225,6 +225,7 @@ export default function Body() {
 
 
     const handleChangeFormValue = (e: any) => {
+        console.log(e);
         if (e.target.name === "cardSelect") {
             setPurchaseForm({
                 ...purchaseForm,
@@ -255,8 +256,8 @@ export default function Body() {
                 storeNo: e.target.value
             })
         }
+        console.log(purchaseForm);
         
-
     }
     
     /* 검색 관련 함수 */
@@ -498,7 +499,7 @@ export default function Body() {
                 onClose={() => { setIsAddPurchase(false);
                     setPurchaseForm({
                         cardNo: 0,
-                        price: "0",
+                        price: "",
                         purchaseDate: "",
                         purchaseType: "",
                         reason: "",
@@ -616,7 +617,7 @@ export default function Body() {
                         setIsAddPurchase(false);
                         setPurchaseForm({
                             cardNo: 0,
-                            price: "0",
+                            price: "",
                             purchaseDate: purchaseDate,
                             purchaseType: "",
                             reason: "",

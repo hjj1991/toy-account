@@ -5,11 +5,9 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import * as service from '../services/axiosList';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snackBarState } from '../recoil/recoil';
@@ -19,23 +17,6 @@ import SignInImg from '../assets/img/signin.png'
 import kakaoLogin from '../assets/img/kakao_login.png'
 import naverLogin from '../assets/img/naver_login.png'
 import { Divider } from '@mui/material';
-
-function Copyright(props: any) {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
-
-
-const theme = createTheme();
-
 
 export default function SignIn() {
 
@@ -121,7 +102,6 @@ export default function SignIn() {
     }
 
     return (
-        <ThemeProvider theme={theme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <CssBaseline />
                 <Grid
@@ -138,7 +118,7 @@ export default function SignIn() {
                         backgroundPosition: 'center',
                     }}
                 />
-                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+                <Grid item xs={12} sm={8} md={5}>
                     <Box
                         sx={{
                             my: 8,
@@ -208,11 +188,9 @@ export default function SignIn() {
                                     </Link>
                                 </Grid>
                             </Grid>
-                            <Copyright sx={{ mt: 5 }} />
                         </Box>
                     </Box>
                 </Grid>
             </Grid>
-        </ThemeProvider>
     );
 }

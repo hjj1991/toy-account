@@ -116,6 +116,17 @@ export function postSocialSignIn(data: URLSearchParams) {
         });
 }
 
+/* 소셜 회원가입 API */
+export function putSocialSignUp(data: URLSearchParams) {
+    return axios.put('/user/social/signup',
+        {
+            provider: data.get("provider"),
+            code: data.get("code"),
+            state: data.get("state")
+        });
+}
+
+
 /* 소셜 계정 연동 */
 export function postSocialMapping(data: URLSearchParams) {
     return authAxios().patch('/user/social/mapping',

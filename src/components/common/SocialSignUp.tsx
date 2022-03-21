@@ -8,15 +8,15 @@ export function SocialSignUp() {
     const params = new URLSearchParams(location.search);
 
     useEffect( () => {
-        service.postSocialSignIn(params)
+        service.putSocialSignUp(params)
         .then((res:any) => {
             if (res.data.success) {
-                console.log( res.data.response);
-                window.opener.postMessage({isAuthenticated: true, data: res.data.response }, '*')
+                window.opener.postMessage({success: true }, '*')
+            }else{
+                window.opener.postMessage({success: false, message: res.data.apiError.message }, '*')
             }
-            
         }).catch((error:any) => {
-            alert("서버 오류입니다.");
+            window.opener.postMessage({success: false }, '*');
         }).finally(() => {
             window.close();
         });

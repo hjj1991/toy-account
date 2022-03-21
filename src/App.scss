@@ -2,10 +2,16 @@
     font-family: "basic";
     src: url("assets/fonts/BMEULJIROTTF.ttf") format("truetype");
 }
-
-* {
-    font-family: 'basic';
+@font-face {
+    font-family: "원모바일POP";
+    src: url("assets/fonts/ONE_Mobile_POP.ttf") format("truetype");
 }
+
+
+
+// * {
+//     font-family: 'basic';
+// }
 
 
 .wrap {
@@ -64,7 +70,7 @@
 }
 /* 소비생활 datepicker 스타일 */
 .purchase-datePicker {
-    width: 150px;
+    width: 165px;
     margin: 5px!important;
 }
 
