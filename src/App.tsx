@@ -20,6 +20,7 @@ import { SocialSignIn } from './components/common/SocialSignIn';
 import { MyInfo } from './pages/MyInfo';
 import { SocialMapping } from './components/common/SocialMapping';
 import { SocialSignUp } from './components/common/SocialSignUp';
+import CommonSnackBar from './components/common/CommonSnackBar';
 
 function Copyright() {
     return (
@@ -199,7 +200,8 @@ function App() {
 
 
     return (
-        authenticated.isAuthenticated ?
+        <>
+        {authenticated.isAuthenticated ?
             (
                 <ThemeProvider theme={theme}>
                     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -252,7 +254,9 @@ function App() {
                 </Switch>
                 {loading && <LoadingModal />}
                 </>
-            )
+            )}
+            <CommonSnackBar />
+            </>
     );
 }
 

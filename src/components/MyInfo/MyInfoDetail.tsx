@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Button, Card, CardContent, CardHeader, Divider, Grid, TextField } from '@mui/material';
 import * as service from '../../services/axiosList';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { AuthenticatedInfo, authenticatedState, loadingState } from '../../recoil/recoil';
+import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snackBarState } from '../../recoil/recoil';
 import storage from '../../lib/storage';
 
 export interface updateValidationForm {
@@ -26,6 +26,7 @@ export function MyInfoDetail(props:any) {
         nickNameCheckMessage: "사용가능합니다.",
         nickNameFontColor: "green"
     });
+    const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const [updateUserForm, setUpdateUserForm] = useState<service.UserModifyForm>({
@@ -90,13 +91,31 @@ export function MyInfoDetail(props:any) {
                 storage.set('accessToken', res.data.response.accessToken);
                 storage.set('refreshToken', res.data.response.refreshToken);
                 storage.set('expireTime', res.data.response.expireTime);
-                alert("정상 수정되었습니다.");
+                setSnackBarInfo({
+                    ...snackBarInfo,
+                    message: "수정 완료되었습니다.",
+                    severity:'success',
+                    title: "성공",
+                    open: true
+                })
             }else{
-                alert(res.data.apiError.message);
+                setSnackBarInfo({
+                    ...snackBarInfo,
+                    message: res.data.apiError.message,
+                    severity:'error',
+                    title: "실패",
+                    open: true
+                })
             }
 
         }catch{
-            alert("서버 오류입니다.");
+            setSnackBarInfo({
+                ...snackBarInfo,
+                message: "서버 오류입니다.",
+                severity:'error',
+                title: "실패",
+                open: true
+            })
         }finally{
             setLoading(false);
         }

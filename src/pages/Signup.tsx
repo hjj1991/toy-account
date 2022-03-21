@@ -10,17 +10,16 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import SignUpImg from '../assets/img/signup.png'
 import { Redirect } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
-import { loadingState } from '../recoil/recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { loadingState, SnackBarInfo, snackBarState } from '../recoil/recoil';
 
 function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
             <Link color="inherit" href="https://mui.com/">
-                Your Website
+                (C) 황재정 2021. All rights reserved.
             </Link>{' '}
-            {new Date().getFullYear()}
             {'.'}
         </Typography>
     );
@@ -81,11 +80,14 @@ export default function SignUp() {
         userEmail: "",
         nickName: ""
     });
+    const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const [userPw2, setUserPw2] = React.useState<string>("");
     const [signUpOk, setSignUpOk] = React.useState<boolean>(false);
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+
         const {nickNameCheck, userPwCheck, userPw2Check, userIdCheck} = signUpValidationForm;
         if(nickNameCheck && userPwCheck && userPw2Check && userIdCheck){
             try{
@@ -93,14 +95,43 @@ export default function SignUp() {
                 const res = await service.postSignUp(signUpForm);
 
                 if(res.data.success){
-                    alert("회원가입이 완료되었습니다. \n 환영합니다.");
+                    setSnackBarInfo({
+                        ...snackBarInfo,
+                        message: "회원가입이 완료되었습니다.",
+                        severity:'success',
+                        title: "성공",
+                        open: true
+                    })
                     setSignUpOk(true);
+                }else{
+                    setSnackBarInfo({
+                        ...snackBarInfo,
+                        message: res.data.apiError.message,
+                        severity:'error',
+                        title: "실패",
+                        open: true
+                    })
+                    
                 }
             }catch{
-                alert("서버 오류입니다.");
+                setSnackBarInfo({
+                    ...snackBarInfo,
+                    message: "회원가입에 실패하였습니다.",
+                    severity:'error',
+                    title: "실패",
+                    open: true
+                })
             }finally{
                 setLoading(false);
             }
+        }else{
+            setSnackBarInfo({
+                ...snackBarInfo,
+                message: "양식에 맞게 작성해주세요.",
+                severity:'error',
+                title: "실패",
+                open: true
+            })
         }
     };
 
@@ -133,10 +164,13 @@ export default function SignUp() {
                     userIdCheck: false
                 })
             }
-            setSignUpForm({
-                ...signUpForm,
-                userId: event.currentTarget.value
-            })
+            if(event.type !== "blur"){
+                setSignUpForm({
+                    ...signUpForm,
+                    userId: event.currentTarget.value
+                })
+            }
+
         }
         if(targetId === "userEmail"){
             setSignUpForm({
@@ -220,10 +254,13 @@ export default function SignUp() {
                     nickNameCheckMessage: "※ 공백제외 한글, 영문, 숫자 2 ~ 10자로 입력해주세요.",
                 });
             }
-            setSignUpForm({
-                ...signUpForm,
-                nickName: event.currentTarget.value
-            })
+            if(event.type !== "blur"){
+                setSignUpForm({
+                    ...signUpForm,
+                    nickName: event.currentTarget.value
+                })
+            }
+
         }
 
 
@@ -262,10 +299,13 @@ export default function SignUp() {
                                 onBlur={handleChangeCheckValue}
                                 onChange={handleChangeCheckValue}
                                 value={signUpForm.userId}
+                                helperText={signUpValidationForm.userIdCheckMessage}
+                                sx={{
+                                    '& p': {
+                                        color: signUpValidationForm.userIdFontColor
+                                    }
+                                }}
                             />
-                            <div style={{ "color": signUpValidationForm.userIdFontColor }}>
-                                {signUpValidationForm.userIdCheckMessage}
-                            </div>
                         </Grid>
                         <Grid item xs={12} >
                             <TextField
@@ -277,10 +317,13 @@ export default function SignUp() {
                                 onBlur={handleChangeCheckValue}
                                 onChange={handleChangeCheckValue}
                                 value={signUpForm.nickName}
+                                helperText={signUpValidationForm.nickNameCheckMessage}
+                                sx={{
+                                    '& p': {
+                                        color: signUpValidationForm.nickNameFontColor
+                                    }
+                                }}
                             />
-                            <div style={{ "color": signUpValidationForm.nickNameFontColor }}>
-                                {signUpValidationForm.nickNameCheckMessage}
-                            </div>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -305,10 +348,13 @@ export default function SignUp() {
                                 autoComplete="new-password"
                                 onChange={handleChangeCheckValue}
                                 value={signUpForm.userPw}
+                                helperText={signUpValidationForm.userPwCheckMessage}
+                                sx={{
+                                    '& p': {
+                                        color: signUpValidationForm.userPwFontColor
+                                    }
+                                }}
                             />
-                            <div style={{ "color": signUpValidationForm.userPwFontColor }}>
-                                {signUpValidationForm.userPwCheckMessage}
-                            </div>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -321,10 +367,13 @@ export default function SignUp() {
                                 autoComplete="new-password"
                                 onChange={handleChangeCheckValue}
                                 value={userPw2}
+                                helperText={signUpValidationForm.userPw2CheckMessage}
+                                sx={{
+                                    '& p': {
+                                        color: signUpValidationForm.userPw2FontColor
+                                    }
+                                }}
                             />
-                            <div style={{ "color": signUpValidationForm.userPw2FontColor }}>
-                                {signUpValidationForm.userPw2CheckMessage}
-                            </div>
                         </Grid>
                     </Grid>
                     <Button

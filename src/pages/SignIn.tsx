@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import * as service from '../services/axiosList';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { AuthenticatedInfo, authenticatedState, loadingState } from '../recoil/recoil';
+import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snackBarState } from '../recoil/recoil';
 import { Redirect } from 'react-router';
 import storage from '../lib/storage';
 import SignInImg from '../assets/img/signin.png'
@@ -59,7 +59,7 @@ export default function SignIn() {
 
 
     const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
-    
+    const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const handleSocialLogin = (e:any) => {
          // 랜덤이기 때문에 결과값이 다를 수 있음.
@@ -93,10 +93,23 @@ export default function SignIn() {
                     storage.set('refreshToken', res.data.response.refreshToken);
                     storage.set('expireTime', res.data.response.expireTime);
                 }else{
-                    alert(res.data.apiError.message);
+                    setSnackBarInfo({
+                        ...snackBarInfo,
+                        message: res.data.apiError.message,
+                        severity:'error',
+                        title: "실패",
+                        open: true
+                    })
                 }
             }).catch((error) => {
-                alert("서버 오류입니다.");
+                console.log(error);
+                setSnackBarInfo({
+                    ...snackBarInfo,
+                    message: error.data,
+                    severity:'error',
+                    title: "실패",
+                    open: true
+                })
             }).finally(() => {
                 setLoading(false);
             });

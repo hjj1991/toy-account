@@ -1,3 +1,4 @@
+import { AlertColor, SnackbarOrigin } from '@mui/material';
 import { atom } from 'recoil';
 
 export interface AuthenticatedInfo {
@@ -14,6 +15,13 @@ export interface AuthenticatedInfo {
             userEmail: string | null;
             userId: string | null;
         }
+}
+
+export interface SnackBarInfo extends SnackbarOrigin {
+    open: boolean,
+    message: string,
+    severity: AlertColor | undefined,
+    title: string
 }
 
 
@@ -42,6 +50,18 @@ export const authenticatedState = atom<AuthenticatedInfo>({
 export const loadingState = atom<boolean>({
     key: 'loadingState',
     default: false
+})
+/* 공통 snackBar 리코일 */
+export const snackBarState = atom<SnackBarInfo>({
+    key: 'snackBarState',
+    default: {
+        open: false,
+        message: "",
+        vertical: 'top',
+        horizontal: 'center',
+        severity: 'success',
+        title: ""
+    }
 })
 
 /* 좌측 메뉴 Active 정보 Recoil */
