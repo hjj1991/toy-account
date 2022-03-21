@@ -23,7 +23,7 @@ import { SocialSignUp } from './components/common/SocialSignUp';
 import CommonSnackBar from './components/common/CommonSnackBar';
 import { Privacy } from './pages/Privacy';
 import { Policy } from './pages/Policy';
-import { Bottom } from './components/layout/Bottom';
+import { Footer } from './components/layout/Footer';
 
 
 
@@ -233,7 +233,7 @@ function App() {
                                 </Switch>
                             </Box>
                             <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
-                                <Bottom />
+                                <Footer />
                             </Box>
                         </Box>
                     </Box>
@@ -255,7 +255,7 @@ function App() {
                 </Switch>
                 {loading && <LoadingModal />}
                 <Box component="footer" sx={{ p: 2, bgcolor: '#fffff' }}>
-                                <Bottom />
+                                <Footer />
                             </Box>
                             </Box>
             )}

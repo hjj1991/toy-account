@@ -75,7 +75,7 @@ function Header(props: HeaderProps) {
                 anchorEl={anchorEl}
                 open={open}
                 onClose={handleClose}
-                // onClick={handleClose}
+                onClick={handleClose}
                 PaperProps={{
                     elevation: 0,
                     sx: {

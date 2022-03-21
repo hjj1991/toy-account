@@ -225,7 +225,6 @@ export default function Body() {
 
 
     const handleChangeFormValue = (e: any) => {
-        console.log(e);
         if (e.target.name === "cardSelect") {
             setPurchaseForm({
                 ...purchaseForm,
@@ -256,7 +255,6 @@ export default function Body() {
                 storeNo: e.target.value
             })
         }
-        console.log(purchaseForm);
         
     }
     
@@ -318,7 +316,13 @@ export default function Body() {
             setSelectedIndx(0);
             setIsOpenDeleteModal(false);
         }catch(err){
-            console.log("서버에러 입니다. " + err);
+            setSnackBarInfo({
+                ...snackBarInfo,
+                message: "서버에러입니다.",
+                severity:'error',
+                title: "에러",
+                open: true
+            })
         }finally{
             setLoading(false);
         }
