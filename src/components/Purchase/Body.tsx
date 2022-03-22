@@ -400,7 +400,7 @@ export default function Body() {
                         <Typography gutterBottom variant="h5" component="div" style={{fontWeight: "bold", textAlign: "center"}}>
                            안녕하세요. {authenticated.data?.nickName}님!
                         </Typography>
-                        <Typography gutterBottom  component="div" style={{fontWeight: "bold", textAlign: "center", color: totalPrice < 0? "red": "green"}}>
+                        <Typography gutterBottom  component="div" style={{fontWeight: "bold", textAlign: "center", color: totalPrice < 0? "red": "#3CB371"}}>
                            총 소비 내역: {totalPrice.toLocaleString()}원
                         </Typography>
                         <Typography variant="body2" color="text.secondary" style={{textAlign: "center"}}>
@@ -438,12 +438,8 @@ export default function Body() {
                         </div>
                     </CardContent>
             </Card>
-            <Tabs value={navSelect} onChange={handleChangeNav}  aria-label="icon label tabs example"
-                    sx={{
-                        m: 0,
-                        backgroundColor: '#009be5'
-                    }}>
-                        <Tab className="navSelect" icon={<img src={allMoney} alt={"없다"} width={38}  />} label="전체" />
+            <Tabs value={navSelect} onChange={handleChangeNav}  aria-label="icon label tabs example">
+                        <Tab className="navSelect" icon={<img src={allMoney} alt={"없다"} width={38}   />} label="전체" />
                         <Tab className="navSelect" icon={<img src={inMoney} alt={"없다"} width={38}  />} label="들어온 돈" />
                         <Tab className="navSelect" icon={<img src={outMoney} alt={"없다"} width={38}  />} label="나간돈" />
             </Tabs>
@@ -484,9 +480,9 @@ export default function Body() {
                         <Grid container  spacing={0}>
                             <Grid item xs={6} style={{color: "black", fontSize: "18px"}}>{elevation.reason}</Grid>
                             {elevation.purchaseType === "INCOME"?(
-                                <Grid item style={{textAlign: "right", color: elevation.purchaseType === "INCOME"? "green": "red"}} xs={6}>+{elevation.price.toLocaleString()}원</Grid>
+                                <Grid item style={{textAlign: "right", color: elevation.purchaseType === "INCOME"? "#3CB371": "red"}} xs={6}>+{elevation.price.toLocaleString()}원</Grid>
                             ):(
-                                <Grid item style={{textAlign: "right", color: elevation.purchaseType === "INCOME"? "green": "red"}} xs={6}>-{elevation.price.toLocaleString()}원</Grid>
+                                <Grid item style={{textAlign: "right", color: elevation.purchaseType === "INCOME"? "#3CB371": "red"}} xs={6}>-{elevation.price.toLocaleString()}원</Grid>
                             )}
                             
                         </Grid>

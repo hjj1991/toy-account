@@ -50,29 +50,25 @@ function Navigator(props: DrawerProps) {
     <Drawer variant="permanent" {...other}>
       <List disablePadding>
       <ListItem sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}>
-          뜨끔한 가계부
+      뜨끔한 가계부
         </ListItem>
+        <NavLink to={'/'} >
         <ListItem sx={{ ...item, ...itemCategory }}>
         <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
           <ListItemText>홈</ListItemText>
-        </ListItem>
+        </ListItem></NavLink>
         {categories.map(({ id, children }) => (
           <Box key={id} sx={{ bgcolor: '#101F33' }}>
             <ListItem sx={{ py: 2, px: 3 }}>
               <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
             </ListItem>
             {children.map(({ id: childId, icon, uri }) => {
-              let isActive = false;
-              if (activeMenuValue.activeNav === uri){
-                isActive = true;
-              }
-                
               return (
                 <NavLink key={childId} to={uri} style={{textDecoration: "none"}}>
                    <ListItem disablePadding >
-                  <ListItemButton selected={isActive} sx={item}>
+                  <ListItemButton selected={activeMenuValue.activeNav === uri? true:false} sx={item}>
                      <ListItemIcon>{icon}</ListItemIcon>
                      <ListItemText>{childId}</ListItemText>
                      </ListItemButton>
