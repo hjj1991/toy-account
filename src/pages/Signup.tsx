@@ -372,18 +372,20 @@ export default function SignUp() {
         <div style={{ textAlign: 'center' }}>
           <img src={SignUpImg} alt="회원가입" />
         </div>
-                            <Grid container spacing={2} justifyContent="center">
-                                <Grid item>
-                                    <img src={naverLogin} id="socialNaver" style={{cursor: 'pointer'}} onClick={handleSocialSignUp} width={50} alt="네이버 로그인" />
-                                </Grid>
-                                <Grid item>
-                                    <img src={kakaoLogin} id="socialKakao" style={{cursor: 'pointer'}} onClick={handleSocialSignUp} width={50} alt="카카오 로그인" />
-                                </Grid>
-                            </Grid>
+          <Typography variant="body2" align='center' sx={{my: 3}}>
+          <Chip variant="filled" label={"간편 회원가입"} sx={{fontSize: '30px', height: '50px', backgroundColor: '#fdcb02', width: '100%', color: '#fff' }} />
+          </Typography>
+          <Grid container spacing={2} justifyContent="center">
+              <Grid item>
+                  <img src={naverLogin} id="socialNaver" style={{cursor: 'pointer'}} onClick={handleSocialSignUp} width={50} alt="네이버 로그인" />
+              </Grid>
+              <Grid item>
+                  <img src={kakaoLogin} id="socialKakao" style={{cursor: 'pointer'}} onClick={handleSocialSignUp} width={50} alt="카카오 로그인" />
+              </Grid>
+          </Grid>
         <Divider sx={{ my: 3 }}>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          <Chip variant="outlined" label={"간편 회원가입"} />
-            <div>OR</div>
+         OR
           </Typography>
         </Divider>
         <Box

@@ -443,9 +443,9 @@ export default function Body() {
                         m: 0,
                         backgroundColor: '#009be5'
                     }}>
-                        <Tab className="navSelect" icon={<img src={allMoney} alt={"없다"}  />} label="전체" />
-                        <Tab className="navSelect" icon={<img src={inMoney} alt={"없다"}  />} label="들어온 돈" />
-                        <Tab className="navSelect" icon={<img src={outMoney} alt={"없다"}  />} label="나간돈" />
+                        <Tab className="navSelect" icon={<img src={allMoney} alt={"없다"} width={38}  />} label="전체" />
+                        <Tab className="navSelect" icon={<img src={inMoney} alt={"없다"} width={38}  />} label="들어온 돈" />
+                        <Tab className="navSelect" icon={<img src={outMoney} alt={"없다"} width={38}  />} label="나간돈" />
             </Tabs>
               <Box 
                 sx={{
@@ -484,9 +484,9 @@ export default function Body() {
                         <Grid container  spacing={0}>
                             <Grid item xs={6} style={{color: "black", fontSize: "18px"}}>{elevation.reason}</Grid>
                             {elevation.purchaseType === "INCOME"?(
-                                <Grid item style={{textAlign: "right", color: elevation.purchaseType === "INCOME"? "green": "red"}} xs={6}>+{elevation.price.toLocaleString()}</Grid>
+                                <Grid item style={{textAlign: "right", color: elevation.purchaseType === "INCOME"? "green": "red"}} xs={6}>+{elevation.price.toLocaleString()}원</Grid>
                             ):(
-                                <Grid item style={{textAlign: "right", color: elevation.purchaseType === "INCOME"? "green": "red"}} xs={6}>-{elevation.price.toLocaleString()}</Grid>
+                                <Grid item style={{textAlign: "right", color: elevation.purchaseType === "INCOME"? "green": "red"}} xs={6}>-{elevation.price.toLocaleString()}원</Grid>
                             )}
                             
                         </Grid>
