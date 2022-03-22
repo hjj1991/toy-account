@@ -25,7 +25,7 @@ import { Privacy } from './pages/Privacy';
 import { Policy } from './pages/Policy';
 import { Footer } from './components/layout/Footer';
 
-
+const BASIC_BACKGROUND_COLOR = '#a3cca3';
 
 let theme = createTheme({
     palette: {
@@ -62,7 +62,15 @@ let theme = createTheme({
 
 theme = {
     ...theme,
+    
     components: {
+        MuiAppBar: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: BASIC_BACKGROUND_COLOR
+                }
+            }
+        },
         MuiDrawer: {
             styleOverrides: {
                 paper: {
@@ -74,8 +82,13 @@ theme = {
             styleOverrides: {
                 root: {
                     textTransform: 'none',
+                    
                 },
                 contained: {
+                    backgroundColor: BASIC_BACKGROUND_COLOR,
+                    "&:hover": {
+                        backgroundColor: '#98aa7c'
+                    },
                     boxShadow: 'none',
                     '&:active': {
                         boxShadow: 'none',
@@ -86,7 +99,7 @@ theme = {
         MuiTabs: {
             styleOverrides: {
                 root: {
-                    marginLeft: theme.spacing(1),
+                    backgroundColor: BASIC_BACKGROUND_COLOR
                 },
                 indicator: {
                     height: 3,

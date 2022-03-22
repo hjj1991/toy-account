@@ -297,7 +297,6 @@ export function MyInfoDetail(props:any) {
                 >
                     <Button
                         fullWidth
-                        color="primary"
                         variant="contained"
                         type='submit'
                     >
