@@ -74,7 +74,7 @@ theme = {
         MuiDrawer: {
             styleOverrides: {
                 paper: {
-                    backgroundColor: '#081627',
+                    backgroundColor: '#597B67',
                 },
             },
         },
@@ -87,7 +87,7 @@ theme = {
                 contained: {
                     backgroundColor: BASIC_BACKGROUND_COLOR,
                     "&:hover": {
-                        backgroundColor: '#98aa7c'
+                        backgroundColor: '#AAE3BA'
                     },
                     boxShadow: 'none',
                     '&:active': {
@@ -145,20 +145,48 @@ theme = {
                 },
             },
         },
+        MuiListItem: {
+            styleOverrides: {
+              root:{
+                py: 2,
+                px: 3,
+                color: 'rgba(255, 255, 255, 0.7)',
+                '&:hover, &:focus': {
+                  bgcolor: 'rgba(255, 255, 255, 0.08)',
+                }           
+              }
+            }
+          },
         MuiListItemButton: {
             styleOverrides: {
                 root: {
-                    '&.Mui-selected': {
-                        color: '#4fc3f7',
+                    py: 2,
+                    px: 3,
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    '&:hover, &:focus': {
+                      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    },    
+                    '&.Mui-selected, &.Mui-selected:hover': {
+                        color: '#CCBC99',
+                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
                     },
                 },
             },
+        },
+        MuiLink: {
+            styleOverrides: {
+                root: {
+                    color: 'black',
+                    textDecoration: 'none'
+                }
+            }
         },
         MuiListItemText: {
             styleOverrides: {
                 primary: {
                     fontSize: 14,
                     fontWeight: theme.typography.fontWeightMedium,
+                    
                 },
             },
         },
@@ -208,9 +236,7 @@ function App() {
     };
 
 
-    return (
-        <>
-            {authenticated.isAuthenticated ?
+    return authenticated.isAuthenticated ?
                 (
                     <ThemeProvider theme={theme}>
                         <Box sx={{ display: 'flex', minHeight: '100vh' }}>
@@ -252,6 +278,7 @@ function App() {
                         </Box>
                         <UpButton />
                         {loading && <LoadingModal />}
+                        <CommonSnackBar />
                     </ThemeProvider>
                 ) :
                 (
@@ -270,12 +297,9 @@ function App() {
                         <Box component="footer" sx={{ p: 2, bgcolor: '#fffff' }}>
                             <Footer />
                         </Box>
+                        <CommonSnackBar />
                     </ThemeProvider>
-                )}
-            <CommonSnackBar />
-
-        </>
-    );
+                );
 }
 
 export default App;

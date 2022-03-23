@@ -9,9 +9,13 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { authenticatedState } from '../../recoil/recoil';
-import { AppBar, Avatar, Grid, IconButton, ListItemText, Toolbar, Tooltip } from '@mui/material';
+import { AppBar, Avatar, Grid, IconButton, Link, ListItemText, Toolbar, Tooltip } from '@mui/material';
 import storage from '../../lib/storage';
-import { Link } from 'react-router-dom';
+import {
+    Link as RouterLink,
+    LinkProps as RouterLinkProps,
+    MemoryRouter,
+  } from 'react-router-dom';
 
 interface HeaderProps {
     onDrawerToggle: () => void;
@@ -109,7 +113,7 @@ function Header(props: HeaderProps) {
                     <ListItemText primary={authenticated.data?.nickName} />
                 </MenuItem>
                 <Divider />
-                <Link to="/myinfo" style={{textDecoration: 'none'}}>
+                <Link component={RouterLink} to="/myinfo">
                     <MenuItem>
                         <ListItemIcon>
                             <Settings fontSize="small" />
@@ -117,7 +121,7 @@ function Header(props: HeaderProps) {
                         내정보
                     </MenuItem>
                 </Link>
-                <Link to="/" onClick={handleClickLogout} style={{textDecoration: 'none'}}>
+                <Link component={RouterLink} to="/" onClick={handleClickLogout}>
                 <MenuItem >
                     <ListItemIcon>
                         <Logout fontSize="small" />
