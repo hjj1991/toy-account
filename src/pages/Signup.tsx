@@ -89,13 +89,24 @@ export default function SignUp() {
     setChecked([checked[0], event.target.checked]);
   };
 
-  const children = (
+  const serviceTerms = (
+    <>
+    <FormControlLabel
+    label="전체 동의"
+    control={
+      <Checkbox
+        checked={checked[0] && checked[1]}
+        indeterminate={checked[0] !== checked[1]}
+        onChange={handleChange1}
+      />
+    }
+  />
     <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
       <FormControlLabel
         label={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span>[필수] 개인회원 약관에 동의</span>
-            <a href='/policy' target="_blank" rel="noopener noreferrer">상세보기</a>
+            <Link href='/policy' target="_blank" rel="noopener noreferrer" sx={{display: 'contents'}}>상세보기</Link>
           </div>}
         control={<Checkbox checked={checked[0]} onChange={handleChange2} />}
         sx={{
@@ -108,7 +119,7 @@ export default function SignUp() {
         label={
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span>[필수] 개인정보 수집 및 이용에 동의</span>
-            <a href='/privacy' target="_blank" rel="noopener noreferrer">상세보기</a>
+            <Link href='/privacy' target="_blank" rel="noopener noreferrer" sx={{display: 'contents'}}>상세보기</Link>
           </div>}
         sx={{
           '& .MuiTypography-root': {
@@ -118,6 +129,7 @@ export default function SignUp() {
         control={<Checkbox checked={checked[1]} onChange={handleChange3} />}
       />
     </Box>
+    </>
   );
 
   React.useEffect(() =>{
@@ -372,9 +384,20 @@ export default function SignUp() {
         <div style={{ textAlign: 'center' }}>
           <img src={SignUpImg} alt="회원가입" />
         </div>
-          <Typography variant="body2" align='center' sx={{my: 3}}>
-          <Chip variant="filled" label={"간편 회원가입"} sx={{fontSize: '30px', height: '50px', backgroundColor: '#fdcb02', width: '100%', color: '#fff' }} />
+        <Typography variant="body2" align='center' sx={{my: 3}}>
+          <Chip variant="filled" label={"회원가입"} sx={{fontSize: '30px', height: '50px', backgroundColor: '#fdcb02', width: '100%', color: '#fff' }} />
           </Typography>
+        <Divider sx={{ my: 3 }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                서비스 약관
+              </Typography>
+            </Divider>
+              {serviceTerms}
+              <Divider sx={{ my: 3 }}>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+         간편 회원가입
+          </Typography>
+        </Divider>
           <Grid container spacing={2} justifyContent="center">
               <Grid item>
                   <img src={naverLogin} id="socialNaver" style={{cursor: 'pointer'}} onClick={handleSocialSignUp} width={50} alt="네이버 로그인" />
@@ -485,24 +508,6 @@ export default function SignUp() {
                 />
               </Grid>
             </Grid>
-            <Divider sx={{ my: 3 }}>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                서비스 약관
-              </Typography>
-            </Divider>
-            <div>
-              <FormControlLabel
-                label="전체 동의"
-                control={
-                  <Checkbox
-                    checked={checked[0] && checked[1]}
-                    indeterminate={checked[0] !== checked[1]}
-                    onChange={handleChange1}
-                  />
-                }
-              />
-              {children}
-            </div>
             <Button
               type="submit"
               fullWidth

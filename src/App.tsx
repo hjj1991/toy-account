@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import Navigator from './components/layout/Navigator';
 import { Route, Switch } from 'react-router-dom';
 import Home from './pages/Home';
@@ -24,6 +23,7 @@ import CommonSnackBar from './components/common/CommonSnackBar';
 import { Privacy } from './pages/Privacy';
 import { Policy } from './pages/Policy';
 import { Footer } from './components/layout/Footer';
+import { useEffect, useState } from 'react';
 
 const BASIC_BACKGROUND_COLOR = '#a3cca3';
 
@@ -62,7 +62,7 @@ let theme = createTheme({
 
 theme = {
     ...theme,
-    
+
     components: {
         MuiAppBar: {
             styleOverrides: {
@@ -74,7 +74,7 @@ theme = {
         MuiDrawer: {
             styleOverrides: {
                 paper: {
-                    backgroundColor: '#597B67',
+                    backgroundColor: '#7A997A',
                 },
             },
         },
@@ -82,7 +82,7 @@ theme = {
             styleOverrides: {
                 root: {
                     textTransform: 'none',
-                    
+
                 },
                 contained: {
                     backgroundColor: BASIC_BACKGROUND_COLOR,
@@ -147,16 +147,15 @@ theme = {
         },
         MuiListItem: {
             styleOverrides: {
-              root:{
-                py: 2,
-                px: 3,
-                color: 'rgba(255, 255, 255, 0.7)',
-                '&:hover, &:focus': {
-                  bgcolor: 'rgba(255, 255, 255, 0.08)',
-                }           
-              }
+                root: {
+                    paddingBottom: '0px',
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    '&:hover, &:focus': {
+                        bgcolor: 'rgba(255, 255, 255, 0.08)',
+                    }
+                }
             }
-          },
+        },
         MuiListItemButton: {
             styleOverrides: {
                 root: {
@@ -164,8 +163,8 @@ theme = {
                     px: 3,
                     color: 'rgba(255, 255, 255, 0.7)',
                     '&:hover, &:focus': {
-                      backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                    },    
+                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    },
                     '&.Mui-selected, &.Mui-selected:hover': {
                         color: '#CCBC99',
                         backgroundColor: 'rgba(255, 255, 255, 0.08)',
@@ -186,7 +185,7 @@ theme = {
                 primary: {
                     fontSize: 14,
                     fontWeight: theme.typography.fontWeightMedium,
-                    
+
                 },
             },
         },
@@ -216,19 +215,30 @@ theme = {
 const drawerWidth = 256;
 
 function App() {
-    const [mobileOpen, setMobileOpen] = React.useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
     const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
     const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
     const loading = useRecoilValue<boolean>(loadingState);
+    const [initState, setInitState] = useState<boolean>(false);
 
-    /* 세션에서 로그인정보가 있을 경우 Recoil State에 넣어준다. */
-    useEffect(() => {
-        const loginInfo = storage.get('loginInfo'); // 로그인 정보를 로컬스토리지에서 가져옵니다.
+    useEffect( () => {
+       async function initFunction (){
+            /* 세션에서 로그인정보가 있을 경우 Recoil State에 넣어준다. */
+            const loginInfo = storage.get('loginInfo'); // 로그인 정보를 로컬스토리지에서 가져옵니다.
+            if (loginInfo && authenticated.isAuthenticated === false) {
+                await setAuthenticated(loginInfo);
+               
+            }
 
-        if (loginInfo && authenticated.isAuthenticated === false) {
-            setAuthenticated(loginInfo);
-        }
+            setInitState(true);
+       }
+
+       initFunction();
+
     });
+
+
+    
 
 
     const handleDrawerToggle = () => {
@@ -236,70 +246,57 @@ function App() {
     };
 
 
-    return authenticated.isAuthenticated ?
-                (
-                    <ThemeProvider theme={theme}>
-                        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-                            <CssBaseline />
-                            <Box
-                                component="nav"
-                                sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-                            >
-                                {isSmUp ? null : (
-                                    <Navigator
-                                        PaperProps={{ style: { width: drawerWidth } }}
-                                        variant="temporary"
-                                        open={mobileOpen}
-                                        onClose={handleDrawerToggle}
-                                    />
-                                )}
-                                <Navigator
-                                    PaperProps={{ style: { width: drawerWidth } }}
-                                    sx={{ display: { sm: 'block', xs: 'none' } }}
-                                />
-                            </Box>
-                            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                                <Header onDrawerToggle={handleDrawerToggle} />
-                                <Box sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1', padding: 0 }}>
-                                    <Switch>
-                                        <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/" component={Home} />
-                                        <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/card" component={Card} />
-                                        <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/purchase" component={Purchase} />
-                                        <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/myinfo" component={MyInfo} />
-                                        <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/social/mapping" component={SocialMapping} />
-                                        <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/privacy" component={Privacy} />
-                                        <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/policy" component={Policy} />
-                                    </Switch>
-                                </Box>
-                                <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
-                                    <Footer />
-                                </Box>
-                            </Box>
-                        </Box>
-                        <UpButton />
-                        {loading && <LoadingModal />}
-                        <CommonSnackBar />
-                    </ThemeProvider>
-                ) :
-                (
-                    <ThemeProvider theme={theme}>
+    return initState?(
+        <ThemeProvider theme={theme}>
+            <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+                <CssBaseline />
+                <Box
+                    component="nav"
+                    sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+                >
+                    {isSmUp ? null : (
+                        <Navigator
+                            PaperProps={{ style: { width: drawerWidth } }}
+                            variant="temporary"
+                            open={mobileOpen}
+                            onClose={handleDrawerToggle}
+                        />
+                    )}
+                    <Navigator
+                        PaperProps={{ style: { width: drawerWidth } }}
+                        sx={{ display: { sm: 'block', xs: 'none' } }}
+                    />
+                </Box>
+                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                    <Header onDrawerToggle={handleDrawerToggle} />
+                    <Box sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1', padding: 0 }}>
                         <Switch>
-                            <Route exact path={["/signin", "/"]} component={SignIn} />
+                            <Route exact path="/" component={Home} />
+                            <Route exact path={"/signin"} component={SignIn} />
                             <Route path={"/social/signin"} component={SocialSignIn} />
                             <Route path={"/social/signup"} component={SocialSignUp} />
                             <Route path={"/privacy"} component={Privacy} />
                             <Route path={"/policy"} component={Policy} />
                             <Route path={"/social/signup"} component={SocialSignUp} />
                             <Route path={"/signup"} component={SignUp} />
-                            <Route path={"*"} component={SignIn} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/account/card" component={Card} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/purchase" component={Purchase} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/myinfo" component={MyInfo} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/social/mapping" component={SocialMapping} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/privacy" component={Privacy} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/policy" component={Policy} />
                         </Switch>
-                        {loading && <LoadingModal />}
-                        <Box component="footer" sx={{ p: 2, bgcolor: '#fffff' }}>
-                            <Footer />
-                        </Box>
-                        <CommonSnackBar />
-                    </ThemeProvider>
-                );
+                    </Box>
+                    <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
+                        <Footer />
+                    </Box>
+                </Box>
+            </Box>
+            <UpButton />
+            {loading && <LoadingModal />}
+            <CommonSnackBar />
+        </ThemeProvider>
+    ): null
 }
 
 export default App;
