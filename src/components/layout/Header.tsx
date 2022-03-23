@@ -11,11 +11,7 @@ import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { authenticatedState } from '../../recoil/recoil';
 import { AppBar, Avatar, Grid, IconButton, Link, ListItemText, Toolbar, Tooltip } from '@mui/material';
 import storage from '../../lib/storage';
-import {
-    Link as RouterLink,
-    LinkProps as RouterLinkProps,
-    MemoryRouter,
-  } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 interface HeaderProps {
     onDrawerToggle: () => void;
