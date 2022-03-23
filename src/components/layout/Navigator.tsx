@@ -6,7 +6,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { useRecoilValue } from 'recoil';
 import { menuState } from '../../recoil/recoil';
 import { NavLink } from 'react-router-dom';
-import { Divider, Drawer, DrawerProps, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Divider, Drawer, DrawerProps, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material';
 import { Box } from '@mui/system';
 
 
@@ -27,15 +27,6 @@ const categories = [
     ],
   },
 ];
-const item = {
-  py: '2px',
-  px: 3,
-  color: 'rgba(255, 255, 255, 0.7)',
-  '&:hover, &:focus': {
-    bgcolor: 'rgba(255, 255, 255, 0.08)',
-  },
-};
-
 const itemCategory = {
   boxShadow: '0 -1px 0 rgb(255,255,255,0.1) inset',
   py: 1.5,
@@ -49,18 +40,18 @@ function Navigator(props: DrawerProps) {
   return (
     <Drawer variant="permanent" {...other}>
       <List disablePadding>
-      <ListItem sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}>
+      <ListItem sx={{ ...itemCategory, fontSize: 22, color: '#fff' }}>
       뜨끔한 가계부
         </ListItem>
         <NavLink to={'/'} >
-        <ListItem sx={{ ...item, ...itemCategory }}>
+        <ListItem sx={{ ...itemCategory }}>
         <ListItemIcon>
             <HomeIcon />
           </ListItemIcon>
           <ListItemText>홈</ListItemText>
         </ListItem></NavLink>
         {categories.map(({ id, children }) => (
-          <Box key={id} sx={{ bgcolor: '#101F33' }}>
+          <Box key={id} sx={{ bgcolor: '#597B67' }}>
             <ListItem sx={{ py: 2, px: 3 }}>
               <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
             </ListItem>
@@ -68,7 +59,7 @@ function Navigator(props: DrawerProps) {
               return (
                 <NavLink key={childId} to={uri} style={{textDecoration: "none"}}>
                    <ListItem disablePadding >
-                  <ListItemButton selected={activeMenuValue.activeNav === uri? true:false} sx={item}>
+                  <ListItemButton selected={activeMenuValue.activeNav === uri? true:false}>
                      <ListItemIcon>{icon}</ListItemIcon>
                      <ListItemText>{childId}</ListItemText>
                      </ListItemButton>
