@@ -6,7 +6,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { useRecoilValue } from 'recoil';
 import { menuState } from '../../recoil/recoil';
 import { NavLink } from 'react-router-dom';
-import { Divider, Drawer, DrawerProps, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material';
+import { Divider, Drawer, DrawerProps, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { Box } from '@mui/system';
 
 
