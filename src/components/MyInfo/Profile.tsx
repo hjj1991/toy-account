@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Cropper from 'react-easy-crop';
 import { Point } from 'react-easy-crop/types';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import storage from '../../lib/storage';
 import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snackBarState } from '../../recoil/recoil';
 import { DataURIToBlob, getCroppedImg } from '../common/canvasUtils';
 import * as service from '../../services/axiosList';
@@ -12,7 +11,7 @@ import naverLogin from '../../assets/img/naver_login.png'
 
 export function Profile(props: any) {
     const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
-    const profileUrl = process.env.REACT_APP_API_HOST + "/user/profile?picture=" + authenticated.data?.picture + "&access_token=" + storage.get('accessToken');
+    const profileUrl = authenticated.data?.picture;
     const hiddenFileInput = useRef<HTMLInputElement>(null);    //파일 input 커스터마이징을 위한 Ref
     const [fileImage, setFileImage] = useState(""); //파일 미리볼 url을 저장해줄 state
     const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });

@@ -9,7 +9,10 @@ import { Alert, AlertTitle, Zoom } from '@mui/material';
 export default function CommonSnackBar() {
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const { vertical, horizontal } = snackBarInfo;
-    const handleClose = () => {
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+          return;
+        }
         setSnackBarInfo({
             ...snackBarInfo,
             message: "",
