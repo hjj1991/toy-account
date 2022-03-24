@@ -20,6 +20,16 @@ import { Divider } from '@mui/material';
 
 export default function SignIn() {
 
+    /* 이미지 동적 로드 테스트 */
+    const test = require.context('/public/images/', false, /\.(png|jpe?g|svg)$/);
+
+    console.log(test);
+
+    test.keys().forEach(fileName => {
+        console.log(fileName);
+
+      });
+
 
     React.useEffect(() =>{
         const receiveMessage = (e:any) =>{
