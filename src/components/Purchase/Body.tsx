@@ -7,7 +7,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import NumberFormat from 'react-number-format';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Input from '@mui/material/Input';
+
 import Typography from '@mui/material/Typography';
 import { Button, CardHeader, Dialog, DialogActions, DialogContent, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -18,7 +18,6 @@ import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snac
 import DateAdapter from '@mui/lab/AdapterMoment';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
-import CreateIcon from '@mui/icons-material/Create';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
@@ -29,36 +28,29 @@ import Budget from '../../assets/img/budget.png';
 import outMoney from '../../assets/img/out-money.png';
 import inMoney from '../../assets/img/in-money.png';
 import allMoney from '../../assets/img/all-money.png';
+import { AddPurchase } from './AddPurchase';
 
 
 
-export default function Body() {
-
-    
+export default function Body(props:{
+    accountBookNo?:number
+}) {
 
     const [navSelect, setNavSelect] = React.useState<number>(0);
-    const [isAddPurchase, setIsAddPurchase] = React.useState<boolean>(false);
+    const [reloadPurchase, setReloadPurchase] = React.useState<boolean>(false);
     const [purchaseList, setPurchaseList] = React.useState<any>([]);
     const [totalPrice, setTotalPrice] = React.useState<any>([]);
     const [filterPurchaseList, setfilterPurchaseList] = React.useState<any>([]);
     const [cardList, setCardList] = React.useState<any>([]);
-    const [storeList, setStoreList] = React.useState<any>([]);
+    const [categoryList, setCategoryList] = React.useState<any>([]);
     const [selectedIndx, setSelectedIndx] = React.useState<number>(0);
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const [isOpenDeleteModal, setIsOpenDeleteModal] = React.useState<boolean>(false);
     const authenticated = useRecoilValue<AuthenticatedInfo>(authenticatedState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
-    const [purchaseForm, setPurchaseForm] = React.useState<service.PurchaseAddForm>({
-        cardNo: 0,
-        price: "",
-        purchaseDate: moment().format("YYYY-MM-DD"),
-        purchaseType: "",
-        reason: "",
-        storeName: "",
-        storeNo: 0
-    })
+
     const [searchForm, setSerachForm] = React.useState<any>({
-        storeTypeName: "ALL",
+        categoryName: "ALL",
         searchValue: ""
     })
 
@@ -68,23 +60,10 @@ export default function Body() {
     const [endDate, setEndDate] = React.useState<string | null>(
         moment().format("yyyy-MM-DD")
       );
-      const [purchaseDate, setPurchaseDate] = React.useState<string>(
-        moment().format("yyyy-MM-DD")
-      );
 
-      const inputPriceFormat = (str:any) => {
-        const comma = (str:any) => {
-          str = String(str);
-          return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, "$1,");
-        };
-        const uncomma = (str:any) => {
-          str = String(str);
-          return str.replace(/[^\d]+/g, "");
-        };
-        return comma(uncomma(str));
-      };
-
-
+    const reloadPurchaseListFunction = () => {
+        setReloadPurchase(!reloadPurchase);
+    }
 
     const handleChangeNav = (event: React.SyntheticEvent, navSelectValue: number) => {
         setNavSelect(navSelectValue);
@@ -103,8 +82,13 @@ export default function Body() {
         }
 
         /* 지출항목 필터 */
-        if(navSelect === 2 && searchForm.storeTypeName !== "ALL"){
-            tempPurchaseList = tempPurchaseList.filter( (purchase:any) => {return purchase.storeInfo.storeTypeName.includes(searchForm.storeTypeName)});
+        if(navSelect === 2 && searchForm.categoryName !== "ALL"){
+            tempPurchaseList = tempPurchaseList.filter( (purchase:any) => {
+                if(purchase.categoryInfo != null){
+                    return purchase.categoryInfo.categoryName.includes(searchForm.categoryName)
+                };
+                });
+                
         }
 
         if(searchForm.searchValue !== ""){
@@ -116,86 +100,25 @@ export default function Body() {
            
     }
       
-    const handleSubmitAddPurchase = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        if(purchaseForm.purchaseType === ""){
-            setSnackBarInfo({
-                ...snackBarInfo,
-                message: "유형을 선택해주세요.",
-                severity:'error',
-                title: "에러",
-                open: true
-            })
-            return;
-        }
-
-        if(purchaseForm.price === "0" || purchaseForm.price === ""){
-            setSnackBarInfo({
-                ...snackBarInfo,
-                message: "금액은 필수값 입니다.",
-                severity:'error',
-                title: "에러",
-                open: true
-            })
-            return;
-        }
-
-        const purchaseAddForm: service.PurchaseAddForm = purchaseForm;
-        purchaseForm.purchaseDate = purchaseDate;
-        
-        try{
-            setLoading(true);
-            const res = await service.postPurchaseAdd(purchaseAddForm);
-
-            if (res.data.success) {
-                setPurchaseForm({
-                    cardNo: 0,
-                    price: "",
-                    purchaseDate:  moment().format("yyyy-MM-DD"),
-                    purchaseType: "",
-                    reason: "",
-                    storeName: "",
-                    storeNo: 0
-                })
-                setSnackBarInfo({
-                    ...snackBarInfo,
-                    message: "추가 되었습니다.",
-                    severity:'success',
-                    title: "성공",
-                    open: true
-                })
-            }
-            setIsAddPurchase(false);
-        }catch(err) {
-            setSnackBarInfo({
-                ...snackBarInfo,
-                message: "서버에러입니다.",
-                severity:'error',
-                title: "에러",
-                open: true
-            })
-        }finally{
-            setLoading(false);
-        }
-
-
-        getPurchaseList();
-     
-
-    }
+  
 
       
     async function getPurchaseList() {
         try{
             setLoading(true);
-            const res = await service.getPurchaseList(startDate, endDate);
+            let res;
+            if(props.accountBookNo != undefined){
+                res = await service.getPurchaseList(startDate, endDate, props.accountBookNo);
+            }else{
+                res = await service.getPurchaseList(startDate, endDate);
+            }
+            
             if (res.status === 200 && res.data.success) {
                 setCardList(res.data.response.cardList);
-                setStoreList(res.data.response.storeList);
+                setCategoryList(res.data.response.categoryList);
                 setPurchaseList(res.data.response.purchaseList);
                 setSerachForm({
-                    storeTypeName: "ALL",
+                    categoryName: "ALL",
                     searchValue: ""
                 });
                 setNavSelect(0);
@@ -224,46 +147,13 @@ export default function Body() {
     }
 
 
-    const handleChangeFormValue = (e: any) => {
-        if (e.target.name === "cardSelect") {
-            setPurchaseForm({
-                ...purchaseForm,
-                cardNo: e.target.value
-            })
-        }
-        if (e.target.name === "price") {
-            setPurchaseForm({
-                ...purchaseForm,
-                price: inputPriceFormat(e.target.value)
-            })
-        }
-        if( e.target.name === "purchaseType"){
-            setPurchaseForm({
-                ...purchaseForm,
-                purchaseType: e.target.value
-            })
-        }
-        if( e.target.name === "reason"){
-            setPurchaseForm({
-                ...purchaseForm,
-                reason: e.target.value
-            })
-        }
-        if(e.target.name === "storeSelect"){
-            setPurchaseForm({
-                ...purchaseForm,
-                storeNo: e.target.value
-            })
-        }
-        
-    }
     
     /* 검색 관련 함수 */
     const handleChangeSearch = (e: any) => {
         if(e.target.name === "searchStoreSelect"){
             setSerachForm({
                 ...searchForm,
-                storeTypeName: e.target.value
+                categoryName: e.target.value
             })
         }
         if(e.target.name === "searchValue"){
@@ -292,12 +182,6 @@ export default function Body() {
         if(type === "end"){
             setEndDate(moment(newValue, "YYYY-MM-DD").format("YYYY-MM-DD"));
         }
-
-        if(type === "purchase"){
-            setPurchaseDate(moment(newValue, "YYYY-MM-DD").format("YYYY-MM-DD"));
-        }
-        
-        
     };
     
     const handleClickRemovePurchaseOk = async (indx:number) => {
@@ -338,13 +222,10 @@ export default function Body() {
 
 
 
-
     React.useEffect(() => {
-
-
         getPurchaseList();
         // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, [startDate, endDate])
+    }, [reloadPurchase, startDate, endDate])
 
     React.useEffect(() => {
         searchChangeResult();
@@ -418,15 +299,15 @@ export default function Body() {
                                 label='지출항목'
                                 name="searchStoreSelect"
                                 id="searchStoreSelect"
-                                value={searchForm.storeTypeName}
+                                value={searchForm.categoryName}
                                 onChange={handleChangeSearch}
                                 sx={{
                                     ".MuiOutlinedInput-notchedOutline": { borderColor: 'rgba(0, 0, 0, 0.23)!important', borderWidth: "1px!important" }
                                 }}
                             >
                                 <MenuItem value="ALL">전체</MenuItem>
-                                {storeList.map((store: any)=>(
-                                    <MenuItem key={store.storeNo} value={store.storeTypeName}>{store.storeTypeName}</MenuItem>
+                                {categoryList.map((category: any)=>(
+                                    <MenuItem key={category.categoryNo} value={category.categoryName}><img style={{width: '20px', marginRight: '10px'}} src={category.categoryIcon} />{category.categoryName}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>: null}
@@ -494,141 +375,12 @@ export default function Body() {
          
           </Grid>
         )
-        <Dialog
-                open={isAddPurchase}
-                onClose={() => { setIsAddPurchase(false);
-                    setPurchaseForm({
-                        cardNo: 0,
-                        price: "",
-                        purchaseDate: "",
-                        purchaseType: "",
-                        reason: "",
-                        storeName: "",
-                        storeNo: 0
-                    }) }}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <form name="purchaseForm" id="purchaseForm" onSubmit={handleSubmitAddPurchase}>
-                <DialogContent>
-                    
-                       <div style={{textAlign: 'center'}}>
-                        <FormControl 
-                            margin='normal'
-                            fullWidth >
-                            <ToggleButtonGroup
-                                color="primary"
-                                fullWidth
-                                value={purchaseForm.purchaseType}
-                                exclusive
-                                
-                                onChange={handleChangeFormValue}
-                                >
-                                <ToggleButton name="purchaseType" value="INCOME">들어온 돈</ToggleButton>
-                                <ToggleButton name="purchaseType" value="OUTGOING">나간 돈</ToggleButton>
-                            </ToggleButtonGroup>
-                        </FormControl>
-                        <FormControl margin='normal' >
-                        <LocalizationProvider dateAdapter={DateAdapter}>
-                            <DesktopDatePicker
-                                label={purchaseForm.purchaseType === "OUTGOING"? "수입 일자": "지출 일자"}
-                                inputFormat="yyyy-MM-DD"
-                                value={purchaseDate}
-                                mask={"____-__-__"}
-                                onChange={(value) => {handleChangeDate(value, 'purchase')}}
-                                renderInput={(params) => <TextField style={{margin: "10px"}} {...params} type="string" />}
-                                />
-                        </LocalizationProvider>
-                        </FormControl>
-                        {purchaseForm.purchaseType === "OUTGOING"?(
-                            <>
-                        <FormControl 
-                            margin='normal'
-                            fullWidth >
-                            <InputLabel id="demo-simple-select-required-label">카드종류</InputLabel>
-                            <Select
-                                fullWidth
-                                name="cardSelect"
-                                labelId="demo-simple-select-required-label"
-                                id="demo-simple-select-required"
-                                value={purchaseForm.cardNo}
-                                label="카드종류 *"
-                                onChange={handleChangeFormValue}
-                            >
-                                    <MenuItem value={0}>현금</MenuItem>
-                                {cardList.map((card: any)=>(
-                                    <MenuItem key={card.cardNo} value={card.cardNo}>{card.cardName}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <FormControl 
-                            margin='normal'
-                            fullWidth >
-                            <InputLabel id="demo-simple-select-required-label">항목</InputLabel>
-                            <Select
-                                fullWidth
-                                name="storeSelect"
-                                labelId="demo-simple-select-required-label"
-                                id="demo-simple-select-required"
-                                value={purchaseForm.storeNo}
-                                label="항목"
-                                onChange={handleChangeFormValue}
-                            >
-                                <MenuItem value={0}>--항목 선택--</MenuItem>
-                                {storeList.map((store: any)=>(
-                                    <MenuItem key={store.storeNo} value={store.storeNo}>{store.storeTypeName}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        </>
-                        ):(<></>)}
-                        <FormControl margin='normal' fullWidth >
-                            <InputLabel htmlFor="component-helper">금액</InputLabel>
-                            <NumberFormat
-                                value={purchaseForm.price}
-                                name="price"
-                                customInput={Input}
-                                thousandSeparator={true}
-                                required={true}
-                                prefix={'₩'}
-                                allowNegative={false}
-                                onChange={handleChangeFormValue}
-                                displayType={"input"}
-                            />
-                        </FormControl>
-                        <FormControl margin='normal' fullWidth >
-                            <TextField
-
-                                id="outlined-name"
-                                label="내용"
-                                name="reason"
-                                required
-                                value={purchaseForm.reason}
-                                onChange={handleChangeFormValue}
-                                    />
-                        </FormControl>
-                        
-                        
-                        </div>
-                </DialogContent>
-                <DialogActions>
-                    <Button autoFocus type="submit">확인</Button>
-                    <Button onClick={() => {  
-                        setIsAddPurchase(false);
-                        setPurchaseForm({
-                            cardNo: 0,
-                            price: "",
-                            purchaseDate: purchaseDate,
-                            purchaseType: "",
-                            reason: "",
-                            storeName: "",
-                            storeNo: 0
-                        }); }}>
-                        취소
-                    </Button>
-                </DialogActions>
-                </form>
-            </Dialog>
+            <AddPurchase 
+                accountBookNo={props.accountBookNo!}
+                reloadPurchaseListFunction={reloadPurchaseListFunction}
+                categoryList={categoryList}
+                cardList={cardList}
+            />
             <CommonModal 
                 showModal={isOpenDeleteModal}
                 selectedIndx={selectedIndx}
@@ -637,21 +389,6 @@ export default function Body() {
                 clickOkHandle = {handleClickRemovePurchaseOk}
                 clickCancelHandle = {handleClickRemovePurchaseCancel}
             />
-        
-        <CreateIcon onClick={() => {
-            setIsAddPurchase(true) 
-            }}
-            className="createIcon"
-                sx={{
-                    position: 'fixed',
-                    bottom: '80px',
-                    right: '40px',
-                    width: '2em',
-                    height: '2em',
-                    zIndex: '10px',
-                    cursor: 'pointer',
-                    opacity: '0.5'
-                }} />
       </Grid>
 
     );

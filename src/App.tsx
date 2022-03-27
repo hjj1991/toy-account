@@ -24,6 +24,8 @@ import { Privacy } from './pages/Privacy';
 import { Policy } from './pages/Policy';
 import { Footer } from './components/layout/Footer';
 import { useEffect, useState } from 'react';
+import { AccountBook } from './pages/AccountBook';
+import { AccountBookDetail } from './pages/AccountBookDetail';
 
 const BASIC_BACKGROUND_COLOR = '#a3cca3';
 
@@ -279,6 +281,8 @@ function App() {
                             <Route path={"/policy"} component={Policy} />
                             <Route path={"/social/signup"} component={SocialSignUp} />
                             <Route path={"/signup"} component={SignUp} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/account-book" component={AccountBook} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/account/account-book/:accountBookNo" component={AccountBookDetail} />
                             <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/account/card" component={Card} />
                             <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/purchase" component={Purchase} />
                             <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/myinfo" component={MyInfo} />
