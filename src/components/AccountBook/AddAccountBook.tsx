@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Paper, PaperProps, TextField } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Grid, Paper, PaperProps, TextField, Typography } from "@mui/material";
 import * as service from '../../services/axiosList';
 import { useRef, useState } from "react";
 import CreateIcon from '@mui/icons-material/Create';
@@ -7,6 +7,7 @@ import { AccountBookAddForm } from "../../services/axiosList";
 import { HexColorPicker } from "react-colorful";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { loadingState, SnackBarInfo, snackBarState } from "../../recoil/recoil";
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 
 function PaperComponent(props: PaperProps) {
     const nodeRef = useRef(null);
@@ -28,7 +29,8 @@ export function AddAccountBook(props:{reloadFunction: Function}) {
     const initAccountBookForm = {
         accountBookName: "",
         accountBookDesc: "",
-        backGroundColor: "#aabbcc"
+        backGroundColor: "#" + Math.floor(Math.random() * 16777215).toString(16),
+        color:  "#" + Math.floor(Math.random() * 16777215).toString(16)
     }
     const [accountBookForm, setAccountBookForm] = useState<AccountBookAddForm>(initAccountBookForm)
 
@@ -138,7 +140,46 @@ export function AddAccountBook(props:{reloadFunction: Function}) {
                     </FormControl>
                     <FormControl margin='normal' fullWidth  sx={{textAlign: 'center'}}>
                         <div>가게부 배경색</div>
-                    <HexColorPicker style={{width: "auto"}} color={accountBookForm.backGroundColor} onChange={(value) => {setAccountBookForm({...accountBookForm, backGroundColor: value})}} />
+                        <HexColorPicker style={{width: "auto"}} color={accountBookForm.backGroundColor} onChange={(value) => {setAccountBookForm({...accountBookForm, backGroundColor: value})}} />
+                    </FormControl>
+                    <FormControl margin='normal' fullWidth  sx={{textAlign: 'center'}}>
+                        <div>가게부 글씨색</div>
+                        <HexColorPicker style={{width: "auto"}} color={accountBookForm.color} onChange={(value) => {setAccountBookForm({...accountBookForm, color: value})}} />
+                    </FormControl>
+                    <FormControl margin='normal' fullWidth  sx={{textAlign: 'center'}}>
+                        <div>미리보기</div>
+                        <Grid item xs={12} sx={{
+                            boxShadow: "0px 2px 1px -1px rgba(0, 0, 0, 20%), 0px 1px 1px 0px rgba(0, 0, 0, 14%), 0px 1px 3px 0px rgba(0, 0, 0, 12%)",
+                            borderRadius: "8px",
+                            padding: "16px",
+                            backgroundColor: accountBookForm.backGroundColor}}>
+                        <Grid container spacing={0} sx={{textAlign: 'left'}}>
+                            <Grid item xs={11} sx={{fontSize: '20px', color: accountBookForm.color}}>
+                                {accountBookForm.accountBookName}
+                            </Grid>
+                            <Grid item xs={1} style={{ textAlign: 'right' }}>
+                                <DeleteForeverOutlinedIcon
+                                    className='deleteIcon'
+                                    sx={{
+                                        cursor: 'pointer',
+                                        color: 'red',
+                                        opacity: '0.4'
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid container spacing={0} sx={{textAlign: 'left', height: '27px'}}>
+                            <Grid item xs={12}>
+                                <Typography component="span" sx={{
+                                    fontSize:'18px',
+                                    opacity: '60%',
+                                    color: accountBookForm.color
+                                }}>
+                                {accountBookForm.accountBookDesc}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                        </Grid>
                     </FormControl>
                 </DialogContent>
                 <DialogActions>

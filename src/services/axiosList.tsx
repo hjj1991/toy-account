@@ -60,7 +60,8 @@ export interface UserModifyForm {
 export interface AccountBookAddForm {
     accountBookName: string,
     accountBookDesc: string,
-    backGroundColor: string
+    backGroundColor: string,
+    color: string
 }
 
 

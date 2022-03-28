@@ -75,10 +75,11 @@ export function Body() {
                             boxShadow: "0px 2px 1px -1px rgba(0, 0, 0, 20%), 0px 1px 1px 0px rgba(0, 0, 0, 14%), 0px 1px 3px 0px rgba(0, 0, 0, 12%)",
                             borderRadius: "8px",
                             padding: "16px",
-                            backgroundColor: elevation.backGroundColor}}>
+                            backgroundColor: elevation.backGroundColor,
+                            color: elevation.color}}>
                         <Grid container spacing={0}>
                             <Grid item xs={11} sx={{fontSize: '20px'}}>
-                                {elevation.accountRole==="OWNER" && <img src={roleOwner} style={{width: '20px', marginRight: '5px'}} />}
+                                {elevation.accountRole==="OWNER" && <img src={roleOwner} alt={elevation.accountBookName} style={{width: '20px', marginRight: '5px'}} />}
                                 {elevation.accountBookName}
                             </Grid>
                             <Grid item xs={1} style={{ textAlign: 'right' }}>
@@ -92,7 +93,7 @@ export function Body() {
                                 />
                             </Grid>
                         </Grid>
-                        <Grid container spacing={0}>
+                        <Grid container spacing={0} sx={{height: '27px'}}>
                             <Grid item xs={12}>
                                 <Typography component="span" sx={{
                                     fontSize:'18px',

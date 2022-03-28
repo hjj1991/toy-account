@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { Body } from "../components/AccountBook/Body";
+import CommonHeader from "../components/common/CommonHeader";
 import { menuState } from "../recoil/recoil";
 
 export function AccountBook( props:any){
@@ -18,6 +19,7 @@ export function AccountBook( props:any){
 
 
     return <>
+    <CommonHeader headerTitle='가계부 목록' onDrawerToggle={handleDrawerToggle} />
     <Body />
     </>
 }
