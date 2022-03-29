@@ -33,7 +33,6 @@ export function Body() {
             setLoading(true);
             const res = await service.getAccountBookList(startDate, endDate);
             if (res.status === 200 && res.data.success) {
-                console.log(res.data.response);
                 setAccountBookList(res.data.response);
             }
         } catch (err) {
@@ -69,8 +68,8 @@ export function Body() {
             }}
         >
             {accountBookList.map((elevation: any) => (
-                <Link component={RouterLink} to={`/account/account-book/${elevation.accountBookNo}`}>
-                <Grid container key={elevation.accountBookNo} spacing={0} >
+                <Link key={elevation.accountBookNo} component={RouterLink} to={`/account/account-book/${elevation.accountBookNo}`}>
+                <Grid container spacing={0} >
                     <Grid item xs={12} sx={{
                             boxShadow: "0px 2px 1px -1px rgba(0, 0, 0, 20%), 0px 1px 1px 0px rgba(0, 0, 0, 14%), 0px 1px 3px 0px rgba(0, 0, 0, 12%)",
                             borderRadius: "8px",

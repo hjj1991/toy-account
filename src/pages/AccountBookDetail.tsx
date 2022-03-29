@@ -1,31 +1,65 @@
+import { Box, Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
-import CommonHeader from "../components/common/CommonHeader";
 import Body from "../components/Purchase/Body";
 import { menuState } from "../recoil/recoil";
+import { Link as RouterLink } from 'react-router-dom';
+import Header from "../components/layout/Header";
 
-export function AccountBookDetail( props:any){
-    const [mobileOpen, setMobileOpen] = useState(false);
+
+export function AccountBookDetail(props: any) {
+
+
+
     const setMenuState = useSetRecoilState(menuState);
-
-    const params:any = useParams();
+    const [value, setValue] = useState(0);
+    const params: any = useParams();
     const accountBookNo = params.accountBookNo;
-
-    useEffect(() =>{
-            setMenuState({activeNav:props.match.path});
+    const [accountBookName, setAccountBookName] = useState<string>();
+    useEffect(() => {
+        setMenuState({ activeNav: props.match.path });
     });
 
+    function LinkTab(props: any) {
+        return (
+          <Tab
+            component={RouterLink}
+            onClick={(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+            //   event.preventDefault();
+            }}
+            {...props}
+          />
+        );
+      }
 
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-      };
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        console.log(newValue);
+        setValue(newValue);
+    };
+
+
+    function headerTabs() {
+
+        return (
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                        <LinkTab label="내역"  to={`/account/account-book/${accountBookNo}`} />
+                        <LinkTab label="달력"  to={`/account/account-book/${accountBookNo}/calendar`} />
+                        <LinkTab label="카테고리 설정"to={`/account/account-book/${accountBookNo}/category`} />
+                    </Tabs>
+                </Box>
+         
+        )
+    }
+
 
 
     return <>
-    <CommonHeader headerTitle='가계부 상세' onDrawerToggle={handleDrawerToggle} />
-    <Body
-        accountBookNo={Number(accountBookNo)}
+        <Header headerTitle={accountBookName}  headerTab={headerTabs} />
+        <Body
+            setAccountBookName={setAccountBookName}
+            accountBookNo={Number(accountBookNo)}
         />
     </>
 }

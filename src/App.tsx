@@ -1,12 +1,11 @@
 import Navigator from './components/layout/Navigator';
 import { Route, Switch } from 'react-router-dom';
 import Home from './pages/Home';
-import Header from './components/layout/Header';
 import SignIn from './pages/SignIn';
 import PrivateRoute from './components/common/PrivateRoute';
 import Card from './pages/Card';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { AuthenticatedInfo, authenticatedState, loadingState } from './recoil/recoil';
+import { AuthenticatedInfo, authenticatedState, leftNavState, loadingState } from './recoil/recoil';
 import storage from './lib/storage';
 import Purchase from './pages/Purchase';
 import { Box } from '@mui/system';
@@ -217,7 +216,7 @@ theme = {
 const drawerWidth = 256;
 
 function App() {
-    const [mobileOpen, setMobileOpen] = useState(false);
+    const [mobileOpen, setMobileOpen] = useRecoilState<boolean>(leftNavState);
     const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
     const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
     const loading = useRecoilValue<boolean>(loadingState);
@@ -270,7 +269,7 @@ function App() {
                     />
                 </Box>
                 <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <Header onDrawerToggle={handleDrawerToggle} />
+                    {/* <Header onDrawerToggle={handleDrawerToggle} /> */}
                     <Box sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1', padding: 0 }}>
                         <Switch>
                             <Route exact path="/" component={Home} />
@@ -282,7 +281,8 @@ function App() {
                             <Route path={"/social/signup"} component={SocialSignUp} />
                             <Route path={"/signup"} component={SignUp} />
                             <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/account-book" component={AccountBook} />
-                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/account/account-book/:accountBookNo" component={AccountBookDetail} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/account-book/:accountBookNo" component={AccountBookDetail} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/account/account-book/:accountBookNo/:type" component={AccountBookDetail} />
                             <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/account/card" component={Card} />
                             <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/purchase" component={Purchase} />
                             <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/myinfo" component={MyInfo} />

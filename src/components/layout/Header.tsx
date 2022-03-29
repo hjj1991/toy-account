@@ -1,20 +1,21 @@
-import React from 'react';
+import { Fragment, useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useRecoilValue } from 'recoil';
-import { authenticatedState } from '../../recoil/recoil';
-import { AppBar, Avatar, Grid, IconButton, Toolbar } from '@mui/material';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { authenticatedState, leftNavState } from '../../recoil/recoil';
+import { AppBar, Avatar, Grid, IconButton, Toolbar, Typography } from '@mui/material';
 import { HeaderMenu } from '../common/HeaderMenu';
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
-
 interface HeaderProps {
-    onDrawerToggle: () => void;
+    headerTitle?: string,
+    headerTab?: () => void;
 }
 
 
 function Header(props: HeaderProps) {
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
     const authenticated = useRecoilValue(authenticatedState);
+    const [leftNavOpen, setLeftNavOpen] = useRecoilState<boolean>(leftNavState);
     const handleClickOpenMenu = (event: any) => {
         setAnchorEl(event.currentTarget);
     };
@@ -22,24 +23,28 @@ function Header(props: HeaderProps) {
         setAnchorEl(null);
     };
 
-    const { onDrawerToggle } = props;
     // let profileUrl = process.env.REACT_APP_API_HOST + "/user/profile?picture=" + authenticated.data?.picture + "&access_token=" + storage.get('accessToken');
     let profileUrl = authenticated.data?.picture;
 
     return (
-        <React.Fragment>
+        <Fragment>
             <AppBar position="sticky" elevation={0}>
                 <Toolbar>
-                    <Grid container spacing={1} alignItems="center">
+                    <Grid container spacing={1} alignItems="center" sx={{alignItems: 'baseline'}}>
                         <Grid sx={{ display: { sm: 'none', xs: 'block' } }} item>
                             <IconButton
                                 color="inherit"
                                 aria-label="open drawer"
-                                onClick={onDrawerToggle}
+                                onClick={()=> {setLeftNavOpen(!leftNavOpen);}}
                                 edge="start"
                             >
                                 <MenuIcon />
                             </IconButton>
+                        </Grid>
+                        <Grid item >
+                            <Typography color="inherit" variant="h5" component="h1">
+                                {props.headerTitle}  {props.headerTab !== undefined ? props.headerTab() : null}
+                            </Typography>
                         </Grid>
                         <Grid item xs />
                         {/* <Grid item>
@@ -59,10 +64,10 @@ function Header(props: HeaderProps) {
                             ) : (
                                 <>
                                     <Grid item>
-                                        <Link component={RouterLink} to="/signup" sx={{color: 'rgba(255, 255, 255, 0.87)'}}>회원가입</Link>
+                                        <Link component={RouterLink} to="/signup" sx={{ color: 'rgba(255, 255, 255, 0.87)' }}>회원가입</Link>
                                     </Grid>
                                     <Grid item>
-                                        <Link component={RouterLink} to="/signin" sx={{color: 'rgba(255, 255, 255, 0.87)'}}>로그인</Link>
+                                        <Link component={RouterLink} to="/signin" sx={{ color: 'rgba(255, 255, 255, 0.87)' }}>로그인</Link>
                                     </Grid>
                                 </>
                             )}
@@ -74,7 +79,7 @@ function Header(props: HeaderProps) {
                 handleClickOpenMenu={handleClickOpenMenu}
                 handleClose={handleClose}
             />
-        </React.Fragment>
+        </Fragment>
     );
 }
 

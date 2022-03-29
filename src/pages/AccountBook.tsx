@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import { Body } from "../components/AccountBook/Body";
-import CommonHeader from "../components/common/CommonHeader";
+import Header from "../components/layout/Header";
 import { menuState } from "../recoil/recoil";
 
 export function AccountBook( props:any){
-    const [mobileOpen, setMobileOpen] = useState(false);
     const setMenuState = useSetRecoilState(menuState);
 
     useEffect(() =>{
@@ -13,13 +12,8 @@ export function AccountBook( props:any){
     });
 
 
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-      };
-
-
     return <>
-    <CommonHeader headerTitle='가계부 목록' onDrawerToggle={handleDrawerToggle} />
+    <Header headerTitle='가계부 목록' />
     <Body />
     </>
 }

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
+import Header from '../components/layout/Header';
 import { menuState } from '../recoil/recoil';
 
 function Home ( props:any){
@@ -9,9 +10,7 @@ function Home ( props:any){
             setMenuState({activeNav:props.match.path});
     });
     return (
-        <div>
-            HOME입니다.
-        </div>
+        <Header headerTitle='홈'  />
     )
 }
 

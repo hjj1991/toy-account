@@ -42,6 +42,7 @@ const MenuProps = {
 
 
 export default function Body(props: {
+    setAccountBookName?: Function,
     accountBookNo?: number
 }) {
     const [category, setCategory] = React.useState<string[]>([]);
@@ -162,6 +163,10 @@ export default function Body(props: {
             }
 
             if (res.status === 200 && res.data.success) {
+                if(props.setAccountBookName !== undefined){
+                    props.setAccountBookName(res.data.response.accountBookName);
+                }
+                
                 setCardList(res.data.response.cardList);
                 setCategoryList(res.data.response.categoryList);
                 setPurchaseList(res.data.response.purchaseList);
