@@ -192,11 +192,19 @@ export function postAccountBookAdd(accountBookAddForm: AccountBookAddForm){
 
 /* 가계부목록 불러오기 API */
 export function getAccountBookList(startDate:any, endDate:any) {
-
     return authAxios().get('/account-book',{
         params:{
             startDate: startDate,
             endDate: endDate
+        }
+    });
+}
+
+/* 카테고리 목록 불러오기 API */
+export function getCategoryList(accountBookNo:number){
+    return authAxios().get('/category',{
+        params:{
+            accountBookNo:accountBookNo
         }
     });
 }

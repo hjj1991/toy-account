@@ -10,7 +10,7 @@ export function AccountBook( props:any){
     useEffect(() =>{
             setMenuState({activeNav:props.match.path});
     });
-
+    console.log("ftfffffff");
 
     return <>
     <Header headerTitle='가계부 목록' />

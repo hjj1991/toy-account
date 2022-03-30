@@ -42,7 +42,7 @@ let theme = createTheme({
             fontWeight: 500,
             fontSize: 26,
             letterSpacing: 0.5,
-        },
+        }
     },
     shape: {
         borderRadius: 8,
@@ -222,24 +222,23 @@ function App() {
     const loading = useRecoilValue<boolean>(loadingState);
     const [initState, setInitState] = useState<boolean>(false);
 
-    useEffect( () => {
-       async function initFunction (){
+    console.log("Gdgd");
+    useEffect(() => {
+        async function initFunction() {
             /* 세션에서 로그인정보가 있을 경우 Recoil State에 넣어준다. */
             const loginInfo = storage.get('loginInfo'); // 로그인 정보를 로컬스토리지에서 가져옵니다.
             if (loginInfo && authenticated.isAuthenticated === false) {
                 await setAuthenticated(loginInfo);
-               
+
             }
 
             setInitState(true);
-       }
+        }
 
-       initFunction();
+        initFunction();
 
     });
 
-
-    
 
 
     const handleDrawerToggle = () => {
@@ -247,7 +246,7 @@ function App() {
     };
 
 
-    return initState?(
+    return initState ? (
         <ThemeProvider theme={theme}>
             <Box sx={{ display: 'flex', minHeight: '100vh' }}>
                 <CssBaseline />
@@ -300,7 +299,7 @@ function App() {
             {loading && <LoadingModal />}
             <CommonSnackBar />
         </ThemeProvider>
-    ): null
+    ) : null
 }
 
 export default App;

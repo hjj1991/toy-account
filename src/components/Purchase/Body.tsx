@@ -26,6 +26,7 @@ import outMoney from '../../assets/img/out-money.png';
 import inMoney from '../../assets/img/in-money.png';
 import allMoney from '../../assets/img/all-money.png';
 import { AddPurchase } from './AddPurchase';
+import { getInputDayLabel } from '../common/CommonFunction';
 
 
 const ITEM_HEIGHT = 48;
@@ -38,6 +39,7 @@ const MenuProps = {
         },
     },
 };
+
 
 
 
@@ -482,9 +484,9 @@ export default function Body(props: {
                     </CardContent>
                 </Card>
                 <Tabs value={navSelect} onChange={handleChangeNav} aria-label="icon label tabs example">
-                    <Tab className="navSelect" icon={<img src={allMoney} alt={"없다"} width={38} />} label="전체" />
-                    <Tab className="navSelect" icon={<img src={inMoney} alt={"없다"} width={38} />} label="들어온 돈" />
-                    <Tab className="navSelect" icon={<img src={outMoney} alt={"없다"} width={38} />} label="나간돈" />
+                    <Tab className="navSelect" icon={<img src={allMoney} alt={"전체"} width={38} />} label="전체" />
+                    <Tab className="navSelect" icon={<img src={inMoney} alt={"수입"} width={38} />} label="들어온 돈" />
+                    <Tab className="navSelect" icon={<img src={outMoney} alt={"지출"} width={38} />} label="나간돈" />
                 </Tabs>
                 <Box
                     sx={{
@@ -504,7 +506,9 @@ export default function Body(props: {
                         <Grid container key={elevation.purchaseNo} spacing={0}>
                             <Grid className='purchaseBox' item xs={12}>
                                 <Grid container spacing={0}>
-                                    <Grid item xs={11} className="purchaseBox-header">{elevation.purchaseDate}</Grid>
+                                    <Grid item xs={11} className="purchaseBox-header">
+                                        {elevation.purchaseDate} [{getInputDayLabel(elevation.purchaseDate)}]
+                                        </Grid>
                                     <Grid item xs={1} style={{ textAlign: 'right' }}>
                                         <DeleteForeverOutlinedIcon
                                             className='deleteIcon'
