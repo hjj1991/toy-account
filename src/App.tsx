@@ -1,12 +1,11 @@
 import Navigator from './components/layout/Navigator';
 import { Route, Switch } from 'react-router-dom';
 import Home from './pages/Home';
-import Header from './components/layout/Header';
 import SignIn from './pages/SignIn';
 import PrivateRoute from './components/common/PrivateRoute';
 import Card from './pages/Card';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { AuthenticatedInfo, authenticatedState, loadingState } from './recoil/recoil';
+import { AuthenticatedInfo, authenticatedState, leftNavState, loadingState } from './recoil/recoil';
 import storage from './lib/storage';
 import Purchase from './pages/Purchase';
 import { Box } from '@mui/system';
@@ -24,6 +23,8 @@ import { Privacy } from './pages/Privacy';
 import { Policy } from './pages/Policy';
 import { Footer } from './components/layout/Footer';
 import { useEffect, useState } from 'react';
+import { AccountBook } from './pages/AccountBook';
+import { AccountBookDetail } from './pages/AccountBookDetail';
 
 const BASIC_BACKGROUND_COLOR = '#a3cca3';
 
@@ -41,7 +42,7 @@ let theme = createTheme({
             fontWeight: 500,
             fontSize: 26,
             letterSpacing: 0.5,
-        },
+        }
     },
     shape: {
         borderRadius: 8,
@@ -215,30 +216,29 @@ theme = {
 const drawerWidth = 256;
 
 function App() {
-    const [mobileOpen, setMobileOpen] = useState(false);
+    const [mobileOpen, setMobileOpen] = useRecoilState<boolean>(leftNavState);
     const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
     const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
     const loading = useRecoilValue<boolean>(loadingState);
     const [initState, setInitState] = useState<boolean>(false);
 
-    useEffect( () => {
-       async function initFunction (){
+    console.log("Gdgd");
+    useEffect(() => {
+        async function initFunction() {
             /* 세션에서 로그인정보가 있을 경우 Recoil State에 넣어준다. */
             const loginInfo = storage.get('loginInfo'); // 로그인 정보를 로컬스토리지에서 가져옵니다.
             if (loginInfo && authenticated.isAuthenticated === false) {
                 await setAuthenticated(loginInfo);
-               
+
             }
 
             setInitState(true);
-       }
+        }
 
-       initFunction();
+        initFunction();
 
     });
 
-
-    
 
 
     const handleDrawerToggle = () => {
@@ -246,7 +246,7 @@ function App() {
     };
 
 
-    return initState?(
+    return initState ? (
         <ThemeProvider theme={theme}>
             <Box sx={{ display: 'flex', minHeight: '100vh' }}>
                 <CssBaseline />
@@ -268,7 +268,7 @@ function App() {
                     />
                 </Box>
                 <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    <Header onDrawerToggle={handleDrawerToggle} />
+                    {/* <Header onDrawerToggle={handleDrawerToggle} /> */}
                     <Box sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1', padding: 0 }}>
                         <Switch>
                             <Route exact path="/" component={Home} />
@@ -279,6 +279,9 @@ function App() {
                             <Route path={"/policy"} component={Policy} />
                             <Route path={"/social/signup"} component={SocialSignUp} />
                             <Route path={"/signup"} component={SignUp} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/account-book" component={AccountBook} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/account-book/:accountBookNo" component={AccountBookDetail} />
+                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/account/account-book/:accountBookNo/:type" component={AccountBookDetail} />
                             <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/account/card" component={Card} />
                             <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/purchase" component={Purchase} />
                             <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/myinfo" component={MyInfo} />
@@ -296,7 +299,7 @@ function App() {
             {loading && <LoadingModal />}
             <CommonSnackBar />
         </ThemeProvider>
-    ): null
+    ) : null
 }
 
 export default App;

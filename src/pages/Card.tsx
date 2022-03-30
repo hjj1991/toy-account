@@ -2,10 +2,9 @@ import Body from '../components/Card/Body';
 import React, { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { menuState } from '../recoil/recoil';
-import CommonHeader from '../components/common/CommonHeader';
+import Header from '../components/layout/Header';
 
 function Card ( props:any){
-    const [mobileOpen, setMobileOpen] = React.useState(false);
     const setMenuState = useSetRecoilState(menuState);
 
     useEffect(() =>{
@@ -13,13 +12,9 @@ function Card ( props:any){
     });
 
 
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-      };
-
     return (
         <>
-        <CommonHeader headerTitle='카드목록' onDrawerToggle={handleDrawerToggle} />
+        <Header headerTitle='카드목록'  />
         <Body />
         </>
     )

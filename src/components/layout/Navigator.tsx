@@ -18,9 +18,10 @@ const categories = [
     val: false,
     uri: '/account',
     children: [
+      { id: '가계부목록', icon: <PeopleIcon />, uri: "/account/account-book" },
       { id: '카드목록', icon: <PeopleIcon />, uri: "/account/card" },
       { id: '소비목록', icon: <ShoppingBasketIcon />, uri: "/account/purchase" },
-      { id: '가게목록', icon: <StoreIcon />, uri: "/account/store" }
+      { id: '카테고리목록', icon: <StoreIcon />, uri: "/account/store" }
     ],
   },
   {

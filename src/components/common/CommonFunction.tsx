@@ -17,3 +17,12 @@ export async function loginValidation(authenticated:AuthenticatedInfo) {
         storage.remove('loginInfo');
     }
 }
+
+
+export function getInputDayLabel(date:string) {
+    
+    let week = new Array('일', '월', '화', '수', '목', '금', '토');
+    let today = new Date(date).getDay();
+    
+    return week[today];
+}

@@ -56,6 +56,14 @@ export interface UserModifyForm {
     userPw: string | null
 }
 
+/* 가계부 추가 API */
+export interface AccountBookAddForm {
+    accountBookName: string,
+    accountBookDesc: string,
+    backGroundColor: string,
+    color: string
+}
+
 
 /* 카드 추가 API */
 export interface CardAddForm {
@@ -74,13 +82,14 @@ export interface CardUpdateForm {
 
 /* 소득,지출 추가 API */
 export interface PurchaseAddForm {
+    accountBookNo: number,
     cardNo?: number,
     price: string,
     purchaseDate: string,
     purchaseType: string,
     reason: string,
     storeName?: string,
-    storeNo: number
+    categoryNo: number
 }
 
 
@@ -176,6 +185,30 @@ export function postReIssueeToken() {
         });
 }
 
+/* 가계부 생성 API */
+export function postAccountBookAdd(accountBookAddForm: AccountBookAddForm){
+    return authAxios().post('/account-book', accountBookAddForm);
+}
+
+/* 가계부목록 불러오기 API */
+export function getAccountBookList(startDate:any, endDate:any) {
+    return authAxios().get('/account-book',{
+        params:{
+            startDate: startDate,
+            endDate: endDate
+        }
+    });
+}
+
+/* 카테고리 목록 불러오기 API */
+export function getCategoryList(accountBookNo:number){
+    return authAxios().get('/category',{
+        params:{
+            accountBookNo:accountBookNo
+        }
+    });
+}
+
 /* 카드목록 불러오기 API */
 export function getCardList() {
 
@@ -211,11 +244,12 @@ export function deleteCardDelete( cardNo: number) {
 }
 
 /* 지출 내역 불러오기 */
-export function getPurchaseList(starDate: any, endDate: any) {
+export function getPurchaseList(startDate: any, endDate: any, accountBookNo?: number) {
     return authAxios().get('/purchase',{
         params:{
-            startDate: starDate,
-            endDate: endDate
+            startDate: startDate,
+            endDate: endDate,
+            accountBookNo: accountBookNo
         }
     });
 }
@@ -223,12 +257,13 @@ export function getPurchaseList(starDate: any, endDate: any) {
 /* 지출 추가 API */
 export function postPurchaseAdd(purchaseAddForm: PurchaseAddForm) {
     return authAxios().post('/purchase',{
+        accountBookNo: purchaseAddForm.accountBookNo,
         cardNo: purchaseAddForm.cardNo === 0? null : purchaseAddForm.cardNo,
         price: purchaseAddForm.price.replace(/,/gi, ""),
         purchaseDate: purchaseAddForm.purchaseDate,
         purchaseType: purchaseAddForm.purchaseType,
         reason: purchaseAddForm.reason,
-        storeNo: purchaseAddForm.storeNo === 0? null: purchaseAddForm.storeNo
+        categoryNo: purchaseAddForm.categoryNo === 0? null: purchaseAddForm.categoryNo
     });
 
 }

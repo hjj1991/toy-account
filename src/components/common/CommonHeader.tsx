@@ -3,7 +3,8 @@ import React from 'react';
 
 
 interface HeaderProps {
-    headerTitle: string,
+    headerTitle?: string,
+    headerTab?: any,
     onDrawerToggle: () => void;
 }
 function CommonHeader(props: HeaderProps) {
@@ -14,8 +15,8 @@ function CommonHeader(props: HeaderProps) {
         <Toolbar>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs>
-              <Typography color="inherit" variant="h5" component="h1">
-                {props.headerTitle}
+              <Typography color="inherit" variant="h5" component="h1" textAlign={'center'}>
+                  {props.headerTitle}  {props.headerTab !== undefined? props.headerTab(): null}
               </Typography>
             </Grid>
           </Grid>

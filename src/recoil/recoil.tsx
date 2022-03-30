@@ -72,6 +72,12 @@ export const menuState = atom<any>({
     }
 })
 
+/* 좌측 메뉴 Active 정보 Recoil */
+export const leftNavState = atom<any>({
+    key: 'leftNavState',
+    default: false
+})
+
 /* 카드 추가 Open/Close */
 export const isAddCardState = atom<boolean>({
     key: 'isAddCardState',
