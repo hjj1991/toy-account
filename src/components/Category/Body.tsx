@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Grid, Typography } from "@mui/material";
+import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react"
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { loadingState, SnackBarInfo, snackBarState } from "../../recoil/recoil";
@@ -35,6 +35,7 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
 
     useEffect(() => {
         getCategoryList(props.accountBookNo);
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, []);
 
     return <Grid container spacing={2} p={3} alignItems={'center'}>

@@ -15,12 +15,7 @@ export function Body() {
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const [reload, setReload] = useState<boolean>(false);
     const [accountBookList, setAccountBookList] = useState<any>([]);
-    const [startDate, setStartDate] = React.useState<string | null>(
-        moment().format("yyyy-MM-") + "01"
-    );
-    const [endDate, setEndDate] = React.useState<string | null>(
-        moment().format("yyyy-MM-DD")
-    );
+
 
     const changeReload = () => {
         setReload(!reload);
@@ -31,7 +26,7 @@ export function Body() {
     async function getAccountBookList() {
         try {
             setLoading(true);
-            const res = await service.getAccountBookList(startDate, endDate);
+            const res = await service.getAccountBookList(moment().format("yyyy-MM-") + "01", moment().format("yyyy-MM-DD"));
             if (res.status === 200 && res.data.success) {
                 setAccountBookList(res.data.response);
             }
