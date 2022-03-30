@@ -20,8 +20,8 @@ export async function loginValidation(authenticated:AuthenticatedInfo) {
 
 
 export function getInputDayLabel(date:string) {
-    
-    let week = new Array('일', '월', '화', '수', '목', '금', '토');
+    let week = [];
+    week = ['일', '월', '화', '수', '목', '금', '토'];
     let today = new Date(date).getDay();
     
     return week[today];
