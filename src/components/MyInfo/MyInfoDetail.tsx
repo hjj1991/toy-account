@@ -82,7 +82,7 @@ export function MyInfoDetail(props:any) {
             const res = await service.patchUserModify(updateUserForm);
 
             if(res.data.success){
-                setAuthenticated({ isAuthenticated: true, data: {...res.data.response, lastLoginDateTime: authenticated.data!.lastLoginDateTime }});
+                setAuthenticated({isLoading: true, isAuthenticated: true, data: {...res.data.response, lastLoginDateTime: authenticated.data!.lastLoginDateTime }});
                 setUpdateUserForm({
                     ...updateUserForm,
                     userPw: ""

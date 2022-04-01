@@ -22,7 +22,7 @@ import CommonSnackBar from './components/common/CommonSnackBar';
 import { Privacy } from './pages/Privacy';
 import { Policy } from './pages/Policy';
 import { Footer } from './components/layout/Footer';
-import { useEffect, useState } from 'react';
+import {  useEffect } from 'react';
 import { AccountBook } from './pages/AccountBook';
 import { AccountBookDetail } from './pages/AccountBookDetail';
 
@@ -215,29 +215,36 @@ theme = {
 
 const drawerWidth = 256;
 
+
+
 function App() {
     const [mobileOpen, setMobileOpen] = useRecoilState<boolean>(leftNavState);
-    const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
+    const isSmUp = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
     const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
     const loading = useRecoilValue<boolean>(loadingState);
-    const [initState, setInitState] = useState<boolean>(false);
+    const loginInfo = storage.get('loginInfo');
+    const isAuthenticated = storage.get('isAuthenticated');
 
-    console.log("Gdgd");
+
     useEffect(() => {
-        async function initFunction() {
-            /* 세션에서 로그인정보가 있을 경우 Recoil State에 넣어준다. */
-            const loginInfo = storage.get('loginInfo'); // 로그인 정보를 로컬스토리지에서 가져옵니다.
-            if (loginInfo && authenticated.isAuthenticated === false) {
-                await setAuthenticated(loginInfo);
-
-            }
-
-            setInitState(true);
+        console.log(loginInfo);
+        /* 세션에서 로그인정보가 있을 경우 Recoil State에 넣어준다. */
+        if (loginInfo !== null) {
+            console.log("SFghfsgh");
+            setAuthenticated({
+                ...loginInfo,
+                isAuthenticated: true,
+                isLoading: true
+                });
+        }else{
+            setAuthenticated({
+                isAuthenticated: false,
+                isLoading: true
+                });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
+    }, [isAuthenticated]);
 
-        initFunction();
-
-    });
 
 
 
@@ -246,8 +253,7 @@ function App() {
     };
 
 
-    return initState ? (
-        <ThemeProvider theme={theme}>
+    return authenticated.isLoading?(<ThemeProvider theme={theme}>
             <Box sx={{ display: 'flex', minHeight: '100vh' }}>
                 <CssBaseline />
                 <Box
@@ -299,7 +305,7 @@ function App() {
             {loading && <LoadingModal />}
             <CommonSnackBar />
         </ThemeProvider>
-    ) : null
+    ):null
 }
 
 export default App;

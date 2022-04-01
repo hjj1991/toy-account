@@ -11,7 +11,6 @@ export type ProtectedRouteProps = {
 function PrivateRoute({ isAuthenticated , ...routeProps }: ProtectedRouteProps) {
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
 
-
     useEffect( () => {
         if(!isAuthenticated){
             setSnackBarInfo({

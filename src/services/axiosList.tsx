@@ -64,6 +64,14 @@ export interface AccountBookAddForm {
     color: string
 }
 
+/* 카테고리 추가 API */
+export interface CategoryAddForm {
+    accountBookNo: number,
+    categoryName: string,
+    categoryDesc: string,
+    categoryIcon: string
+}
+
 
 /* 카드 추가 API */
 export interface CardAddForm {
@@ -198,6 +206,11 @@ export function getAccountBookList(startDate:any, endDate:any) {
             endDate: endDate
         }
     });
+}
+
+/* 카테고리 생성 API */
+export function postCategoryAdd(categoryAddForm: CategoryAddForm){
+    return authAxios().post('/category', categoryAddForm);
 }
 
 /* 카테고리 목록 불러오기 API */

@@ -19,7 +19,6 @@ export function AccountBookDetail(props: any) {
     useEffect(() => {
         setMenuState({ activeNav: props.match.path });
         // eslint-disable-next-line react-hooks/exhaustive-deps 
-
         switch(params.type){
             case "calendar":
                 setValue(1);
@@ -83,7 +82,6 @@ export function AccountBookDetail(props: any) {
     }
 
 
-    console.log("dfgdg");
 
     return <>
         <Header headerTitle={accountBookName}  headerTab={headerTabs} />

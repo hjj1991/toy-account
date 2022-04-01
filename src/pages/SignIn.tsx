@@ -20,23 +20,14 @@ import { Divider } from '@mui/material';
 
 export default function SignIn() {
 
-    /* 이미지 동적 로드 테스트 */
-    const test = require.context('/public/images/', false, /\.(png|jpe?g|svg)$/);
-
-    console.log(test);
-
-    test.keys().forEach(fileName => {
-        console.log(fileName);
-
-      });
-
 
     React.useEffect(() =>{
         const receiveMessage = (e:any) =>{
             if(e.data.hasOwnProperty('isAuthenticated') && e.data.isAuthenticated){
                 const data = e.data.data;
-                setAuthenticated({ isAuthenticated: true, data: data });
-                storage.set('loginInfo', { isAuthenticated: true, data: data });
+                setAuthenticated({isLoading: true, isAuthenticated: true, data: data });
+                storage.set('loginInfo', data);
+                storage.set('isAuthenticated', true);
                 storage.set('accessToken', data.accessToken);
                 storage.set('refreshToken', data.refreshToken);
                 storage.set('expireTime', data.expireTime);
@@ -78,7 +69,7 @@ export default function SignIn() {
         await service.postSignIn(newSignInForm)
             .then((res) => {
                 if (res.data.success) {
-                    setAuthenticated({ isAuthenticated: true, data: res.data.response });
+                    setAuthenticated({isLoading: true, isAuthenticated: true, data: res.data.response });
                     storage.set('loginInfo', { isAuthenticated: true, data: res.data.response });
                     storage.set('accessToken', res.data.response.accessToken);
                     storage.set('refreshToken', res.data.response.refreshToken);

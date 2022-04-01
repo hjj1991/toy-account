@@ -3,20 +3,29 @@ import { useEffect, useState } from "react"
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { loadingState, SnackBarInfo, snackBarState } from "../../recoil/recoil";
 import * as service from '../../services/axiosList';
+import { AddCategory } from "./AddCategory";
+
 
 
 export default function Body(props: { setAccountBookName?: Function, accountBookNo: number }) {
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const [categoryList, setCategoryList] = useState<any>([]);
+    const [reload, setReload] = useState<boolean>(false);
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
 
+    const changeReload = () => {
+        setReload(!reload);
+    }
 
     const getCategoryList: any = async (accountBookNo: number) => {
         try {
             setLoading(true);
             const res = await service.getCategoryList(accountBookNo);
             if (res.status === 200 && res.data.success) {
-                setCategoryList(res.data.response);
+                setCategoryList(res.data.response.categoryList);
+                if(props.setAccountBookName !== undefined){
+                    props.setAccountBookName(res.data.response.accountBookName);
+                }
             }
         } catch (err) {
             setSnackBarInfo({
@@ -35,10 +44,11 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
 
     useEffect(() => {
         getCategoryList(props.accountBookNo);
-        // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, []);
+    }, [props.accountBookNo, reload]);
 
-    return <Grid container spacing={2} p={3} alignItems={'center'}>
+    return <>
+    <AddCategory accountBookNo={props.accountBookNo} categoryList={categoryList} reloadFunction={changeReload} />
+    <Grid container spacing={2} p={3} alignItems={'center'}>
         {categoryList.map((category: any) => (
             <Grid key={category.categoryNo} xs={4} sm={6} md={4} lg={3} xl={2} item sx={{
                 textAlign: 'center',
@@ -80,4 +90,5 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
             </Grid>
         ))}
     </Grid>
+    </>
 }
