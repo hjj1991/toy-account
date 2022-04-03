@@ -24,13 +24,13 @@ export default function SignIn() {
     React.useEffect(() =>{
         const receiveMessage = (e:any) =>{
             if(e.data.hasOwnProperty('isAuthenticated') && e.data.isAuthenticated){
-                const data = e.data.data;
-                setAuthenticated({isLoading: true, isAuthenticated: true, data: data });
+                const data = e.data;
                 storage.set('loginInfo', data);
                 storage.set('isAuthenticated', true);
-                storage.set('accessToken', data.accessToken);
-                storage.set('refreshToken', data.refreshToken);
-                storage.set('expireTime', data.expireTime);
+                storage.set('accessToken', data.data.accessToken);
+                storage.set('refreshToken', data.data.refreshToken);
+                storage.set('expireTime', data.data.expireTime);
+                setAuthenticated({isLoading: true, isAuthenticated: true, data: data });
             }
         }
         
@@ -45,7 +45,7 @@ export default function SignIn() {
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const handleSocialLogin = (e:any) => {
          // 랜덤이기 때문에 결과값이 다를 수 있음.
-        let state = Math.random().toString(36).substr(2,11); // "twozs5xfni"
+        let state = Math.random().toString(36).substring(2,11); // "twozs5xfni"
         const redirectUri = process.env.REACT_APP_SOCIAL_HOST;
         window.name = 'parentForm'; 
         if(e.currentTarget.id === "socialNaver"){

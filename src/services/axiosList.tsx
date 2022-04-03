@@ -222,6 +222,11 @@ export function getCategoryList(accountBookNo:number){
     });
 }
 
+/* 카테고리 상세 조회 API */
+export function getCategoryDetail(categoryNo:number){
+    return authAxios().get(`/category/${categoryNo}`);
+}
+
 /* 카드목록 불러오기 API */
 export function getCardList() {
 

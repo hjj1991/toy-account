@@ -227,10 +227,8 @@ function App() {
 
 
     useEffect(() => {
-        console.log(loginInfo);
         /* 세션에서 로그인정보가 있을 경우 Recoil State에 넣어준다. */
         if (loginInfo !== null) {
-            console.log("SFghfsgh");
             setAuthenticated({
                 ...loginInfo,
                 isAuthenticated: true,

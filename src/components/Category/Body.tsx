@@ -4,12 +4,21 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { loadingState, SnackBarInfo, snackBarState } from "../../recoil/recoil";
 import * as service from '../../services/axiosList';
 import { AddCategory } from "./AddCategory";
+import ModifyCategory from "./ModifyCategory";
 
+interface CategoryDetailForm {
+    categoryNo: number;
+    isCategoryDetailOpen: boolean;
+}
 
 
 export default function Body(props: { setAccountBookName?: Function, accountBookNo: number }) {
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const [categoryList, setCategoryList] = useState<any>([]);
+    const [categoryDetail, setCategoryDetail] = useState<CategoryDetailForm>({
+        categoryNo: 0,
+        isCategoryDetailOpen: false
+    });
     const [reload, setReload] = useState<boolean>(false);
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
 
@@ -41,6 +50,22 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
 
     }
 
+    const handleCloseCategoryDetail = () => {
+        setCategoryDetail({
+            ...categoryDetail,
+            categoryNo: 0,
+            isCategoryDetailOpen: false
+        })
+    }
+
+    const handleClickCategoryDetail = (e:any, categoryNo: number) => {
+
+        setCategoryDetail({
+            categoryNo: categoryNo,
+            isCategoryDetailOpen: true
+        })
+    }
+
 
     useEffect(() => {
         getCategoryList(props.accountBookNo);
@@ -48,6 +73,7 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
 
     return <>
     <AddCategory accountBookNo={props.accountBookNo} categoryList={categoryList} reloadFunction={changeReload} />
+    {categoryDetail.isCategoryDetailOpen && <ModifyCategory categoryNo={categoryDetail.categoryNo} isCategoryDetailOpen={categoryDetail.isCategoryDetailOpen} handleCloseCategoryDetail={handleCloseCategoryDetail} /> }
     <Grid container spacing={2} p={3} alignItems={'center'}>
         {categoryList.map((category: any) => (
             <Grid key={category.categoryNo} xs={4} sm={6} md={4} lg={3} xl={2} item sx={{
@@ -60,7 +86,7 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
                     
             }}  >
                 <Card>
-                    <CardActionArea>
+                    <CardActionArea  onClick={(e:any) => {handleClickCategoryDetail(e, category.categoryNo)}}>
                         <CardMedia
                             component="img"
                             sx={{

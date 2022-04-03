@@ -23,6 +23,7 @@ function Header(props: HeaderProps) {
         setAnchorEl(null);
     };
 
+
     // let profileUrl = process.env.REACT_APP_API_HOST + "/user/profile?picture=" + authenticated.data?.picture + "&access_token=" + storage.get('accessToken');
     let profileUrl = authenticated.data?.picture;
 
