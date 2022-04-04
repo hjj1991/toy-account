@@ -1,14 +1,10 @@
-import { DataGrid, GridActionsCellItem, GridCellParams, GridColumns, GridRowId, GridRowParams, MuiBaseEvent, MuiEvent, useGridApiContext, useGridApiRef} from '@mui/x-data-grid';
+import { GridRowId, GridRowParams, MuiBaseEvent, MuiEvent, useGridApiContext, useGridApiRef} from '@mui/x-data-grid';
 import { Box, Button, Modal } from '@mui/material';
 import { useEffect, useState } from 'react';
 import * as service from '../../services/axiosList';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { loadingState, SnackBarInfo, snackBarState } from '../../recoil/recoil';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
-import { cpuUsage } from 'process';
+import MaterialTable from 'material-table';
 
 
 
@@ -49,7 +45,25 @@ export default function ModifyCategory(props:{
     isCategoryDetailOpen: boolean,
     handleCloseCategoryDetail: any
 }) {
-    
+  const imageList = require.context('/public/images/', false, /\.(png|jpe?g|svg)$/);
+  interface LooseObject {
+    [key: string]: any;
+}
+  let iconObject:LooseObject = {};
+  imageList.keys().map((fileName) => {
+    iconObject[`/images${fileName.substring(1)}`] = <img alt={fileName.substring(1)} src={`/images${fileName.substring(1)}`} />;
+  })
+
+  const [columns, setColumns] = useState([
+    { title: 'No', field: 'categoryNo'},
+    { title: '카테고리명', field: 'categoryName' },
+    { title: '카테고리설명', field: 'categoryDesc' },
+    {
+      title: '아이콘',
+      field: 'categoryIcon',
+      lookup: iconObject
+    },
+  ]);
 
     const initCategoryDetail = {
         categoryNo: 0,
@@ -112,7 +126,7 @@ export default function ModifyCategory(props:{
 
         getCategoryDetail(props.categoryNo);
 
-    },[props.categoryNo])
+    },[])
 
     const handleRowEditStop = (
         params: GridRowParams,
@@ -131,29 +145,6 @@ export default function ModifyCategory(props:{
 
     
 
-    const columns: GridColumns = [
-        { field: 'categoryName', headerName: '카테고리명', type: 'string', editable: true},
-        { field: 'categoryDesc', headerName: '카테고리설명', type: 'string', editable: true  },
-        { field: 'categoryIcon', headerName: '아이콘', type: 'string', editable: true },
-        { field: 'action', headerName: '', type: 'actions', getActions: ({ id }) => {
-      
-          return [
-            <GridActionsCellItem
-              icon={<EditIcon />}
-              label="Edit"
-              onClick={(e) =>{ handleClickEdit(e, id)}}
-              className="textPrimary"
-              color="inherit"
-            />,
-            <GridActionsCellItem
-              icon={<DeleteIcon />}
-              label="Delete"
-              color="inherit"
-            />,
-          ];
-        },
-      },
-      ];
 
   return (
 
@@ -165,13 +156,20 @@ export default function ModifyCategory(props:{
   >
     <Box sx={style}>
     <div style={{ height: 500, width: '100%' }}>
-      <DataGrid
-        editMode="row"
-        rows={childCategoryList}
-        columns={columns}
-        onRowEditStop={handleRowEditStop}
-        experimentalFeatures={{ newEditingApi: true }}
-      />
+    <MaterialTable
+      title="Editable Preview"
+      columns={columns}
+      data={childCategoryList}
+      editable={{
+        onRowAdd: newData =>
+          new Promise((resolve, reject) => {
+            setTimeout(() => {
+              setChildCategoryList([...childCategoryList, newData]);
+              
+              resolve(newData);
+            }, 1000)
+          })}}
+    />
     </div>
     </Box>
   </Modal>

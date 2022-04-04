@@ -1,12 +1,10 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import FormControl from '@mui/material/FormControl';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
-import { CardHeader, Chip, OutlinedInput, TextField } from '@mui/material';
-import Grid from '@mui/material/Grid';
+
+
+import { CardHeader, Chip, FormControl, Grid, InputLabel, MenuItem, OutlinedInput, Select, Tab, Tabs, TextField, Typography } from '@mui/material';
+
 import Box from '@mui/material/Box';
 import * as service from '../../services/axiosList';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -14,11 +12,10 @@ import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snac
 import DateAdapter from '@mui/lab/AdapterMoment';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
+
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import CancelIcon from '@mui/icons-material/Cancel';
-import Select from '@mui/material/Select';
+
 import moment from 'moment';
 import CommonModal from '../common/CommonModal';
 import Budget from '../../assets/img/budget.png';
@@ -385,7 +382,7 @@ export default function Body(props: {
                                                 onChange={handleChangeSearch}
 
                                                 input={<OutlinedInput id="select-multiple-category" label="Chip" />}
-                                                renderValue={(selected) => {
+                                                renderValue={(selected:any) => {
                                                     if (selected.length === 0) {
                                                         return <span>전체</span>;
                                                     }
@@ -394,7 +391,7 @@ export default function Body(props: {
                                                             {selected.map((value: any) => (
                                                                 <Chip key={value} label={value} deleteIcon={
                                                                     <CancelIcon
-                                                                        onMouseDown={(event) => event.stopPropagation()}
+                                                                        onMouseDown={(event:any) => event.stopPropagation()}
                                                                     />
                                                                 } onDelete={(e) => { handleSeachCategoryDelete(e, value, 'category') }} />
                                                             ))}
@@ -436,7 +433,7 @@ export default function Body(props: {
                                                 onChange={handleChangeSearch}
 
                                                 input={<OutlinedInput id="select-multiple-subcategory" label="Chip" />}
-                                                renderValue={(selected) => {
+                                                renderValue={(selected:any) => {
                                                     if (selected.length === 0) {
                                                         return <span>전체</span>;
                                                     }
@@ -445,7 +442,7 @@ export default function Body(props: {
                                                             {selected.map((value: any) => (
                                                                 <Chip key={value} label={value} deleteIcon={
                                                                     <CancelIcon
-                                                                        onMouseDown={(event) => event.stopPropagation()}
+                                                                        onMouseDown={(event:any) => event.stopPropagation()}
                                                                     />
                                                                 } onDelete={(e) => { handleSeachCategoryDelete(e, value, 'subCategory') }} />
                                                             ))}
