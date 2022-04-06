@@ -21,6 +21,9 @@ export const refreshConfig = async (config: AxiosRequestConfig): Promise<AxiosRe
     if(expireTime < moment().valueOf()){
         const res = await postReIssueeToken();
         if(res.status === 200 && res.data.success){
+            if (config.headers === undefined) {
+                config.headers = {};
+              }
             config.headers['access_token'] = res.data.response.accessToken;
             storage.set('accessToken', res.data.response.accessToken);
             storage.set('refreshToken', res.data.response.refreshToken);

@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
 import Header from '../components/layout/Header';
+import { menuState } from '../recoil/recoil';
 
 
-function Home ( props:any){
-    // const setMenuState = useSetRecoilState(menuState);
+function Home (){
+    const setMenuState = useSetRecoilState(menuState);
 
-    // useEffect(() =>{
-    //         setMenuState({activeNav:props.match.path});
-    // });
+    const location = useLocation();
+    useEffect(() =>{
+            setMenuState({activeNav:location.pathname});
+    });
 
-    console.log("Gdgd");
     return (
         <Header headerTitle='홈'  />
     )

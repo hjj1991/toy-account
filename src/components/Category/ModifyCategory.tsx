@@ -1,10 +1,9 @@
-import { GridRowId, GridRowParams, MuiBaseEvent, MuiEvent, useGridApiContext, useGridApiRef} from '@mui/x-data-grid';
-import { Box, Button, Modal } from '@mui/material';
+import { Box, MenuItem, Modal, Paper, Select, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import * as service from '../../services/axiosList';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { loadingState, SnackBarInfo, snackBarState } from '../../recoil/recoil';
-import MaterialTable from 'material-table';
+import MaterialTable, { Column } from 'material-table';
 
 
 
@@ -51,18 +50,51 @@ export default function ModifyCategory(props:{
 }
   let iconObject:LooseObject = {};
   imageList.keys().map((fileName) => {
-    iconObject[`/images${fileName.substring(1)}`] = <img alt={fileName.substring(1)} src={`/images${fileName.substring(1)}`} />;
+    iconObject[`/images${fileName.substring(1)}`] = <img  style={{'width': '20px'}} alt={fileName.substring(1)} src={`/images${fileName.substring(1)}`} />;
   })
 
-  const [columns, setColumns] = useState([
-    { title: 'No', field: 'categoryNo'},
-    { title: '카테고리명', field: 'categoryName' },
-    { title: '카테고리설명', field: 'categoryDesc' },
+  const [columns, setColumns] = useState<Column<any>[]>([
+    { title: 'No', field: 'categoryNo', editable: 'never',  sorting: false},
+    { title: '카테고리명', field: 'categoryName', editComponent: (props) => (
+      <TextField
+          type="text"
+          size='small'
+          value={props.value ? props.value : ''}
+          onChange={e => props.onChange(e.target.value)}
+      />
+  ) },
+    { title: '카테고리설명', field: 'categoryDesc', editComponent: (props) => (
+      <TextField
+          type="text"
+          size='small'
+          value={props.value ? props.value : ''}
+          onChange={e => props.onChange(e.target.value)}
+          sx={{
+            fontSize: '10px'
+          }}
+      />
+  )  },
     {
       title: '아이콘',
       field: 'categoryIcon',
-      lookup: iconObject
-    },
+      // lookup: iconObject,
+      sorting: false,
+      editComponent: ({ value, onChange, rowData }) => (
+        <Select
+           value={value}
+           size={'small'}
+           onChange={(event) => {
+              onChange(event.target.value);
+           }}
+        >
+           {imageList.keys().map((fileName) =>  (
+                <MenuItem key={fileName} value={fileName}>
+                   <img  style={{'width': '20px'}} alt={fileName.substring(1)} src={`/images${fileName.substring(1)}`} />
+                </MenuItem>
+            ))}
+        </Select>
+   )
+    }
   ]);
 
     const initCategoryDetail = {
@@ -74,8 +106,6 @@ export default function ModifyCategory(props:{
     }
     const [categoryDetail, setCategoryDetail] = useState<CategoryDetail>(initCategoryDetail);
     const [childCategoryList, setChildCategoryList] = useState<Array<ChildCategory>>([]);
-    const apiRef = useGridApiRef();
-    console.log(apiRef);
 
     
 
@@ -128,21 +158,6 @@ export default function ModifyCategory(props:{
 
     },[])
 
-    const handleRowEditStop = (
-        params: GridRowParams,
-        event: MuiEvent<MuiBaseEvent>,
-      ) => {
-          console.log(event);
-        event.defaultMuiPrevented = true;
-
-        console.log(params);
-      };
-
-    const handleClickEdit = (e:any, id:GridRowId) => {
-
-
-    }
-
     
 
 
@@ -157,18 +172,27 @@ export default function ModifyCategory(props:{
     <Box sx={style}>
     <div style={{ height: 500, width: '100%' }}>
     <MaterialTable
-      title="Editable Preview"
+      title="카테고리 목록"
+      components={{
+        Container: (props) => <Paper className="category-table" {...props}/>
+            }}
       columns={columns}
       data={childCategoryList}
       editable={{
         onRowAdd: newData =>
           new Promise((resolve, reject) => {
-            setTimeout(() => {
               setChildCategoryList([...childCategoryList, newData]);
-              
-              resolve(newData);
-            }, 1000)
+
           })}}
+      options={{
+        'actionsColumnIndex': 4,
+        'paging': false,
+        'rowStyle': {
+          fontSize: '10px'
+        },
+        'headerStyle': {
+        }
+      }}
     />
     </div>
     </Box>

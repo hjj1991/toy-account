@@ -3,12 +3,13 @@ import React, { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { menuState } from '../recoil/recoil';
 import Header from '../components/layout/Header';
+import { useLocation } from 'react-router-dom';
 
-function Card ( props:any){
+function Card (){
     const setMenuState = useSetRecoilState(menuState);
-
+    const location = useLocation();
     useEffect(() =>{
-            setMenuState({activeNav:props.match.path});
+            setMenuState({activeNav:location.pathname});
     });
 
 

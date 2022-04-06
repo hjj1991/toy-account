@@ -11,12 +11,12 @@ import Typography from '@mui/material/Typography';
 import * as service from '../services/axiosList';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snackBarState } from '../recoil/recoil';
-import { Redirect } from 'react-router';
 import storage from '../lib/storage';
 import SignInImg from '../assets/img/signin.png'
 import kakaoLogin from '../assets/img/kakao_login.png'
 import naverLogin from '../assets/img/naver_login.png'
 import { Divider } from '@mui/material';
+import { Navigate } from 'react-router-dom';
 
 export default function SignIn() {
 
@@ -99,7 +99,7 @@ export default function SignIn() {
     }
 
     if (authenticated.isAuthenticated) {
-        return <Redirect to={{ pathname: '/' }} />
+        return <Navigate replace to='/' />
     }
 
     return (

@@ -1,5 +1,5 @@
 import Navigator from './components/layout/Navigator';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import PrivateRoute from './components/common/PrivateRoute';
@@ -274,25 +274,27 @@ function App() {
                 <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     {/* <Header onDrawerToggle={handleDrawerToggle} /> */}
                     <Box sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1', padding: 0 }}>
-                        <Switch>
-                            <Route exact path="/" component={Home} />
-                            <Route exact path={"/signin"} component={SignIn} />
-                            <Route path={"/social/signin"} component={SocialSignIn} />
-                            <Route path={"/social/signup"} component={SocialSignUp} />
-                            <Route path={"/privacy"} component={Privacy} />
-                            <Route path={"/policy"} component={Policy} />
-                            <Route path={"/social/signup"} component={SocialSignUp} />
-                            <Route path={"/signup"} component={SignUp} />
-                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/account-book" component={AccountBook} />
-                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/account-book/:accountBookNo" component={AccountBookDetail} />
-                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/account/account-book/:accountBookNo/:type" component={AccountBookDetail} />
-                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/account/card" component={Card} />
-                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/account/purchase" component={Purchase} />
-                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} exact path="/myinfo" component={MyInfo} />
-                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/social/mapping" component={SocialMapping} />
-                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/privacy" component={Privacy} />
-                            <PrivateRoute isAuthenticated={authenticated.isAuthenticated} path="/policy" component={Policy} />
-                        </Switch>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path={"/signin"} element={<SignIn />} />
+                            <Route path={"/social/signin"} element={<SocialSignIn />} />
+                            <Route path={"/social/signup"} element={<SocialSignUp />} />
+                            <Route path={"/privacy"} element={<Privacy />} />
+                            <Route path={"/policy"} element={<Policy />} />
+                            <Route path={"/social/signup"} element={<SocialSignUp />} />
+                            <Route path={"/signup"} element={<SignUp />} />
+                            <Route path='/' element={<PrivateRoute/>}>
+                                <Route path="/account/account-book" element={<AccountBook />} />
+                                <Route path="/account/account-book/:accountBookNo" element={<AccountBookDetail />} />
+                                <Route path="/account/account-book/:accountBookNo/:type" element={<AccountBookDetail />} />
+                                <Route path="/account/card" element={<Card />} />
+                                <Route path="/account/purchase" element={<Purchase/>} />
+                                <Route path="/myinfo" element={<MyInfo/>} />
+                                <Route path="/social/mapping" element={<SocialMapping/>} />
+                                <Route path="/privacy" element={<Privacy/>} />
+                                <Route path="/policy" element={<Policy/>} />
+                            </Route>
+                        </Routes>
                     </Box>
                     <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
                         <Footer />

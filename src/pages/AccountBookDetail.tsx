@@ -1,6 +1,6 @@
 import { Box, Tab, Tabs } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import PurchaseBody from "../components/Purchase/Body";
 import { menuState } from "../recoil/recoil";
@@ -9,15 +9,16 @@ import Header from "../components/layout/Header";
 import CategoryBody from "../components/Category/Body";
 
 
-export function AccountBookDetail(props: any) {
+export function AccountBookDetail() {
     let type; 
+    const location = useLocation();
     const setMenuState = useSetRecoilState(menuState);
     const [value, setValue] = useState(0);
     const params: any = useParams();
     const accountBookNo = params.accountBookNo;
     const [accountBookName, setAccountBookName] = useState<string>();
     useEffect(() => {
-        setMenuState({ activeNav: props.match.path });
+        setMenuState({activeNav:location.pathname });
         // eslint-disable-next-line react-hooks/exhaustive-deps 
         switch(params.type){
             case "calendar":

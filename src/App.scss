@@ -185,3 +185,17 @@
         transform: translate(0, -1em) rotate(-225deg);
     }
 }
+
+@media (max-width: 600px) {
+    /* 카테고리 목록 테이블 */
+    .category-table thead > tr > th{
+        font-size: 10px;
+    }
+    .category-table thead > tr > th:first-child {
+        display: none;
+    }
+
+    .category-table tbody > tr > td:first-child {
+        display: none;
+    }
+}
