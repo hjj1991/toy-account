@@ -73,7 +73,7 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
 
     return <>
     <AddCategory accountBookNo={props.accountBookNo} categoryList={categoryList} reloadFunction={changeReload} />
-    {categoryDetail.isCategoryDetailOpen && <ModifyCategory categoryNo={categoryDetail.categoryNo} isCategoryDetailOpen={categoryDetail.isCategoryDetailOpen} handleCloseCategoryDetail={handleCloseCategoryDetail} /> }
+    {categoryDetail.isCategoryDetailOpen && <ModifyCategory categoryNo={categoryDetail.categoryNo} accountBookNo={props.accountBookNo} isCategoryDetailOpen={categoryDetail.isCategoryDetailOpen} handleCloseCategoryDetail={handleCloseCategoryDetail} /> }
     <Grid container spacing={2} p={3} alignItems={'center'}>
         {categoryList.map((category: any) => (
             <Grid key={category.categoryNo} xs={4} sm={6} md={4} lg={3} xl={2} item sx={{

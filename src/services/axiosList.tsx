@@ -69,6 +69,7 @@ export interface AccountBookAddForm {
 
 /* 카테고리 추가 API */
 export interface CategoryAddForm {
+    parentCategoryNo?:number,
     accountBookNo: number,
     categoryName: string,
     categoryDesc: string,
