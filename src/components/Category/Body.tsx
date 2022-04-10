@@ -4,7 +4,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { loadingState, SnackBarInfo, snackBarState } from "../../recoil/recoil";
 import * as service from '../../services/axiosList';
 import { AddCategory } from "./AddCategory";
-import ModifyCategory from "./ModifyCategory";
+import ChildCategory from "./ChildCategory";
 
 interface CategoryDetailForm {
     categoryNo: number;
@@ -14,6 +14,7 @@ interface CategoryDetailForm {
 
 export default function Body(props: { setAccountBookName?: Function, accountBookNo: number }) {
     const setLoading = useSetRecoilState<boolean>(loadingState);
+    const [accountRole, setAccountRole] = useState<string>("");
     const [categoryList, setCategoryList] = useState<any>([]);
     const [categoryDetail, setCategoryDetail] = useState<CategoryDetailForm>({
         categoryNo: 0,
@@ -32,6 +33,7 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
             const res = await service.getCategoryList(accountBookNo);
             if (res.status === 200 && res.data.success) {
                 setCategoryList(res.data.response.categoryList);
+                setAccountRole(res.data.response.accountRole);
                 if(props.setAccountBookName !== undefined){
                     props.setAccountBookName(res.data.response.accountBookName);
                 }
@@ -69,11 +71,12 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
 
     useEffect(() => {
         getCategoryList(props.accountBookNo);
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [props.accountBookNo, reload]);
 
     return <>
-    <AddCategory accountBookNo={props.accountBookNo} categoryList={categoryList} reloadFunction={changeReload} />
-    {categoryDetail.isCategoryDetailOpen && <ModifyCategory categoryNo={categoryDetail.categoryNo} accountBookNo={props.accountBookNo} isCategoryDetailOpen={categoryDetail.isCategoryDetailOpen} handleCloseCategoryDetail={handleCloseCategoryDetail} /> }
+    {accountRole === "OWNER" && <AddCategory accountBookNo={props.accountBookNo} categoryList={categoryList} reloadFunction={changeReload} />}
+    {categoryDetail.isCategoryDetailOpen && <ChildCategory accountRole={accountRole} categoryNo={categoryDetail.categoryNo} accountBookNo={props.accountBookNo} isCategoryDetailOpen={categoryDetail.isCategoryDetailOpen} handleCloseCategoryDetail={handleCloseCategoryDetail} /> }
     <Grid container spacing={2} p={3} alignItems={'center'}>
         {categoryList.map((category: any) => (
             <Grid key={category.categoryNo} xs={4} sm={6} md={4} lg={3} xl={2} item sx={{

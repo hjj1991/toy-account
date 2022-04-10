@@ -75,7 +75,7 @@ export function AccountBookDetail() {
                         }}>
                         <LinkTab label="내역"  to={`/account/account-book/${accountBookNo}`} />
                         <LinkTab label="달력"  to={`/account/account-book/${accountBookNo}/calendar`} />
-                        <LinkTab label="카테고리 설정"to={`/account/account-book/${accountBookNo}/category`} />
+                        <LinkTab label="카테고리"to={`/account/account-book/${accountBookNo}/category`} />
                     </Tabs>
                 </Box>
          

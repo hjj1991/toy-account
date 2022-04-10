@@ -76,6 +76,19 @@ export interface CategoryAddForm {
     categoryIcon: string
 }
 
+/* 카테고리 수정 API */
+export interface CategoryModifyForm {
+    parentCategoryNo?:number
+    accountBookNo: number
+    categoryName: string
+    categoryDesc: string
+    categoryIcon: string
+}
+
+/* 카테고리 삭제 API */
+export interface CategoryDeleteForm {
+    accountBookNo: number
+}
 
 /* 카드 추가 API */
 export interface CardAddForm {
@@ -229,6 +242,20 @@ export function getCategoryList(accountBookNo:number){
 /* 카테고리 상세 조회 API */
 export function getCategoryDetail(categoryNo:number){
     return authAxios().get(`/category/${categoryNo}`);
+}
+
+/* 카테고리 수정 API */
+export function patchCategoryModify(categoryNo: number, categoryModifyForm: CategoryModifyForm){
+    return authAxios().patch(`/category/${categoryNo}`,
+        categoryModifyForm
+    );
+}
+
+/* 카테고리 삭제 API */
+export function deleteCategoryDelete(categoryNo: number, categoryDeleteForm: CategoryDeleteForm){
+    return authAxios().delete(`/category/${categoryNo}`, {
+        data: categoryDeleteForm
+    });
 }
 
 /* 카드목록 불러오기 API */
