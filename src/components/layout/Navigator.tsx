@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import PeopleIcon from '@mui/icons-material/People';
-import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 import StoreIcon from '@mui/icons-material/Store';
 import HomeIcon from '@mui/icons-material/Home';
 import { useRecoilValue } from 'recoil';
