@@ -3,20 +3,40 @@ import { useEffect, useState } from "react"
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { loadingState, SnackBarInfo, snackBarState } from "../../recoil/recoil";
 import * as service from '../../services/axiosList';
+import { AddCategory } from "./AddCategory";
+import ChildCategory from "./ChildCategory";
+
+interface CategoryDetailForm {
+    categoryNo: number;
+    isCategoryDetailOpen: boolean;
+}
 
 
 export default function Body(props: { setAccountBookName?: Function, accountBookNo: number }) {
     const setLoading = useSetRecoilState<boolean>(loadingState);
+    const [accountRole, setAccountRole] = useState<string>("");
     const [categoryList, setCategoryList] = useState<any>([]);
+    const [categoryDetail, setCategoryDetail] = useState<CategoryDetailForm>({
+        categoryNo: 0,
+        isCategoryDetailOpen: false
+    });
+    const [reload, setReload] = useState<boolean>(false);
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
 
+    const changeReload = () => {
+        setReload(!reload);
+    }
 
     const getCategoryList: any = async (accountBookNo: number) => {
         try {
             setLoading(true);
             const res = await service.getCategoryList(accountBookNo);
             if (res.status === 200 && res.data.success) {
-                setCategoryList(res.data.response);
+                setCategoryList(res.data.response.categoryList);
+                setAccountRole(res.data.response.accountRole);
+                if(props.setAccountBookName !== undefined){
+                    props.setAccountBookName(res.data.response.accountBookName);
+                }
             }
         } catch (err) {
             setSnackBarInfo({
@@ -32,13 +52,32 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
 
     }
 
+    const handleCloseCategoryDetail = () => {
+        setCategoryDetail({
+            ...categoryDetail,
+            categoryNo: 0,
+            isCategoryDetailOpen: false
+        })
+    }
+
+    const handleClickCategoryDetail = (e:any, categoryNo: number) => {
+
+        setCategoryDetail({
+            categoryNo: categoryNo,
+            isCategoryDetailOpen: true
+        })
+    }
+
 
     useEffect(() => {
         getCategoryList(props.accountBookNo);
         // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, []);
+    }, [props.accountBookNo, reload]);
 
-    return <Grid container spacing={2} p={3} alignItems={'center'}>
+    return <>
+    {accountRole === "OWNER" && <AddCategory accountBookNo={props.accountBookNo} categoryList={categoryList} reloadFunction={changeReload} />}
+    {categoryDetail.isCategoryDetailOpen && <ChildCategory accountRole={accountRole} categoryNo={categoryDetail.categoryNo} accountBookNo={props.accountBookNo} isCategoryDetailOpen={categoryDetail.isCategoryDetailOpen} handleCloseCategoryDetail={handleCloseCategoryDetail} /> }
+    <Grid container spacing={2} p={3} alignItems={'center'}>
         {categoryList.map((category: any) => (
             <Grid key={category.categoryNo} xs={4} sm={6} md={4} lg={3} xl={2} item sx={{
                 textAlign: 'center',
@@ -50,7 +89,7 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
                     
             }}  >
                 <Card>
-                    <CardActionArea>
+                    <CardActionArea  onClick={(e:any) => {handleClickCategoryDetail(e, category.categoryNo)}}>
                         <CardMedia
                             component="img"
                             sx={{
@@ -80,4 +119,5 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
             </Grid>
         ))}
     </Grid>
+    </>
 }

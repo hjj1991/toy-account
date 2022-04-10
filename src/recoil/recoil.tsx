@@ -2,6 +2,7 @@ import { AlertColor, SnackbarOrigin } from '@mui/material';
 import { atom } from 'recoil';
 
 export interface AuthenticatedInfo {
+    isLoading: boolean,
     isAuthenticated: boolean
     data?:{
             accessToken: string;
@@ -29,6 +30,7 @@ export interface SnackBarInfo extends SnackbarOrigin {
 export const authenticatedState = atom<AuthenticatedInfo>({
     key: 'authenticatedState',
     default: {
+        isLoading: false,
         isAuthenticated: false,
         data: {
             accessToken: "",

@@ -63,6 +63,16 @@
 .createIcon:hover {
     opacity: 1;
 }
+.createIcon {
+    position: fixed;
+    bottom: 80px;
+    right: 40px;
+    width: 2em!important;
+    height: 2em!important;
+    z-index: 10;
+    cursor: pointer;
+    opacity: 0.5;
+}
 /* 소비생활 Tab 내부 선택 항목 스타일 */
 .navSelect.Mui-selected {
     color: rgb(255, 255, 255)!important; 
@@ -173,5 +183,24 @@
     }
     100% {
         transform: translate(0, -1em) rotate(-225deg);
+    }
+}
+
+@media (max-width: 600px) {
+    /* 카테고리 목록 테이블 */
+    .category-table thead > tr > th{
+        font-size: 10px;
+    }
+
+    .category-table tbody > tr > td:nth-of-type(2) {
+        max-width: 50px;
+    }
+}
+
+@media (max-width: 900px) {
+    /* 카테고리 목록 테이블 */
+
+    .category-table tbody > tr > td:nth-of-type(2) {
+        max-width: 80px;
     }
 }

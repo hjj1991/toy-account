@@ -3,13 +3,14 @@ import React, { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { menuState } from '../recoil/recoil';
 import Header from '../components/layout/Header';
+import { useLocation } from 'react-router-dom';
 
-function Purchase ( props:any){
+function Purchase (){
     const setMenuState = useSetRecoilState(menuState);
-
-    useEffect(() => {
-        setMenuState({activeNav:props.match.path});
-    })
+    const location = useLocation();
+    useEffect(() =>{
+            setMenuState({activeNav:location.pathname});
+    });
 
     return (
         <>

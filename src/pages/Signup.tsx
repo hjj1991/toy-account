@@ -9,12 +9,12 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import SignUpImg from '../assets/img/signup.png'
-import { Redirect } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { loadingState, SnackBarInfo, snackBarState } from '../recoil/recoil';
 import { Checkbox, Chip, FormControlLabel } from '@mui/material';
 import kakaoLogin from '../assets/img/kakao_login.png'
 import naverLogin from '../assets/img/naver_login.png'
+import { Navigate } from 'react-router-dom';
 
 
 const getCheckExistsUserId = (userId: string) => {
@@ -378,7 +378,7 @@ export default function SignUp() {
 
   return signUpOk ?
     (
-      <Redirect to={{ pathname: '/' }} />
+      <Navigate replace to="/" />
     ) : (
       <Container component="main" maxWidth="xs">
         <div style={{ textAlign: 'center' }}>

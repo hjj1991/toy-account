@@ -21,6 +21,9 @@ export const refreshConfig = async (config: AxiosRequestConfig): Promise<AxiosRe
     if(expireTime < moment().valueOf()){
         const res = await postReIssueeToken();
         if(res.status === 200 && res.data.success){
+            if (config.headers === undefined) {
+                config.headers = {};
+              }
             config.headers['access_token'] = res.data.response.accessToken;
             storage.set('accessToken', res.data.response.accessToken);
             storage.set('refreshToken', res.data.response.refreshToken);
@@ -64,6 +67,28 @@ export interface AccountBookAddForm {
     color: string
 }
 
+/* 카테고리 추가 API */
+export interface CategoryAddForm {
+    parentCategoryNo?:number,
+    accountBookNo: number,
+    categoryName: string,
+    categoryDesc: string,
+    categoryIcon: string
+}
+
+/* 카테고리 수정 API */
+export interface CategoryModifyForm {
+    parentCategoryNo?:number
+    accountBookNo: number
+    categoryName: string
+    categoryDesc: string
+    categoryIcon: string
+}
+
+/* 카테고리 삭제 API */
+export interface CategoryDeleteForm {
+    accountBookNo: number
+}
 
 /* 카드 추가 API */
 export interface CardAddForm {
@@ -200,12 +225,36 @@ export function getAccountBookList(startDate:any, endDate:any) {
     });
 }
 
+/* 카테고리 생성 API */
+export function postCategoryAdd(categoryAddForm: CategoryAddForm){
+    return authAxios().post('/category', categoryAddForm);
+}
+
 /* 카테고리 목록 불러오기 API */
 export function getCategoryList(accountBookNo:number){
     return authAxios().get('/category',{
         params:{
             accountBookNo:accountBookNo
         }
+    });
+}
+
+/* 카테고리 상세 조회 API */
+export function getCategoryDetail(categoryNo:number){
+    return authAxios().get(`/category/${categoryNo}`);
+}
+
+/* 카테고리 수정 API */
+export function patchCategoryModify(categoryNo: number, categoryModifyForm: CategoryModifyForm){
+    return authAxios().patch(`/category/${categoryNo}`,
+        categoryModifyForm
+    );
+}
+
+/* 카테고리 삭제 API */
+export function deleteCategoryDelete(categoryNo: number, categoryDeleteForm: CategoryDeleteForm){
+    return authAxios().delete(`/category/${categoryNo}`, {
+        data: categoryDeleteForm
     });
 }
 

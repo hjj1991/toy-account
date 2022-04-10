@@ -11,35 +11,26 @@ import Typography from '@mui/material/Typography';
 import * as service from '../services/axiosList';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snackBarState } from '../recoil/recoil';
-import { Redirect } from 'react-router';
 import storage from '../lib/storage';
 import SignInImg from '../assets/img/signin.png'
 import kakaoLogin from '../assets/img/kakao_login.png'
 import naverLogin from '../assets/img/naver_login.png'
 import { Divider } from '@mui/material';
+import { Navigate } from 'react-router-dom';
 
 export default function SignIn() {
-
-    /* 이미지 동적 로드 테스트 */
-    const test = require.context('/public/images/', false, /\.(png|jpe?g|svg)$/);
-
-    console.log(test);
-
-    test.keys().forEach(fileName => {
-        console.log(fileName);
-
-      });
 
 
     React.useEffect(() =>{
         const receiveMessage = (e:any) =>{
             if(e.data.hasOwnProperty('isAuthenticated') && e.data.isAuthenticated){
-                const data = e.data.data;
-                setAuthenticated({ isAuthenticated: true, data: data });
-                storage.set('loginInfo', { isAuthenticated: true, data: data });
-                storage.set('accessToken', data.accessToken);
-                storage.set('refreshToken', data.refreshToken);
-                storage.set('expireTime', data.expireTime);
+                const data = e.data;
+                storage.set('loginInfo', data);
+                storage.set('isAuthenticated', true);
+                storage.set('accessToken', data.data.accessToken);
+                storage.set('refreshToken', data.data.refreshToken);
+                storage.set('expireTime', data.data.expireTime);
+                setAuthenticated({isLoading: true, isAuthenticated: true, data: data });
             }
         }
         
@@ -54,7 +45,7 @@ export default function SignIn() {
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const handleSocialLogin = (e:any) => {
          // 랜덤이기 때문에 결과값이 다를 수 있음.
-        let state = Math.random().toString(36).substr(2,11); // "twozs5xfni"
+        let state = Math.random().toString(36).substring(2,11); // "twozs5xfni"
         const redirectUri = process.env.REACT_APP_SOCIAL_HOST;
         window.name = 'parentForm'; 
         if(e.currentTarget.id === "socialNaver"){
@@ -78,7 +69,7 @@ export default function SignIn() {
         await service.postSignIn(newSignInForm)
             .then((res) => {
                 if (res.data.success) {
-                    setAuthenticated({ isAuthenticated: true, data: res.data.response });
+                    setAuthenticated({isLoading: true, isAuthenticated: true, data: res.data.response });
                     storage.set('loginInfo', { isAuthenticated: true, data: res.data.response });
                     storage.set('accessToken', res.data.response.accessToken);
                     storage.set('refreshToken', res.data.response.refreshToken);
@@ -108,7 +99,7 @@ export default function SignIn() {
     }
 
     if (authenticated.isAuthenticated) {
-        return <Redirect to={{ pathname: '/' }} />
+        return <Navigate replace to='/' />
     }
 
     return (

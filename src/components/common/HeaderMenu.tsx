@@ -2,7 +2,6 @@ import { Logout, Settings } from "@mui/icons-material";
 import { Divider, Link, ListItemIcon, ListItemText, Menu, MenuItem } from "@mui/material";
 import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilValue, useResetRecoilState } from "recoil";
-import storage from "../../lib/storage";
 import { authenticatedState } from "../../recoil/recoil";
 
 export function HeaderMenu(props:any){
@@ -10,7 +9,7 @@ export function HeaderMenu(props:any){
     const resetAuthenticated = useResetRecoilState(authenticatedState);
     const open = Boolean(props.anchorEl);
     const handleClickLogout = () => {
-        storage.remove('loginInfo');
+        sessionStorage.clear();
         resetAuthenticated();
     }
 

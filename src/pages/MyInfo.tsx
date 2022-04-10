@@ -1,15 +1,18 @@
 import React, { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import Header from "../components/layout/Header";
 import { Body } from "../components/MyInfo/Body";
 import { menuState } from "../recoil/recoil";
 
-export function MyInfo( props:any){
+export function MyInfo(){
     const setMenuState = useSetRecoilState(menuState);
 
-    useEffect(() => {
-        setMenuState({activeNav:props.match.path});
-    })
+    const location = useLocation();
+    useEffect(() =>{
+            setMenuState({activeNav:location.pathname});
+    });
+
 
     return (
         <>
