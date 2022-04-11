@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import * as service from '../../services/axiosList';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { isAddCardState, isCardListReloadState, isModifyModalShowState, loadingState } from '../../recoil/recoil';
+import { isAddCardState, isCardListReloadState, isModifyModalShowState, loadingState, SnackBarInfo, snackBarState } from '../../recoil/recoil';
 import CloseIcon from '@mui/icons-material/Close';
 import { AddCard } from './AddCard';
 import CreateIcon from '@mui/icons-material/Create';
@@ -24,18 +24,39 @@ export default function Body() {
     const [isOpenRemoveCardModal, setIsOpenRemoveCardModal] = React.useState<boolean>(false);
     const [selectedIndx, setSelectedIndx] = React.useState<number>(0);
     const setLoading = useSetRecoilState<boolean>(loadingState);
+    const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
 
     const handleClickRemoveCard = async () => {
         try{
             if (selectedIndx !== 0) {
                 setLoading(true);
                 const res = await service.deleteCardDelete(selectedIndx);
-                if (res.status === 200 && res.data.success) {
-                    alert("정상 삭제 되었습니다.");
+                if (res.data.success) {
+                    setSnackBarInfo({
+                        ...snackBarInfo,
+                        message: "정상 삭제되었습니다.",
+                        severity: 'success',
+                        title: "성공",
+                        open: true
+                    });
+                }else{
+                    setSnackBarInfo({
+                        ...snackBarInfo,
+                        message: res.data.apiError.message,
+                        severity: 'error',
+                        title: "실패",
+                        open: true
+                    });
                 }
             }
-        }catch(err){
-            alert("서버에러입니다." + err);
+        }catch{
+            setSnackBarInfo({
+                ...snackBarInfo,
+                message: '서버 에러입니다.',
+                severity: 'error',
+                title: "실패",
+                open: true
+            });
         }finally{
             setLoading(false);
         }
@@ -107,7 +128,7 @@ export default function Body() {
                                 <Typography gutterBottom variant="h5" component="div">
                                     ({card.cardType === "CREDIT_CARD" ? "신용카드" : "체크카드"})
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography variant="body2" color="text.secondary" sx={{height: '100px'}}>
                                     {card.cardDesc}
                                 </Typography>
                             </CardContent>

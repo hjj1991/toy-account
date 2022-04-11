@@ -1,9 +1,7 @@
-import CreateIcon from '@mui/icons-material/Create';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, Paper, PaperProps, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import * as service from '../../services/axiosList';
-import _ from "lodash";
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { loadingState, SnackBarInfo, snackBarState } from '../../recoil/recoil';
 
@@ -21,45 +19,27 @@ function PaperComponent(props: PaperProps) {
     );
 }
 
-export function AddCategory(props: {accountBookNo:number, categoryList:any, reloadFunction: Function}) {
+export function ModifyCategory(props: {modifyCategoryNo: number, categoryDetail:service.CategoryForm, accountBookNo:number, reloadFunction: Function, modfiyClose: any}) {
     const imageList = require.context('/public/images/', false, /\.(png|jpe?g|svg)$/);
     const setLoading = useSetRecoilState<boolean>(loadingState);
-    const [isOpenAddCategoryModal, setIsOpenAddCategoryModal] = useState<boolean>(false);
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
-    const initCategoryForm = { accountBookNo: props.accountBookNo,
-        categoryName: "",
-        categoryDesc: "",
-        categoryIcon: ""
-    }
-    const [formValidation, setFormValidation] = useState({
-        categoryNameCheck: false,
-        categoryNameHelpText: "",
-    })
-    const [addCategoryForm, setAddCategoryForm] = useState<service.CategoryForm>(initCategoryForm);
-
-
-    const handleClickClose = () => {
-        setIsOpenAddCategoryModal(false);
-    }
+    const [modifyCategoryForm, setModifyCategoryForm] = useState<service.CategoryForm>(props.categoryDetail);
 
     const handleSubmit = async (e:any) => {
         e.preventDefault();
-        if(!formValidation.categoryNameCheck){
-            return;
-        }
 
         try{
             setLoading(true);
-            const res = await service.postCategoryAdd(addCategoryForm);
+            const res = await service.patchCategoryModify(props.modifyCategoryNo, modifyCategoryForm);
             if(res.data.success){
                 setSnackBarInfo({
                     ...snackBarInfo,
-                    message: "카테고리가 추가되었습니다.",
+                    message: "카테고리가 수정되었습니다.",
                     severity:'success',
                     title: "성공",
                     open: true
                 })
-                setIsOpenAddCategoryModal(false);
+                props.modfiyClose();
             }else{
                 setSnackBarInfo({
                     ...snackBarInfo,
@@ -87,27 +67,15 @@ export function AddCategory(props: {accountBookNo:number, categoryList:any, relo
     const handleChangeFormValue = (e:any) => {
 
         if (e.target.name === "categoryName") {
-            if(_.find(_.flatten(_.map(props.categoryList, 'childCategoryList')), { categoryName: e.target.value }) === undefined 
-            && _.find(props.categoryList, {'categoryName': e.target.value}) === undefined){
-                setFormValidation({
-                    categoryNameCheck: true,
-                    categoryNameHelpText: ""
-                })
-            }else{
-                setFormValidation({
-                    categoryNameCheck: false,
-                    categoryNameHelpText: "중복된 카테고리명입니다."
-                })
-            }
-            setAddCategoryForm({
-                ...addCategoryForm,
+            setModifyCategoryForm({
+                ...modifyCategoryForm,
                 categoryName: e.target.value
             })
         }
 
         if (e.target.name === "categoryDesc") {
-            setAddCategoryForm({
-                ...addCategoryForm,
+            setModifyCategoryForm({
+                ...modifyCategoryForm,
                 categoryDesc: e.target.value
             })
         }
@@ -118,34 +86,32 @@ export function AddCategory(props: {accountBookNo:number, categoryList:any, relo
         event: React.MouseEvent<HTMLElement>,
         value: string,
       ) => {
-        setAddCategoryForm({
-            ...addCategoryForm,
+        setModifyCategoryForm({
+            ...modifyCategoryForm,
             categoryIcon: value
         });
       };
     
 
     return <>
-        <CreateIcon onClick={() => { setIsOpenAddCategoryModal(true); }} className="createIcon" />
         <Dialog
-            open={isOpenAddCategoryModal}
-            onClose={handleClickClose}
+            open={true}
+            onClose={props.modfiyClose}
             PaperComponent={PaperComponent}
             aria-labelledby="draggable-dialog-title"
 
         >
             <Box component='form' onSubmit={handleSubmit}>
                 <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-                    카테고리 추가
+                    카테고리 수정
                 </DialogTitle>
                 <DialogContent>
                     <FormControl margin='normal' fullWidth >
                         <TextField
                             label="카테고리명"
                             name="categoryName"
-                            helperText={formValidation.categoryNameHelpText}
                             required
-                            value={addCategoryForm.categoryName}
+                            value={modifyCategoryForm.categoryName}
                             onChange={handleChangeFormValue}
                             sx={{
                                 '& .MuiFormHelperText-root':{
@@ -158,13 +124,13 @@ export function AddCategory(props: {accountBookNo:number, categoryList:any, relo
                         <TextField
                             label="카테고리설명"
                             name="categoryDesc"
-                            value={addCategoryForm.categoryDesc}
+                            value={modifyCategoryForm.categoryDesc}
                             onChange={handleChangeFormValue}
                         />
                     </FormControl>
                     <Typography>아이콘 선택</Typography>
                         <ToggleButtonGroup
-                            value={addCategoryForm.categoryIcon}
+                            value={modifyCategoryForm.categoryIcon}
                             exclusive
                             size='small'
                             onChange={handleChangeIcon}
@@ -196,7 +162,7 @@ export function AddCategory(props: {accountBookNo:number, categoryList:any, relo
                 </DialogContent>
                 <DialogActions>
                     <Button type='submit'>확인</Button>
-                    <Button onClick={handleClickClose}>
+                    <Button onClick={props.modfiyClose}>
                         취소
                     </Button>
                 </DialogActions>

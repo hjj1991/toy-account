@@ -188,19 +188,14 @@
 
 @media (max-width: 600px) {
     /* 카테고리 목록 테이블 */
-    .category-table thead > tr > th{
-        font-size: 10px;
+    .category-table tbody > tr > td:nth-child(4) > div{
+        justify-content: right;
     }
 
-    .category-table tbody > tr > td:nth-of-type(2) {
-        max-width: 50px;
-    }
 }
 
 @media (max-width: 900px) {
     /* 카테고리 목록 테이블 */
 
-    .category-table tbody > tr > td:nth-of-type(2) {
-        max-width: 80px;
-    }
+
 }

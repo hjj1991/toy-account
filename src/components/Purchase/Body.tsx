@@ -304,6 +304,8 @@ export default function Body(props: {
         // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [navSelect, searchForm, category]);
 
+    console.log(categoryList);
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -403,7 +405,7 @@ export default function Body(props: {
                                                 <MenuItem disabled value="">
                                                     <span>전체</span>
                                                 </MenuItem>
-                                                {categoryList.map((category: any) => (
+                                                {categoryList.categoryList.map((category: any) => (
                                                     <MenuItem
                                                         key={category.categoryNo} value={category.categoryName}
                                                     >
