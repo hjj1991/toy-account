@@ -201,16 +201,18 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
                             categoryDesc: category.categoryDesc,
                             categoryIcon: category.categoryIcon})} 
                             size="small"
-                            color="primary"
+                            color="success"
                             sx={{
-                                minWidth: 0
+                                minWidth: 0,
+                                
                             }}
                           >수정</Button>
                         <Button onClick={() => handleClickCategoryDelete(category.categoryNo)}
                          size="small"
                          color="error"
                          sx={{
-                            minWidth: 0
+                            minWidth: 0,
+                            color: 'red'
                         }}
                         >삭제</Button>
                        
