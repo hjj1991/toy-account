@@ -91,7 +91,7 @@ export default function Body(props: {
             let totalCategory = category.filter((item) => item !== value);
             let childCategoryList: any = [];
             for (let selectName of totalCategory) {
-                for (let tempCategory of categoryList) {
+                for (let tempCategory of categoryList.categoryList) {
                     if (tempCategory.categoryName === selectName && tempCategory.childCategoryList.length > 0) {
                         childCategoryList.push(...tempCategory.childCategoryList);
                     }
@@ -132,8 +132,14 @@ export default function Body(props: {
         if (navSelect === 2 && category.length > 0) {
             let totalCategory = [...category, ...subCategory];
             tempPurchaseList = tempPurchaseList.filter((purchase: any) => {
+                /* 카테고리가 설정되어 있는경우 */
                 if (purchase.categoryInfo != null) {
-                    return totalCategory.some(x => (x === purchase.categoryInfo.categoryName || x === purchase.categoryInfo.parentCategoryName));
+                    /* 세부 카테고리가 설정된 경우 */
+                    if(subCategory.length !== 0){
+                        return subCategory.some(x => x === purchase.categoryInfo.categoryName);
+                    }else{
+                        return totalCategory.some(x => (x === purchase.categoryInfo.categoryName || x === purchase.categoryInfo.parentCategoryName));
+                    }
                 } else {
                     return false;
                 }
@@ -211,7 +217,7 @@ export default function Body(props: {
             let totalCategory = typeof value === 'string' ? value.split(',') : value;
             let childCategoryList: any = [];
             for (let selectName of totalCategory) {
-                for (let tempCategory of categoryList) {
+                for (let tempCategory of categoryList.categoryList) {
                     if (tempCategory.categoryName === selectName && tempCategory.childCategoryList.length > 0) {
                         childCategoryList.push(...tempCategory.childCategoryList);
                     }
@@ -302,9 +308,8 @@ export default function Body(props: {
     React.useEffect(() => {
         searchChangeResult();
         // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, [navSelect, searchForm, category]);
+    }, [navSelect, searchForm, category, subCategory]);
 
-    console.log(categoryList);
 
     return (
         <Grid container spacing={2}>

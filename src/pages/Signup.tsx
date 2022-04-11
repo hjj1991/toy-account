@@ -91,78 +91,78 @@ export default function SignUp() {
 
   const serviceTerms = (
     <>
-    <FormControlLabel
-    label="전체 동의"
-    control={
-      <Checkbox
-        checked={checked[0] && checked[1]}
-        indeterminate={checked[0] !== checked[1]}
-        onChange={handleChange1}
-      />
-    }
-  />
-    <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
       <FormControlLabel
-        label={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>[필수] 개인회원 약관에 동의</span>
-            <Link href='/policy' target="_blank" rel="noopener noreferrer" sx={{display: 'contents'}}>상세보기</Link>
-          </div>}
-        control={<Checkbox checked={checked[0]} onChange={handleChange2} />}
-        sx={{
-          '& .MuiTypography-root': {
-            width: '100%'
-          }
-        }}
+        label="전체 동의"
+        control={
+          <Checkbox
+            checked={checked[0] && checked[1]}
+            indeterminate={checked[0] !== checked[1]}
+            onChange={handleChange1}
+          />
+        }
       />
-      <FormControlLabel
-        label={
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>[필수] 개인정보 수집 및 이용에 동의</span>
-            <Link href='/privacy' target="_blank" rel="noopener noreferrer" sx={{display: 'contents'}}>상세보기</Link>
-          </div>}
-        sx={{
-          '& .MuiTypography-root': {
-            width: '100%'
-          }
-        }}
-        control={<Checkbox checked={checked[1]} onChange={handleChange3} />}
-      />
-    </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
+        <FormControlLabel
+          label={
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>[필수] 개인회원 약관에 동의</span>
+              <Link href='/policy' target="_blank" rel="noopener noreferrer" sx={{ display: 'contents' }}>상세보기</Link>
+            </div>}
+          control={<Checkbox checked={checked[0]} onChange={handleChange2} />}
+          sx={{
+            '& .MuiTypography-root': {
+              width: '100%'
+            }
+          }}
+        />
+        <FormControlLabel
+          label={
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>[필수] 개인정보 수집 및 이용에 동의</span>
+              <Link href='/privacy' target="_blank" rel="noopener noreferrer" sx={{ display: 'contents' }}>상세보기</Link>
+            </div>}
+          sx={{
+            '& .MuiTypography-root': {
+              width: '100%'
+            }
+          }}
+          control={<Checkbox checked={checked[1]} onChange={handleChange3} />}
+        />
+      </Box>
     </>
   );
 
-  React.useEffect(() =>{
-    const receiveMessage = (e:any) =>{
-        if(e.data.hasOwnProperty('success') && e.data.success){
-          if(e.data.success){
-            setSnackBarInfo({
-              ...snackBarInfo,
-              message: "회원가입에 성공하였습니다.",
-              severity: 'success',
-              title: "환영합니다.",
-              open: true
-            })
-            setSignUpOk(true);
-          }else{
-            setSnackBarInfo({
-              ...snackBarInfo,
-              message: e.data.message,
-              severity: 'error',
-              title: "실패",
-              open: true
-            })
-          }
+  React.useEffect(() => {
+    const receiveMessage = (e: any) => {
+      if (e.data.hasOwnProperty('success') && e.data.success) {
+        if (e.data.success) {
+          setSnackBarInfo({
+            ...snackBarInfo,
+            message: "회원가입에 성공하였습니다.",
+            severity: 'success',
+            title: "환영합니다.",
+            open: true
+          })
+          setSignUpOk(true);
+        } else {
+          setSnackBarInfo({
+            ...snackBarInfo,
+            message: e.data.message,
+            severity: 'error',
+            title: "실패",
+            open: true
+          })
         }
+      }
     }
-    
+
     window.addEventListener("message", receiveMessage, false);
     return () => window.removeEventListener("message", receiveMessage);
     // eslint-disable-next-line react-hooks/exhaustive-deps 
-})
+  })
 
-  const handleSocialSignUp = (e:any) => {
-    if(!checked[0] || !checked[1]){
+  const handleSocialSignUp = (e: any) => {
+    if (!checked[0] || !checked[1]) {
       setSnackBarInfo({
         ...snackBarInfo,
         message: "약관에 동의해주세요.",
@@ -173,21 +173,21 @@ export default function SignUp() {
       return;
     }
     // 랜덤이기 때문에 결과값이 다를 수 있음.
-   let state = Math.random().toString(36).substr(2,11); // "twozs5xfni"
-   const redirectUri = process.env.REACT_APP_HOST + "/social/signup";
-   window.name = 'parentForm'; 
-   if(e.currentTarget.id === "socialNaver"){
-       window.open(`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sUyp7Y2KoOfRvdsAEdCc&redirect_uri=${redirectUri}?provider=NAVER&state=${state}`, "popup", "location=no,resizable=no");
-   }
-   if(e.currentTarget.id === "socialKakao"){
-       window.open(`https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=656c5afa5455de8f5ad9eb51e09e3720&redirect_uri=${redirectUri}?provider=KAKAO&state=${state}`, "popup", "location=no,resizable=no");
-   }
-   
-}
+    let state = Math.random().toString(36).substr(2, 11); // "twozs5xfni"
+    const redirectUri = process.env.REACT_APP_HOST + "/social/signup";
+    window.name = 'parentForm';
+    if (e.currentTarget.id === "socialNaver") {
+      window.open(`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sUyp7Y2KoOfRvdsAEdCc&redirect_uri=${redirectUri}?provider=NAVER&state=${state}`, "popup", "location=no,resizable=no");
+    }
+    if (e.currentTarget.id === "socialKakao") {
+      window.open(`https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=656c5afa5455de8f5ad9eb51e09e3720&redirect_uri=${redirectUri}?provider=KAKAO&state=${state}`, "popup", "location=no,resizable=no");
+    }
+
+  }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if(!checked[0] || !checked[1]){
+    if (!checked[0] || !checked[1]) {
       setSnackBarInfo({
         ...snackBarInfo,
         message: "약관에 동의해주세요.",
@@ -384,31 +384,29 @@ export default function SignUp() {
         <div style={{ textAlign: 'center' }}>
           <img src={SignUpImg} alt="회원가입" />
         </div>
-        <Typography variant="body2" align='center' sx={{my: 3}}>
-          <Chip variant="filled" label={"회원가입"} sx={{fontSize: '30px', height: '50px', backgroundColor: '#fdcb02', width: '100%', color: '#fff' }} />
-          </Typography>
+        <Chip variant="filled" label={"회원가입"} sx={{ fontSize: '30px', height: '50px', backgroundColor: '#fdcb02', width: '100%', color: '#fff' }} />
         <Divider sx={{ my: 3 }}>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                서비스 약관
-              </Typography>
-            </Divider>
-              {serviceTerms}
-              <Divider sx={{ my: 3 }}>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-         간편 회원가입
+            서비스 약관
           </Typography>
         </Divider>
-          <Grid container spacing={2} justifyContent="center">
-              <Grid item>
-                  <img src={naverLogin} id="socialNaver" style={{cursor: 'pointer'}} onClick={handleSocialSignUp} width={50} alt="네이버 로그인" />
-              </Grid>
-              <Grid item>
-                  <img src={kakaoLogin} id="socialKakao" style={{cursor: 'pointer'}} onClick={handleSocialSignUp} width={50} alt="카카오 로그인" />
-              </Grid>
-          </Grid>
+        {serviceTerms}
         <Divider sx={{ my: 3 }}>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-         OR
+            간편 회원가입
+          </Typography>
+        </Divider>
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item>
+            <img src={naverLogin} id="socialNaver" style={{ cursor: 'pointer' }} onClick={handleSocialSignUp} width={50} alt="네이버 로그인" />
+          </Grid>
+          <Grid item>
+            <img src={kakaoLogin} id="socialKakao" style={{ cursor: 'pointer' }} onClick={handleSocialSignUp} width={50} alt="카카오 로그인" />
+          </Grid>
+        </Grid>
+        <Divider sx={{ my: 3 }}>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            OR
           </Typography>
         </Divider>
         <Box
@@ -427,7 +425,6 @@ export default function SignUp() {
                   fullWidth
                   id="userId"
                   label="아이디"
-                  autoFocus
                   onBlur={handleChangeCheckValue}
                   onChange={handleChangeCheckValue}
                   value={signUpForm.userId}
@@ -512,20 +509,22 @@ export default function SignUp() {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, backgroundColor: '#fdcb02',
-              '&:hover': {
-                backgroundColor: '#fdae02',
-                borderColor: '#0062cc',
-                boxShadow: 'none',
-              },
-              '&:active': {
-                boxShadow: 'none',
-                backgroundColor: '#fdcb02',
-                borderColor: '#005cbf',
-              },
-              '&:focus': {
-                boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
-              } }}
+              sx={{
+                mt: 3, mb: 2, backgroundColor: '#fdcb02',
+                '&:hover': {
+                  backgroundColor: '#fdae02',
+                  borderColor: '#0062cc',
+                  boxShadow: 'none',
+                },
+                '&:active': {
+                  boxShadow: 'none',
+                  backgroundColor: '#fdcb02',
+                  borderColor: '#005cbf',
+                },
+                '&:focus': {
+                  boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+                }
+              }}
             >
               회원가입
             </Button>

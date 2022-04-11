@@ -10,12 +10,13 @@ import { useState } from "react";
 import moment from "moment";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { loadingState, SnackBarInfo, snackBarState } from "../../recoil/recoil";
+import _ from "lodash";
 
 
 export function AddPurchase(props:{
     reloadPurchaseListFunction: any,
     accountBookNo: number,
-    categoryList: [],
+    categoryList: any,
     cardList: []
 }) {
     const [isAddPurchase, setIsAddPurchase] = useState<boolean>(false);
@@ -28,12 +29,15 @@ export function AddPurchase(props:{
         purchaseType: "",
         reason: "",
         storeName: "",
-        categoryNo: 0
+        categoryNo: 0,
+        cardNo: 0
     };
     const [purchaseDate, setPurchaseDate] = useState<string>(
         moment().format("yyyy-MM-DD")
       );
     const [purchaseForm, setPurchaseForm] = useState<service.PurchaseAddForm>(initPurchaseForm);
+    const [selecetedSubCategoryNo, setSelectedSubCategoryNo] = useState<number>(0);
+    const [childCategories, setChildCategories] = useState([]);
 
     const inputPriceFormat = (str:any) => {
         const comma = (str:any) => {
@@ -74,10 +78,21 @@ export function AddPurchase(props:{
             })
         }
         if(e.target.name === "categorySelect"){
+            const categoryInfo = props.categoryList.categoryList.find((value:any) => value.categoryNo === e.target.value);
+            if(categoryInfo !== undefined){
+                setChildCategories(categoryInfo.childCategoryList);
+            }else{
+                setChildCategories([]);
+            }
+
             setPurchaseForm({
                 ...purchaseForm,
                 categoryNo: e.target.value
             })
+            setSelectedSubCategoryNo(0);
+        }
+        if(e.target.name === "subCategorySelect"){
+            setSelectedSubCategoryNo(e.target.value);
         }
         
     }
@@ -112,7 +127,12 @@ export function AddPurchase(props:{
             return;
         }
 
-        const purchaseAddForm: service.PurchaseAddForm = purchaseForm;
+
+        let purchaseAddForm: service.PurchaseAddForm = _.cloneDeep(purchaseForm);
+        /* 세부 카테고리가 설정되었을 경우 세부카테고리를 넣어준다 */
+        if(selecetedSubCategoryNo !== 0){
+            purchaseAddForm.categoryNo = selecetedSubCategoryNo;
+        }
         purchaseForm.purchaseDate = purchaseDate;
         
         try{
@@ -121,6 +141,7 @@ export function AddPurchase(props:{
 
             if (res.data.success) {
                 setPurchaseForm(initPurchaseForm);
+                setSelectedSubCategoryNo(0);
                 setSnackBarInfo({
                     ...snackBarInfo,
                     message: "추가 되었습니다.",
@@ -235,7 +256,26 @@ export function AddPurchase(props:{
                         onChange={handleChangeFormValue}
                     >
                         <MenuItem value={0}>--항목 선택--</MenuItem>
-                        {props.categoryList.map((category: any)=>(
+                        {props.categoryList.categoryList.map((category: any)=>(
+                            <MenuItem key={category.categoryNo} value={category.categoryNo}>{category.categoryName}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <FormControl 
+                    margin='normal'
+                    fullWidth >
+                    <InputLabel id="demo-simple-select-required-label">세부항목</InputLabel>
+                    <Select
+                        fullWidth
+                        name="subCategorySelect"
+                        labelId="demo-simple-select-required-label"
+                        id="demo-simple-select-required"
+                        value={selecetedSubCategoryNo}
+                        label="항목"
+                        onChange={handleChangeFormValue}
+                    >
+                        <MenuItem value={0}>--항목 선택--</MenuItem>
+                        {childCategories.map((category: any)=>(
                             <MenuItem key={category.categoryNo} value={category.categoryNo}>{category.categoryName}</MenuItem>
                         ))}
                     </Select>
