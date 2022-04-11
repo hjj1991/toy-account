@@ -59,7 +59,7 @@ export interface UserModifyForm {
     userPw: string | null
 }
 
-/* 가계부 추가 API */
+/* 가계부 추가 interface */
 export interface AccountBookAddForm {
     accountBookName: string,
     accountBookDesc: string,
@@ -67,8 +67,8 @@ export interface AccountBookAddForm {
     color: string
 }
 
-/* 카테고리 추가 API */
-export interface CategoryAddForm {
+/* 카테고리 interface */
+export interface CategoryForm {
     parentCategoryNo?:number,
     accountBookNo: number,
     categoryName: string,
@@ -76,14 +76,6 @@ export interface CategoryAddForm {
     categoryIcon: string
 }
 
-/* 카테고리 수정 API */
-export interface CategoryModifyForm {
-    parentCategoryNo?:number
-    accountBookNo: number
-    categoryName: string
-    categoryDesc: string
-    categoryIcon: string
-}
 
 /* 카테고리 삭제 API */
 export interface CategoryDeleteForm {
@@ -226,7 +218,7 @@ export function getAccountBookList(startDate:any, endDate:any) {
 }
 
 /* 카테고리 생성 API */
-export function postCategoryAdd(categoryAddForm: CategoryAddForm){
+export function postCategoryAdd(categoryAddForm: CategoryForm){
     return authAxios().post('/category', categoryAddForm);
 }
 
@@ -245,7 +237,7 @@ export function getCategoryDetail(categoryNo:number){
 }
 
 /* 카테고리 수정 API */
-export function patchCategoryModify(categoryNo: number, categoryModifyForm: CategoryModifyForm){
+export function patchCategoryModify(categoryNo: number, categoryModifyForm: CategoryForm){
     return authAxios().patch(`/category/${categoryNo}`,
         categoryModifyForm
     );

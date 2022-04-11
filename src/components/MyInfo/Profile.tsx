@@ -122,7 +122,6 @@ export function Profile(props: any) {
         // 랜덤이기 때문에 결과값이 다를 수 있음.
         let state = Math.random().toString(36).substr(2, 11); // "twozs5xfni"
         const redirectUri = process.env.REACT_APP_HOST + "/social/mapping";
-        console.log(redirectUri);
         window.name = 'parentForm';
         if (e.currentTarget.id === "socialNaver") {
             window.open(`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sUyp7Y2KoOfRvdsAEdCc&redirect_uri=${redirectUri}?provider=NAVER&state=${state}`, "popup", "location=no,resizable=no");
@@ -227,10 +226,13 @@ export function Profile(props: any) {
                             item
                             xs={12}
                             spacing={0}
+                            m={1}
                             justifyContent="space-evenly"
                         >
 
-                            <Button onClick={handleClickInputFileButton}>
+                            <Button 
+                                color='success'
+                                onClick={handleClickInputFileButton}>
                                 이미지 선택
                             </Button>
                             <input
