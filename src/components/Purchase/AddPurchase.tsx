@@ -133,7 +133,7 @@ export function AddPurchase(props:{
         if(selecetedSubCategoryNo !== 0){
             purchaseAddForm.categoryNo = selecetedSubCategoryNo;
         }
-        purchaseForm.purchaseDate = purchaseDate;
+        purchaseAddForm.purchaseDate = purchaseDate;
         
         try{
             setLoading(true);
@@ -212,7 +212,7 @@ export function AddPurchase(props:{
                 <FormControl margin='normal' >
                 <LocalizationProvider dateAdapter={DateAdapter}>
                     <DesktopDatePicker
-                        label={purchaseForm.purchaseType === "OUTGOING"? "수입 일자": "지출 일자"}
+                        label={purchaseForm.purchaseType === "OUTGOING"? "지출 일자": "수입 일자"}
                         inputFormat="yyyy-MM-DD"
                         value={purchaseDate}
                         mask={"____-__-__"}
