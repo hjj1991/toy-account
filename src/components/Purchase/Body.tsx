@@ -14,6 +14,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 import moment from 'moment';
@@ -24,6 +25,7 @@ import inMoney from '../../assets/img/in-money.png';
 import allMoney from '../../assets/img/all-money.png';
 import { AddPurchase } from './AddPurchase';
 import { getInputDayLabel } from '../common/CommonFunction';
+import ModifyPurchase from './ModifyPurchase';
 
 
 const ITEM_HEIGHT = 48;
@@ -57,6 +59,7 @@ export default function Body(props: {
     const [selectedIndx, setSelectedIndx] = React.useState<number>(0);
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const [isOpenDeleteModal, setIsOpenDeleteModal] = React.useState<boolean>(false);
+    const [isOpenModifyModal, setIsOpenModifyModal] = React.useState<boolean>(false);
     const authenticated = useRecoilValue<AuthenticatedInfo>(authenticatedState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
 
@@ -295,6 +298,14 @@ export default function Body(props: {
         setSelectedIndx(0);
         setIsOpenDeleteModal(false);
     }
+    const handleClickModifyPurchase = (e:any, purchaseNo:number) => {
+        setIsOpenModifyModal(true);
+        setSelectedIndx(purchaseNo);
+    }
+    const handleCloseModifyPurchase = () => {
+        setSelectedIndx(0);
+        setIsOpenModifyModal(false);
+    }
 
 
 
@@ -312,6 +323,15 @@ export default function Body(props: {
 
 
     return (
+        <>
+        {isOpenModifyModal && 
+        <ModifyPurchase                 
+            accountBookNo={props.accountBookNo!}
+            reloadPurchaseListFunction={reloadPurchaseListFunction}
+            handleCloseModifyPurchase={handleCloseModifyPurchase}
+            purchaseNo={selectedIndx}
+            categoryList={categoryList}
+            cardList={cardList} />}
         <Grid container spacing={2}>
             <Grid item xs={12}>
                 <Card
@@ -510,10 +530,23 @@ export default function Body(props: {
                         <Grid container key={elevation.purchaseNo} spacing={0}>
                             <Grid className='purchaseBox' item xs={12}>
                                 <Grid container spacing={0}>
-                                    <Grid item xs={11} className="purchaseBox-header">
+                                    <Grid item xs={10} className="purchaseBox-header">
                                         {elevation.purchaseDate} [{getInputDayLabel(elevation.purchaseDate)}]
                                         </Grid>
-                                    <Grid item xs={1} style={{ textAlign: 'right' }}>
+                                    <Grid item xs={2} style={{ textAlign: 'right' }}>
+                                        <EditOutlinedIcon
+                                            onClick={(e) => {
+                                                handleClickModifyPurchase(e, elevation.purchaseNo);
+                                            }}
+                                            sx={{
+                                                cursor: 'pointer',
+                                                color: 'blue',
+                                                opacity: '0.4',
+                                                '&:hover': {
+                                                    opacity: 1
+                                                }
+                                            }}
+                                            />
                                         <DeleteForeverOutlinedIcon
                                             className='deleteIcon'
                                             onClick={() => {
@@ -523,7 +556,10 @@ export default function Body(props: {
                                             sx={{
                                                 cursor: 'pointer',
                                                 color: 'red',
-                                                opacity: '0.4'
+                                                opacity: '0.4',
+                                                '&:hover': {
+                                                    opacity: 1
+                                                }
                                             }}
                                         />
                                     </Grid>
@@ -560,6 +596,6 @@ export default function Body(props: {
                 clickCancelHandle={handleClickRemovePurchaseCancel}
             />
         </Grid>
-
+        </>
     );
 }

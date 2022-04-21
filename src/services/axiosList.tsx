@@ -284,7 +284,7 @@ export function deleteCardDelete( cardNo: number) {
     return authAxios().delete(`/card/${cardNo}`);
 }
 
-/* 지출 내역 불러오기 */
+/* 지출 내역들 불러오기 */
 export function getPurchaseList(startDate: any, endDate: any, accountBookNo?: number) {
     return authAxios().get('/purchase',{
         params:{
@@ -293,6 +293,11 @@ export function getPurchaseList(startDate: any, endDate: any, accountBookNo?: nu
             accountBookNo: accountBookNo
         }
     });
+}
+
+/* 지출 내역 불러오기 */
+export function getPurchase(purchaseNo: number) {
+    return authAxios().get(`/purchase/${purchaseNo}`);
 }
 
 /* 지출 추가 API */
