@@ -21,7 +21,6 @@ export default function ModifyPurchase(props:{
     handleCloseModifyPurchase: any,
     cardList: []
 }) {
-    const [isAddPurchase, setIsAddPurchase] = useState<boolean>(false);
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const initPurchaseForm = {
@@ -59,14 +58,27 @@ export default function ModifyPurchase(props:{
 
             const res = await service.getPurchase(purchaseNo);
             if (res.status === 200 && res.data.success) {
+                /* 세부 카테고리가 설정되어 있으면 셋팅해준다 */
+                if(res.data.response.categoryNo !== null){
+                    setSelectedSubCategoryNo(res.data.response.categoryNo);
+                }else{
+                    setSelectedSubCategoryNo(0);
+                }
+                /* 세부카테고리목록을 셋팅해준다 */
+                const categoryInfo = props.categoryList.categoryList.find((value:any) => value.categoryNo === res.data.response.parentCategoryNo);
+                if(categoryInfo !== undefined){
+                    setChildCategories(categoryInfo.childCategoryList);
+                }else{
+                    setChildCategories([]);
+                }
                 setPurchaseForm({
                     accountBookNo: res.data.response.accountBookNo,
-                    categoryNo: res.data.response.cateogryNo,
+                    categoryNo: res.data.response.parentCategoryNo === null? 0 : res.data.response.parentCategoryNo,
                     price: res.data.response.price,
                     purchaseDate: res.data.response.purchaseDate,
                     purchaseType: res.data.response.purchaseType,
                     reason: res.data.response.reason,
-                    cardNo: res.data.response.cardNo,
+                    cardNo: res.data.response.cardNo === null? 0 : res.data.response.cardNo,
                     storeName: res.data.response.storeName
 
                 })
@@ -82,10 +94,9 @@ export default function ModifyPurchase(props:{
 
     }
 
-
       useEffect(()=>{
         getPurchase(props.purchaseNo);
-      }, [props.purchaseNo])
+      }, [])
 
     const handleChangeFormValue = (e: any) => {
         if (e.target.name === "cardSelect") {
@@ -163,30 +174,34 @@ export default function ModifyPurchase(props:{
         }
 
 
-        let purchaseAddForm: service.PurchaseAddForm = _.cloneDeep(purchaseForm);
+        let purchaseModifyForm: service.PurchaseAddForm = _.cloneDeep(purchaseForm);
         /* 세부 카테고리가 설정되었을 경우 세부카테고리를 넣어준다 */
         if(selecetedSubCategoryNo !== 0){
-            purchaseAddForm.categoryNo = selecetedSubCategoryNo;
+            purchaseModifyForm.categoryNo = selecetedSubCategoryNo;
         }
-        purchaseAddForm.purchaseDate = purchaseDate;
+        purchaseModifyForm.purchaseDate = purchaseDate;
+        purchaseModifyForm.purchaseNo = props.purchaseNo;
+
+        
         
         try{
             setLoading(true);
-            const res = await service.postPurchaseAdd(purchaseAddForm);
+            console.log(purchaseModifyForm);
+            const res = await service.patchPurchaseModify(purchaseModifyForm);
 
             if (res.data.success) {
                 setPurchaseForm(initPurchaseForm);
                 setSelectedSubCategoryNo(0);
                 setSnackBarInfo({
                     ...snackBarInfo,
-                    message: "추가 되었습니다.",
+                    message: "수정 되었습니다.",
                     severity:'success',
                     title: "성공",
                     open: true
                 })
+                props.handleCloseModifyPurchase();
                 props.reloadPurchaseListFunction();
             }
-            setIsAddPurchase(false);
         }catch(err) {
             setSnackBarInfo({
                 ...snackBarInfo,
@@ -197,6 +212,7 @@ export default function ModifyPurchase(props:{
             })
         }finally{
             setLoading(false);
+        
         }
 
 
@@ -334,7 +350,6 @@ export default function ModifyPurchase(props:{
         <DialogActions>
             <Button autoFocus type="submit">확인</Button>
             <Button onClick={() => {  
-                setIsAddPurchase(false);
                 setPurchaseForm(initPurchaseForm); }}>
                 취소
             </Button>

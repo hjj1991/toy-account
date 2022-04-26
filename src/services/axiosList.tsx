@@ -99,6 +99,7 @@ export interface CardUpdateForm {
 
 /* 소득,지출 추가 API */
 export interface PurchaseAddForm {
+    purchaseNo?: number,
     accountBookNo: number,
     cardNo?: number,
     price: string,
@@ -311,9 +312,21 @@ export function postPurchaseAdd(purchaseAddForm: PurchaseAddForm) {
         reason: purchaseAddForm.reason,
         categoryNo: purchaseAddForm.categoryNo === 0? null: purchaseAddForm.categoryNo
     });
-
 }
 
+
+/* 지출 수정 API */
+export function patchPurchaseModify(purchaseAddForm: PurchaseAddForm) {
+    return authAxios().patch(`/purchase/${purchaseAddForm.purchaseNo}`,{
+        accountBookNo: purchaseAddForm.accountBookNo,
+        cardNo: purchaseAddForm.cardNo === 0? null : purchaseAddForm.cardNo,
+        price: purchaseAddForm.price.replace(/,/gi, ""),
+        purchaseDate: purchaseAddForm.purchaseDate,
+        purchaseType: purchaseAddForm.purchaseType,
+        reason: purchaseAddForm.reason,
+        categoryNo: purchaseAddForm.categoryNo === 0? null: purchaseAddForm.categoryNo
+    });
+}
 /* 지출 삭제 API */
 export function postPurchaseDelete(purchaseNo: number) {
     return authAxios().delete(`/purchase/${purchaseNo}`);
