@@ -1,7 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, InputLabel, MenuItem, Select, TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { FormControl } from '@mui/material';
 import DateAdapter from '@mui/lab/AdapterMoment';
-import CreateIcon from '@mui/icons-material/Create';
 import Input from '@mui/material/Input';
 import * as service from '../../services/axiosList';
 import { DesktopDatePicker, LocalizationProvider } from "@mui/lab";
@@ -96,6 +95,7 @@ export default function ModifyPurchase(props:{
 
       useEffect(()=>{
         getPurchase(props.purchaseNo);
+           // eslint-disable-next-line react-hooks/exhaustive-deps 
       }, [])
 
     const handleChangeFormValue = (e: any) => {
