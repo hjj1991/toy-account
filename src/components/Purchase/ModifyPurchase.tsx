@@ -181,12 +181,16 @@ export default function ModifyPurchase(props:{
         }
         purchaseModifyForm.purchaseDate = purchaseDate;
         purchaseModifyForm.purchaseNo = props.purchaseNo;
+        purchaseModifyForm.price = String(purchaseModifyForm.price);
 
+        /* 수입의 경우 카테고리를 초기화 해준다. */
+        if(purchaseModifyForm.purchaseType === "INCOME"){
+            purchaseModifyForm.categoryNo = 0;
+        }
         
         
         try{
             setLoading(true);
-            console.log(purchaseModifyForm);
             const res = await service.patchPurchaseModify(purchaseModifyForm);
 
             if (res.data.success) {
@@ -293,7 +297,9 @@ export default function ModifyPurchase(props:{
                     >
                         <MenuItem value={0}>--항목 선택--</MenuItem>
                         {props.categoryList.categoryList.map((category: any)=>(
-                            <MenuItem key={category.categoryNo} value={category.categoryNo}>{category.categoryName}</MenuItem>
+                            <MenuItem key={category.categoryNo} value={category.categoryNo}>
+                                <img style={{ width: '20px', marginRight: '10px' }} alt={category.categoryName} src={category.categoryIcon} />{category.categoryName}
+                            </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -312,7 +318,9 @@ export default function ModifyPurchase(props:{
                     >
                         <MenuItem value={0}>--항목 선택--</MenuItem>
                         {childCategories.map((category: any)=>(
-                            <MenuItem key={category.categoryNo} value={category.categoryNo}>{category.categoryName}</MenuItem>
+                            <MenuItem key={category.categoryNo} value={category.categoryNo}>
+                                <img style={{ width: '20px', marginRight: '10px' }} alt={category.categoryName} src={category.categoryIcon} />{category.categoryName}
+                            </MenuItem>
                         ))}
                     </Select>
                 </FormControl>

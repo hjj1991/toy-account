@@ -316,15 +316,15 @@ export function postPurchaseAdd(purchaseAddForm: PurchaseAddForm) {
 
 
 /* 지출 수정 API */
-export function patchPurchaseModify(purchaseAddForm: PurchaseAddForm) {
-    return authAxios().patch(`/purchase/${purchaseAddForm.purchaseNo}`,{
-        accountBookNo: purchaseAddForm.accountBookNo,
-        cardNo: purchaseAddForm.cardNo === 0? null : purchaseAddForm.cardNo,
-        price: purchaseAddForm.price.replace(/,/gi, ""),
-        purchaseDate: purchaseAddForm.purchaseDate,
-        purchaseType: purchaseAddForm.purchaseType,
-        reason: purchaseAddForm.reason,
-        categoryNo: purchaseAddForm.categoryNo === 0? null: purchaseAddForm.categoryNo
+export function patchPurchaseModify(purchaseModifyForm: PurchaseAddForm) {
+    return authAxios().patch(`/purchase/${purchaseModifyForm.purchaseNo}`,{
+        accountBookNo: purchaseModifyForm.accountBookNo,
+        cardNo: purchaseModifyForm.cardNo === 0? null : purchaseModifyForm.cardNo,
+        price: purchaseModifyForm.price.replace(/,/gi, ""),
+        purchaseDate: purchaseModifyForm.purchaseDate,
+        purchaseType: purchaseModifyForm.purchaseType,
+        reason: purchaseModifyForm.reason,
+        categoryNo: purchaseModifyForm.categoryNo === 0? null: purchaseModifyForm.categoryNo
     });
 }
 /* 지출 삭제 API */
