@@ -257,7 +257,9 @@ export function AddPurchase(props:{
                     >
                         <MenuItem value={0}>--항목 선택--</MenuItem>
                         {props.categoryList.categoryList.map((category: any)=>(
-                            <MenuItem key={category.categoryNo} value={category.categoryNo}>{category.categoryName}</MenuItem>
+                            <MenuItem key={category.categoryNo} value={category.categoryNo}>
+                                <img style={{ width: '20px', marginRight: '10px' }} alt={category.categoryName} src={category.categoryIcon} />{category.categoryName}
+                                </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -276,7 +278,9 @@ export function AddPurchase(props:{
                     >
                         <MenuItem value={0}>--항목 선택--</MenuItem>
                         {childCategories.map((category: any)=>(
-                            <MenuItem key={category.categoryNo} value={category.categoryNo}>{category.categoryName}</MenuItem>
+                            <MenuItem key={category.categoryNo} value={category.categoryNo}>
+                                <img style={{ width: '20px', marginRight: '10px' }} alt={category.categoryName} src={category.categoryIcon} />{category.categoryName}
+                                </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
