@@ -163,29 +163,17 @@ export default function Body(props: {
     async function getPurchaseList() {
         try {
             setLoading(true);
-            let res;
-            if (props.accountBookNo !== undefined) {
-                res = await service.getPurchaseList(startDate, endDate, props.accountBookNo);
-            } else {
-                res = await service.getPurchaseList(startDate, endDate);
-            }
-
+            const res = await service.getPurchaseList(startDate, endDate, props.accountBookNo);
             if (res.status === 200 && res.data.success) {
-                if(props.setAccountBookName !== undefined){
-                    props.setAccountBookName(res.data.response.accountBookName);
-                }
-                
-                setCardList(res.data.response.cardList);
-                setCategoryList(res.data.response.categoryList);
-                setPurchaseList(res.data.response.purchaseList);
+                setPurchaseList(res.data.response.content);
                 setSerachForm({
                     categoryName: "ALL",
                     searchValue: ""
                 });
                 setNavSelect(0);
-                setfilterPurchaseList(res.data.response.purchaseList);
+                setfilterPurchaseList(res.data.response.content);
                 let totalValue = 0;
-                for (let purchase of res.data.response.purchaseList) {
+                for (let purchase of res.data.response.content) {
 
                     if (purchase.purchaseType === "OUTGOING") {
                         totalValue -= purchase.price;
@@ -308,13 +296,37 @@ export default function Body(props: {
     }
 
 
+    const getAccountBookDetail = async () => {
+        try {
+            setLoading(true);
+            const res = await service.getAccountBookDetail(props.accountBookNo!);
+
+            if (res.status === 200 && res.data.success) {
+                if(props.setAccountBookName !== undefined){
+                    props.setAccountBookName(res.data.response.accountBookName);
+                }
+                
+                setCardList(res.data.response.cardList);
+                setCategoryList(res.data.response.categoryList);
+
+            }
+        } catch (err) {
+            alert("서버 오류입니다." + err);
+        } finally {
+            setLoading(false);
+        }
+    }
 
 
+    React.useEffect(() => {
+        getAccountBookDetail();
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
+    },[]);
 
     React.useEffect(() => {
         getPurchaseList();
         // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, [reloadPurchase, startDate, endDate])
+    }, [reloadPurchase, startDate, endDate]);
 
     React.useEffect(() => {
         searchChangeResult();

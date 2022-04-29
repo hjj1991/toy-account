@@ -217,6 +217,11 @@ export function getAccountBookList(startDate:any, endDate:any) {
     });
 }
 
+/* 가계부 상세조회 API */
+export function getAccountBookDetail(accountBookNo:number){
+    return authAxios().get(`/account-book/${accountBookNo}`);
+}
+
 /* 카테고리 생성 API */
 export function postCategoryAdd(categoryAddForm: CategoryForm){
     return authAxios().post('/category', categoryAddForm);
