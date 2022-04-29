@@ -6,6 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import { CardHeader, Chip, FormControl, Grid, InputLabel, MenuItem, OutlinedInput, Select, Tab, Tabs, TextField, Typography } from '@mui/material';
 
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import * as service from '../../services/axiosList';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snackBarState, } from '../../recoil/recoil';
@@ -26,6 +27,7 @@ import allMoney from '../../assets/img/all-money.png';
 import { AddPurchase } from './AddPurchase';
 import { getInputDayLabel } from '../common/CommonFunction';
 import ModifyPurchase from './ModifyPurchase';
+import { FlareSharp } from '@mui/icons-material';
 
 
 const ITEM_HEIGHT = 48;
@@ -46,27 +48,34 @@ export default function Body(props: {
     setAccountBookName?: Function,
     accountBookNo?: number
 }) {
-    const [category, setCategory] = React.useState<string[]>([]);
-    const [subCategory, setSubCategory] = React.useState<string[]>([]);
-    const [subCategoryList, setSubCategoryList] = React.useState([]);
-    const [navSelect, setNavSelect] = React.useState<number>(0);
-    const [reloadPurchase, setReloadPurchase] = React.useState<boolean>(false);
-    const [purchaseList, setPurchaseList] = React.useState<any>([]);
-    const [totalPrice, setTotalPrice] = React.useState<any>([]);
-    const [filterPurchaseList, setfilterPurchaseList] = React.useState<any>([]);
-    const [cardList, setCardList] = React.useState<any>([]);
-    const [categoryList, setCategoryList] = React.useState<any>([]);
+    const [categoryCollection, setCategoryCollection] = React.useState<any>({
+        category: [],
+        subCategory: [],
+        subCategoryList: []
+    })
+    const [purchaseCollection, setPurchaseCollection] = React.useState<any>({
+        readMore: false,
+        purchaseList: [],
+        filterPurchaseList: [],
+        reloadPurchase: false,
+        navSelect: 0,
+        totalPrice: 0,
+        searchForm: {
+            categoryName: "ALL",
+            searchValue: ""
+        }
+
+    })
+    const [accountInfo, setAccountInfo] = React.useState<any>({
+        cardList: [],
+        categoryList: []
+    })
     const [selectedIndx, setSelectedIndx] = React.useState<number>(0);
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const [isOpenDeleteModal, setIsOpenDeleteModal] = React.useState<boolean>(false);
     const [isOpenModifyModal, setIsOpenModifyModal] = React.useState<boolean>(false);
     const authenticated = useRecoilValue<AuthenticatedInfo>(authenticatedState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
-
-    const [searchForm, setSerachForm] = React.useState<any>({
-        categoryName: "ALL",
-        searchValue: ""
-    })
 
     const [startDate, setStartDate] = React.useState<string | null>(
         moment().format("yyyy-MM-") + "01"
@@ -76,25 +85,33 @@ export default function Body(props: {
     );
 
     const reloadPurchaseListFunction = () => {
-        setReloadPurchase(!reloadPurchase);
+        setPurchaseCollection({
+            ...purchaseCollection,
+            reloadPurchase: !purchaseCollection.reloadPurchase
+        });
     }
 
     const handleChangeNav = (event: React.SyntheticEvent, navSelectValue: number) => {
-        setNavSelect(navSelectValue);
+        setPurchaseCollection({
+            ...purchaseCollection,
+            navSelect: navSelectValue
+        });
     };
 
     const handleSeachCategoryDelete = (e: any, value: any, type: string) => {
 
         if (type === 'subCategory') {
-            setSubCategory(subCategory.filter((item) => item !== value));
+            setCategoryCollection({
+                ...categoryCollection,
+                subCategory: categoryCollection.subCategory.filter((item:any) => item !== value)
+            });
         }
         if (type === 'category') {
-            setCategory(category.filter((item) => item !== value));
 
-            let totalCategory = category.filter((item) => item !== value);
+            let totalCategory = categoryCollection.category.filter((item:any) => item !== value);
             let childCategoryList: any = [];
             for (let selectName of totalCategory) {
-                for (let tempCategory of categoryList.categoryList) {
+                for (let tempCategory of accountInfo.categoryList.categoryList) {
                     if (tempCategory.categoryName === selectName && tempCategory.childCategoryList.length > 0) {
                         childCategoryList.push(...tempCategory.childCategoryList);
                     }
@@ -104,15 +121,18 @@ export default function Body(props: {
             let selectedSubCategory = [];
             /* 현재 선택된 부모 카테고리에 현재 선택된 세부 카테고리가 있을 경우 넣어주고 없는 경우 초기화를 해줘야하기 때문 */
             for (let tempCategory of childCategoryList) {
-                for (let selectSubCategory of subCategory) {
+                for (let selectSubCategory of categoryCollection.subCategory) {
                     if (selectSubCategory === tempCategory.categoryName) {
                         selectedSubCategory.push(selectSubCategory);
                     }
                 }
             }
 
-            setSubCategory(selectedSubCategory);
-            setSubCategoryList(childCategoryList);
+            setCategoryCollection({
+                category: categoryCollection.category.filter((item:any) => item !== value),
+                subCategory: selectedSubCategory,
+                subCategoryList: childCategoryList
+            });
         }
 
 
@@ -121,25 +141,26 @@ export default function Body(props: {
 
     const searchChangeResult = () => {
 
-        let tempPurchaseList = purchaseList;
+        let tempPurchaseList = purchaseCollection.purchaseList;
         /* 들어온 돈의 필터 */
-        if (navSelect === 1) {
+        if (purchaseCollection.navSelect === 1) {
             tempPurchaseList = tempPurchaseList.filter((purchase: any) => { return purchase.purchaseType === "INCOME" });
         }
         /* 나간돈의 필터 */
-        if (navSelect === 2) {
+        if (purchaseCollection.navSelect === 2) {
             tempPurchaseList = tempPurchaseList.filter((purchase: any) => { return purchase.purchaseType === "OUTGOING" });
         }
 
         /* 지출항목 필터 */
-        if (navSelect === 2 && category.length > 0) {
-            let totalCategory = [...category, ...subCategory];
+        if (purchaseCollection.navSelect === 2 && categoryCollection.category.length > 0) {
+            let totalCategory = [...categoryCollection.category, ...categoryCollection.subCategory];
             tempPurchaseList = tempPurchaseList.filter((purchase: any) => {
                 /* 카테고리가 설정되어 있는경우 */
                 if (purchase.categoryInfo != null) {
                     /* 세부 카테고리가 설정된 경우 */
-                    if(subCategory.length !== 0){
-                        return subCategory.some(x => x === purchase.categoryInfo.categoryName);
+
+                    if(categoryCollection.subCategory.length !== 0){
+                        return categoryCollection.subCategory.some((x:any) => x === purchase.categoryInfo.categoryName);
                     }else{
                         return totalCategory.some(x => (x === purchase.categoryInfo.categoryName || x === purchase.categoryInfo.parentCategoryName));
                     }
@@ -150,12 +171,15 @@ export default function Body(props: {
 
         }
 
-        if (searchForm.searchValue !== "") {
-            tempPurchaseList = tempPurchaseList.filter((purchase: any) => { return purchase.reason.includes(searchForm.searchValue) });
+        if (purchaseCollection.searchForm.searchValue !== "") {
+            tempPurchaseList = tempPurchaseList.filter((purchase: any) => { return purchase.reason.includes(purchaseCollection.searchForm.searchValue) });
         }
 
 
-        setfilterPurchaseList(tempPurchaseList);
+        setPurchaseCollection({
+            ...purchaseCollection,
+            filterPurchaseList: tempPurchaseList
+        });
 
     }
 
@@ -165,13 +189,7 @@ export default function Body(props: {
             setLoading(true);
             const res = await service.getPurchaseList(startDate, endDate, props.accountBookNo);
             if (res.status === 200 && res.data.success) {
-                setPurchaseList(res.data.response.content);
-                setSerachForm({
-                    categoryName: "ALL",
-                    searchValue: ""
-                });
-                setNavSelect(0);
-                setfilterPurchaseList(res.data.response.content);
+
                 let totalValue = 0;
                 for (let purchase of res.data.response.content) {
 
@@ -183,7 +201,19 @@ export default function Body(props: {
                     }
                 }
 
-                setTotalPrice(totalValue);
+                setPurchaseCollection({
+                    readMore: !res.data.response.last,
+                    purchaseList: res.data.response.content,
+                    filterPurchaseList: res.data.response.content,
+                    navSelect: 0,
+                    totalPrice: totalValue,
+                    searchForm: {
+                        categoryName: "ALL",
+                        searchValue: ""
+                    }
+                });
+            
+
 
             }
         } catch (err) {
@@ -201,35 +231,42 @@ export default function Body(props: {
     const handleChangeSearch = (e: any) => {
         if (e.target.name === "categorySelect") {
             const value = e.target.value;
-            setCategory(
-                typeof value === 'string' ? value.split(',') : value,
-            );
 
             let totalCategory = typeof value === 'string' ? value.split(',') : value;
             let childCategoryList: any = [];
             for (let selectName of totalCategory) {
-                for (let tempCategory of categoryList.categoryList) {
+                for (let tempCategory of accountInfo.categoryList.categoryList) {
                     if (tempCategory.categoryName === selectName && tempCategory.childCategoryList.length > 0) {
                         childCategoryList.push(...tempCategory.childCategoryList);
                     }
                 }
             }
-            setSubCategoryList(childCategoryList);
+
+            setCategoryCollection({
+                ...categoryCollection,
+                category: typeof value === 'string' ? value.split(',') : value,
+                subCategoryList: childCategoryList
+            });
         }
 
         if (e.target.name === "subCategorySelect") {
             const value = e.target.value;
-            setSubCategory(
-                typeof value === 'string' ? value.split(',') : value,
-            );
+
+            setCategoryCollection({
+                ...categoryCollection,
+                subCategory: typeof value === 'string' ? value.split(',') : value
+            });
 
         }
 
         if (e.target.name === "searchValue") {
-            setSerachForm({
-                ...searchForm,
-                searchValue: e.target.value
-            })
+            setPurchaseCollection({
+                ...purchaseCollection,
+                searchForm:{
+                    ...purchaseCollection.searchForm,
+                    searchValue: e.target.value
+                }
+            });
         }
     }
 
@@ -298,7 +335,7 @@ export default function Body(props: {
 
     const getAccountBookDetail = async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             const res = await service.getAccountBookDetail(props.accountBookNo!);
 
             if (res.status === 200 && res.data.success) {
@@ -306,14 +343,16 @@ export default function Body(props: {
                     props.setAccountBookName(res.data.response.accountBookName);
                 }
                 
-                setCardList(res.data.response.cardList);
-                setCategoryList(res.data.response.categoryList);
+                setAccountInfo({
+                    cardList: res.data.response.cardList,
+                    categoryList: res.data.response.categoryList
+                });
 
             }
         } catch (err) {
             alert("서버 오류입니다." + err);
         } finally {
-            setLoading(false);
+            // setLoading(false);
         }
     }
 
@@ -326,12 +365,12 @@ export default function Body(props: {
     React.useEffect(() => {
         getPurchaseList();
         // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, [reloadPurchase, startDate, endDate]);
+    }, [purchaseCollection.reloadPurchase, startDate, endDate]);
 
     React.useEffect(() => {
         searchChangeResult();
         // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, [navSelect, searchForm, category, subCategory]);
+    }, [purchaseCollection.purchaseList, purchaseCollection.navSelect, purchaseCollection.searchForm, categoryCollection.category, categoryCollection.subCategory]);
 
 
     return (
@@ -342,8 +381,8 @@ export default function Body(props: {
             reloadPurchaseListFunction={reloadPurchaseListFunction}
             handleCloseModifyPurchase={handleCloseModifyPurchase}
             purchaseNo={selectedIndx}
-            categoryList={categoryList}
-            cardList={cardList} />}
+            categoryList={accountInfo.categoryList}
+            cardList={accountInfo.cardList} />}
         <Grid container spacing={2}>
             <Grid item xs={12}>
                 <Card
@@ -393,14 +432,14 @@ export default function Body(props: {
                         <Typography gutterBottom variant="h5" component="div" style={{ fontWeight: "bold", textAlign: "center" }}>
                             안녕하세요. {authenticated.data?.nickName}님!
                         </Typography>
-                        <Typography gutterBottom component="div" style={{ fontWeight: "bold", textAlign: "center", color: totalPrice < 0 ? "red" : "#3CB371" }}>
-                            총 소비 내역: {totalPrice.toLocaleString()}원
+                        <Typography gutterBottom component="div" style={{ fontWeight: "bold", textAlign: "center", color: purchaseCollection.totalPrice < 0 ? "red" : "#3CB371" }}>
+                            총 소비 내역: {purchaseCollection.totalPrice.toLocaleString()}원
                         </Typography>
                         <Typography variant="body2" color="text.secondary" style={{ textAlign: "center" }}>
                             지난 거래내역을 확인하세요.
                         </Typography>
                         <Grid container textAlign={'center'}>
-                            {navSelect === 2 ?
+                            {purchaseCollection.navSelect === 2 ?
                                 <>
                                     <Grid item xs={12} >
                                         <FormControl
@@ -417,7 +456,7 @@ export default function Body(props: {
                                                 id="select-multiple-category"
                                                 name="categorySelect"
                                                 multiple
-                                                value={category}
+                                                value={categoryCollection.category}
                                                 onChange={handleChangeSearch}
 
                                                 input={<OutlinedInput id="select-multiple-category" label="Chip" />}
@@ -442,7 +481,7 @@ export default function Body(props: {
                                                 <MenuItem disabled value="">
                                                     <span>전체</span>
                                                 </MenuItem>
-                                                {categoryList.categoryList.map((category: any) => (
+                                                {accountInfo.categoryList.categoryList.map((category: any) => (
                                                     <MenuItem
                                                         key={category.categoryNo} value={category.categoryName}
                                                     >
@@ -468,7 +507,7 @@ export default function Body(props: {
                                                 id="select-multiple-subcategory"
                                                 name="subCategorySelect"
                                                 multiple
-                                                value={subCategory}
+                                                value={categoryCollection.subCategory}
                                                 onChange={handleChangeSearch}
 
                                                 input={<OutlinedInput id="select-multiple-subcategory" label="Chip" />}
@@ -493,7 +532,7 @@ export default function Body(props: {
                                                 <MenuItem disabled value="">
                                                     <span>전체</span>
                                                 </MenuItem>
-                                                {subCategoryList.map((tempCategory: any) => (
+                                                {categoryCollection.subCategoryList.map((tempCategory: any) => (
                                                     <MenuItem
                                                         key={tempCategory.categoryNo} value={tempCategory.categoryName}
                                                     >
@@ -513,13 +552,13 @@ export default function Body(props: {
                                         }, mt: 1
                                     }}
                                 >
-                                    <TextField id="demo-helper-text-misaligned-no-helper" name="searchValue" label="검색어" onChange={handleChangeSearch} value={searchForm.searchValue} />
+                                    <TextField id="demo-helper-text-misaligned-no-helper" name="searchValue" label="검색어" onChange={handleChangeSearch} value={purchaseCollection.searchForm.searchValue} />
                                 </FormControl>
                             </Grid>
                         </Grid>
                     </CardContent>
                 </Card>
-                <Tabs value={navSelect} onChange={handleChangeNav} aria-label="icon label tabs example">
+                <Tabs value={purchaseCollection.navSelect} onChange={handleChangeNav} aria-label="icon label tabs example">
                     <Tab className="navSelect" icon={<img src={allMoney} alt={"전체"} width={38} />} label="전체" />
                     <Tab className="navSelect" icon={<img src={inMoney} alt={"수입"} width={38} />} label="들어온 돈" />
                     <Tab className="navSelect" icon={<img src={outMoney} alt={"지출"} width={38} />} label="나간돈" />
@@ -528,8 +567,12 @@ export default function Body(props: {
                     sx={{
                         p: 1,
                         bgcolor: 'white',
-                        display: 'grid',
                         border: 1,
+                    }}>
+                <Box
+                    sx={{
+                        bgcolor: 'white',
+                        display: 'grid',
                         gridTemplateColumns: {
                             xs: 'repeat(1, 1fr)',
                             sm: 'repeat(1, 1fr)',
@@ -538,7 +581,7 @@ export default function Body(props: {
                         gap: 1,
                     }}
                 >
-                    {filterPurchaseList.map((elevation: any) => (
+                    {purchaseCollection.filterPurchaseList.map((elevation: any) => (
                         <Grid container key={elevation.purchaseNo} spacing={0}>
                             <Grid className='purchaseBox' item xs={12}>
                                 <Grid container spacing={0}>
@@ -589,6 +632,13 @@ export default function Body(props: {
 
                         </Grid>
                     ))}
+                    </Box>
+                    {purchaseCollection.readMore && <Button fullWidth size='large' variant="outlined" color='success'
+                    sx={{
+                        mt:1
+                    }}>+ 더 보기</Button>
+                    }
+                    
                 </Box>
 
             </Grid>
@@ -596,8 +646,8 @@ export default function Body(props: {
             <AddPurchase
                 accountBookNo={props.accountBookNo!}
                 reloadPurchaseListFunction={reloadPurchaseListFunction}
-                categoryList={categoryList}
-                cardList={cardList}
+                categoryList={accountInfo.categoryList}
+                cardList={accountInfo.cardList}
             />
             <CommonModal
                 showModal={isOpenDeleteModal}
