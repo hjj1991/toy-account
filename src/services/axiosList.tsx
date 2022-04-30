@@ -291,12 +291,13 @@ export function deleteCardDelete( cardNo: number) {
 }
 
 /* 지출 내역들 불러오기 */
-export function getPurchaseList(startDate: any, endDate: any, accountBookNo?: number) {
+export function getPurchaseList(startDate: any, endDate: any, accountBookNo?: number, page?: number) {
     return authAxios().get('/purchase',{
         params:{
             startDate: startDate,
             endDate: endDate,
-            accountBookNo: accountBookNo
+            accountBookNo: accountBookNo,
+            page: page
         }
     });
 }

@@ -27,7 +27,6 @@ import allMoney from '../../assets/img/all-money.png';
 import { AddPurchase } from './AddPurchase';
 import { getInputDayLabel } from '../common/CommonFunction';
 import ModifyPurchase from './ModifyPurchase';
-import { FlareSharp } from '@mui/icons-material';
 
 
 const ITEM_HEIGHT = 48;
@@ -55,6 +54,7 @@ export default function Body(props: {
     })
     const [purchaseCollection, setPurchaseCollection] = React.useState<any>({
         readMore: false,
+        currentPage: 0,
         purchaseList: [],
         filterPurchaseList: [],
         reloadPurchase: false,
@@ -134,9 +134,11 @@ export default function Body(props: {
                 subCategoryList: childCategoryList
             });
         }
+    }
 
-
-
+    /* 소비목록 더보기 클릭 */
+    const handleClickReadMore = () => {
+        getPurchaseList(purchaseCollection.currentPage+1);
     }
 
     const searchChangeResult = () => {
@@ -184,10 +186,10 @@ export default function Body(props: {
     }
 
 
-    async function getPurchaseList() {
+    async function getPurchaseList(page:number) {
         try {
             setLoading(true);
-            const res = await service.getPurchaseList(startDate, endDate, props.accountBookNo);
+            const res = await service.getPurchaseList(startDate, endDate, props.accountBookNo, page);
             if (res.status === 200 && res.data.success) {
 
                 let totalValue = 0;
@@ -201,20 +203,34 @@ export default function Body(props: {
                     }
                 }
 
-                setPurchaseCollection({
-                    readMore: !res.data.response.last,
-                    purchaseList: res.data.response.content,
-                    filterPurchaseList: res.data.response.content,
-                    navSelect: 0,
-                    totalPrice: totalValue,
-                    searchForm: {
-                        categoryName: "ALL",
-                        searchValue: ""
-                    }
-                });
-            
-
-
+                /* 처음 로딩 첫페이지 인 경우 */
+                if(!purchaseCollection.readMore && purchaseCollection.purchaseList.length === 0){
+                    setPurchaseCollection({
+                        readMore: !res.data.response.last,
+                        purchaseList: res.data.response.content,
+                        filterPurchaseList: res.data.response.content,
+                        currentPage: res.data.response.number,
+                        navSelect: 0,
+                        totalPrice: totalValue,
+                        searchForm: {
+                            categoryName: "ALL",
+                            searchValue: ""
+                        }
+                    });
+                }else{
+                    setPurchaseCollection({
+                        readMore: !res.data.response.last,
+                        purchaseList: [...purchaseCollection.purchaseList, ...res.data.response.content],
+                        currentPage: page,
+                        filterPurchaseList: [...purchaseCollection.purchaseList, ...res.data.response.content],
+                        navSelect: 0,
+                        totalPrice: totalValue,
+                        searchForm: {
+                            categoryName: "ALL",
+                            searchValue: ""
+                        }
+                    });
+                }
             }
         } catch (err) {
             alert("서버 오류입니다." + err);
@@ -316,7 +332,7 @@ export default function Body(props: {
         } finally {
             setLoading(false);
         }
-        getPurchaseList();
+        getPurchaseList(purchaseCollection.currentPage);
     }
 
     const handleClickRemovePurchaseCancel = () => {
@@ -363,7 +379,7 @@ export default function Body(props: {
     },[]);
 
     React.useEffect(() => {
-        getPurchaseList();
+        getPurchaseList(purchaseCollection.currentPage);
         // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [purchaseCollection.reloadPurchase, startDate, endDate]);
 
@@ -636,7 +652,8 @@ export default function Body(props: {
                     {purchaseCollection.readMore && <Button fullWidth size='large' variant="outlined" color='success'
                     sx={{
                         mt:1
-                    }}>+ 더 보기</Button>
+                    }}
+                    onClick={handleClickReadMore}>+ 더 보기</Button>
                     }
                     
                 </Box>

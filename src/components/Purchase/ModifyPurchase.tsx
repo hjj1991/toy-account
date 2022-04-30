@@ -36,8 +36,10 @@ export default function ModifyPurchase(props:{
         moment().format("yyyy-MM-DD")
       );
     const [purchaseForm, setPurchaseForm] = useState<service.PurchaseAddForm>(initPurchaseForm);
-    const [selecetedSubCategoryNo, setSelectedSubCategoryNo] = useState<number>(0);
-    const [childCategories, setChildCategories] = useState([]);
+    const [categoryCollection, setCategoryCollection] = useState<any>({
+        selecetedSubCategoryNo: 0,
+        childCategories: []
+    })
 
     const inputPriceFormat = (str:any) => {
         const comma = (str:any) => {
@@ -57,22 +59,32 @@ export default function ModifyPurchase(props:{
 
             const res = await service.getPurchase(purchaseNo);
             if (res.status === 200 && res.data.success) {
+                let selectedSubCategoryNo = 0;
+                let selectedCategoryNo = 0;
                 /* 세부 카테고리가 설정되어 있으면 셋팅해준다 */
-                if(res.data.response.categoryNo !== null){
-                    setSelectedSubCategoryNo(res.data.response.categoryNo);
-                }else{
-                    setSelectedSubCategoryNo(0);
+                if(res.data.response.categoryNo !== null && res.data.response.parentCategoryNo !== null){
+                    selectedSubCategoryNo = res.data.response.categoryNo;
+                    selectedCategoryNo = res.data.response.categoryNo;
+                }else if(res.data.response.categoryNo !== null && res.data.response.parentCategoryNo === null){
+                    selectedCategoryNo = res.data.response.categoryNo;
                 }
+
                 /* 세부카테고리목록을 셋팅해준다 */
                 const categoryInfo = props.categoryList.categoryList.find((value:any) => value.categoryNo === res.data.response.parentCategoryNo);
                 if(categoryInfo !== undefined){
-                    setChildCategories(categoryInfo.childCategoryList);
+                    setCategoryCollection({
+                        selecetedSubCategoryNo: selectedSubCategoryNo,
+                        childCategories: categoryInfo.childCategoryList
+                    })
                 }else{
-                    setChildCategories([]);
+                    setCategoryCollection({
+                        selecetedSubCategoryNo: selectedSubCategoryNo,
+                        childCategories: []
+                    })
                 }
                 setPurchaseForm({
                     accountBookNo: res.data.response.accountBookNo,
-                    categoryNo: res.data.response.parentCategoryNo === null? 0 : res.data.response.parentCategoryNo,
+                    categoryNo: selectedCategoryNo,
                     price: res.data.response.price,
                     purchaseDate: res.data.response.purchaseDate,
                     purchaseType: res.data.response.purchaseType,
@@ -125,20 +137,22 @@ export default function ModifyPurchase(props:{
         }
         if(e.target.name === "categorySelect"){
             const categoryInfo = props.categoryList.categoryList.find((value:any) => value.categoryNo === e.target.value);
-            if(categoryInfo !== undefined){
-                setChildCategories(categoryInfo.childCategoryList);
-            }else{
-                setChildCategories([]);
-            }
+
+            setCategoryCollection({
+                selectedSubCategoryNo: 0,
+                childCategories: categoryInfo !== undefined? categoryInfo.childCategoryList: []
+            })
 
             setPurchaseForm({
                 ...purchaseForm,
                 categoryNo: e.target.value
             })
-            setSelectedSubCategoryNo(0);
         }
         if(e.target.name === "subCategorySelect"){
-            setSelectedSubCategoryNo(e.target.value);
+            setCategoryCollection({
+                ...categoryCollection,
+                selectedSubCategoryNo: e.target.value
+            });
         }
         
     }
@@ -176,8 +190,8 @@ export default function ModifyPurchase(props:{
 
         let purchaseModifyForm: service.PurchaseAddForm = _.cloneDeep(purchaseForm);
         /* 세부 카테고리가 설정되었을 경우 세부카테고리를 넣어준다 */
-        if(selecetedSubCategoryNo !== 0){
-            purchaseModifyForm.categoryNo = selecetedSubCategoryNo;
+        if(categoryCollection.selecetedSubCategoryNo !== 0){
+            purchaseModifyForm.categoryNo = categoryCollection.selecetedSubCategoryNo;
         }
         purchaseModifyForm.purchaseDate = purchaseDate;
         purchaseModifyForm.purchaseNo = props.purchaseNo;
@@ -195,7 +209,10 @@ export default function ModifyPurchase(props:{
 
             if (res.data.success) {
                 setPurchaseForm(initPurchaseForm);
-                setSelectedSubCategoryNo(0);
+                setCategoryCollection({
+                    ...categoryCollection,
+                    selectedSubCategoryNo: 0
+                });
                 setSnackBarInfo({
                     ...snackBarInfo,
                     message: "수정 되었습니다.",
@@ -312,12 +329,12 @@ export default function ModifyPurchase(props:{
                         name="subCategorySelect"
                         labelId="demo-simple-select-required-label"
                         id="demo-simple-select-required"
-                        value={selecetedSubCategoryNo}
+                        value={categoryCollection.selecetedSubCategoryNo}
                         label="항목"
                         onChange={handleChangeFormValue}
                     >
                         <MenuItem value={0}>--항목 선택--</MenuItem>
-                        {childCategories.map((category: any)=>(
+                        {categoryCollection.childCategories.map((category: any)=>(
                             <MenuItem key={category.categoryNo} value={category.categoryNo}>
                                 <img style={{ width: '20px', marginRight: '10px' }} alt={category.categoryName} src={category.categoryIcon} />{category.categoryName}
                             </MenuItem>
