@@ -32,9 +32,6 @@ export default function ModifyPurchase(props:{
         categoryNo: 0,
         cardNo: 0
     };
-    const [purchaseDate, setPurchaseDate] = useState<string>(
-        moment().format("yyyy-MM-DD")
-      );
     const [purchaseForm, setPurchaseForm] = useState<service.PurchaseAddForm>(initPurchaseForm);
     const [categoryCollection, setCategoryCollection] = useState<any>({
         selectedSubCategoryNo: 0,
@@ -158,7 +155,10 @@ export default function ModifyPurchase(props:{
     }
 
     const handleChangeDate = (newValue: string | null) => {
-            setPurchaseDate(moment(newValue, "YYYY-MM-DD").format("YYYY-MM-DD"));
+        setPurchaseForm({
+            ...purchaseForm,
+            purchaseDate: moment(newValue, "YYYY-MM-DD").format("YYYY-MM-DD")
+        })
 
     };
 
@@ -193,7 +193,6 @@ export default function ModifyPurchase(props:{
         if(categoryCollection.selectedSubCategoryNo !== 0){
             purchaseModifyForm.categoryNo = categoryCollection.selectedSubCategoryNo;
         }
-        purchaseModifyForm.purchaseDate = purchaseDate;
         purchaseModifyForm.purchaseNo = props.purchaseNo;
         purchaseModifyForm.price = String(purchaseModifyForm.price);
 
@@ -271,7 +270,7 @@ export default function ModifyPurchase(props:{
                     <DesktopDatePicker
                         label={purchaseForm.purchaseType === "OUTGOING"? "지출 일자": "수입 일자"}
                         inputFormat="yyyy-MM-DD"
-                        value={purchaseDate}
+                        value={purchaseForm.purchaseDate}
                         mask={"____-__-__"}
                         onChange={(value) => {handleChangeDate(value)}}
                         renderInput={(params) => <TextField style={{margin: "10px"}} {...params} type="string" />}
