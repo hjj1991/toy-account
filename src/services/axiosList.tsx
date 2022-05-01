@@ -218,6 +218,11 @@ export function getAccountBookList(startDate:any, endDate:any) {
     });
 }
 
+/* 가계부 상세조회 API */
+export function getAccountBookDetail(accountBookNo:number){
+    return authAxios().get(`/account-book/${accountBookNo}`);
+}
+
 /* 카테고리 생성 API */
 export function postCategoryAdd(categoryAddForm: CategoryForm){
     return authAxios().post('/category', categoryAddForm);
@@ -286,12 +291,13 @@ export function deleteCardDelete( cardNo: number) {
 }
 
 /* 지출 내역들 불러오기 */
-export function getPurchaseList(startDate: any, endDate: any, accountBookNo?: number) {
+export function getPurchaseList(startDate: any, endDate: any, accountBookNo?: number, page?: number) {
     return authAxios().get('/purchase',{
         params:{
             startDate: startDate,
             endDate: endDate,
-            accountBookNo: accountBookNo
+            accountBookNo: accountBookNo,
+            page: page
         }
     });
 }
