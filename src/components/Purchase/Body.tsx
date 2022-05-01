@@ -27,6 +27,7 @@ import allMoney from '../../assets/img/all-money.png';
 import { AddPurchase } from './AddPurchase';
 import { getInputDayLabel } from '../common/CommonFunction';
 import ModifyPurchase from './ModifyPurchase';
+import _ from "lodash";
 
 
 const ITEM_HEIGHT = 48;
@@ -158,7 +159,7 @@ export default function Body(props: {
 
     const searchChangeResult = () => {
 
-        let tempPurchaseList = purchaseCollection.purchaseList;
+        let tempPurchaseList = _.cloneDeep(purchaseCollection.purchaseList);
         /* 들어온 돈의 필터 */
         if (purchaseCollection.navSelect === 1) {
             tempPurchaseList = tempPurchaseList.filter((purchase: any) => { return purchase.purchaseType === "INCOME" });
