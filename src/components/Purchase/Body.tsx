@@ -211,7 +211,7 @@ export default function Body(props: {
 
 
                 /* 처음 로딩 첫페이지 인 경우 */
-                if(!purchaseCollection.readMore && purchaseCollection.purchaseList.length === 0){
+                if(page === 0){
                     setPurchaseCollection({
                         readMore: !res.data.response.last,
                         purchaseList: res.data.response.content,
