@@ -386,7 +386,7 @@ export default function Body(props: {
     },[]);
 
     React.useEffect(() => {
-        getPurchaseList(purchaseCollection.currentPage);
+        getPurchaseList(0);
         // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [purchaseCollection.reloadPurchase, startDate, endDate]);
 
