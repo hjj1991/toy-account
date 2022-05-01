@@ -189,7 +189,7 @@ export default function Body(props: {
 
         }
 
-        if (purchaseCollection.searchForm.searchValue !== "") {
+        if (purchaseCollection.searchForm.searchValue.trim() !== "") {
             tempPurchaseList = tempPurchaseList.filter((purchase: any) => { return purchase.reason.includes(purchaseCollection.searchForm.searchValue) });
         }
 
@@ -340,7 +340,7 @@ export default function Body(props: {
         } finally {
             setLoading(false);
         }
-        getPurchaseList(purchaseCollection.currentPage);
+        getPurchaseList(0);
     }
 
     const handleClickRemovePurchaseCancel = () => {
