@@ -37,7 +37,7 @@ export default function ModifyPurchase(props:{
       );
     const [purchaseForm, setPurchaseForm] = useState<service.PurchaseAddForm>(initPurchaseForm);
     const [categoryCollection, setCategoryCollection] = useState<any>({
-        selecetedSubCategoryNo: 0,
+        selectedSubCategoryNo: 0,
         childCategories: []
     })
 
@@ -73,12 +73,12 @@ export default function ModifyPurchase(props:{
                 const categoryInfo = props.categoryList.categoryList.find((value:any) => value.categoryNo === res.data.response.parentCategoryNo);
                 if(categoryInfo !== undefined){
                     setCategoryCollection({
-                        selecetedSubCategoryNo: selectedSubCategoryNo,
+                        selectedSubCategoryNo: selectedSubCategoryNo,
                         childCategories: categoryInfo.childCategoryList
                     })
                 }else{
                     setCategoryCollection({
-                        selecetedSubCategoryNo: selectedSubCategoryNo,
+                        selectedSubCategoryNo: selectedSubCategoryNo,
                         childCategories: []
                     })
                 }
@@ -190,8 +190,8 @@ export default function ModifyPurchase(props:{
 
         let purchaseModifyForm: service.PurchaseAddForm = _.cloneDeep(purchaseForm);
         /* 세부 카테고리가 설정되었을 경우 세부카테고리를 넣어준다 */
-        if(categoryCollection.selecetedSubCategoryNo !== 0){
-            purchaseModifyForm.categoryNo = categoryCollection.selecetedSubCategoryNo;
+        if(categoryCollection.selectedSubCategoryNo !== 0){
+            purchaseModifyForm.categoryNo = categoryCollection.selectedSubCategoryNo;
         }
         purchaseModifyForm.purchaseDate = purchaseDate;
         purchaseModifyForm.purchaseNo = props.purchaseNo;
@@ -202,7 +202,7 @@ export default function ModifyPurchase(props:{
             purchaseModifyForm.categoryNo = 0;
         }
         
-        
+
         try{
             setLoading(true);
             const res = await service.patchPurchaseModify(purchaseModifyForm);
@@ -329,7 +329,7 @@ export default function ModifyPurchase(props:{
                         name="subCategorySelect"
                         labelId="demo-simple-select-required-label"
                         id="demo-simple-select-required"
-                        value={categoryCollection.selecetedSubCategoryNo}
+                        value={categoryCollection.selectedSubCategoryNo}
                         label="항목"
                         onChange={handleChangeFormValue}
                     >
@@ -374,8 +374,7 @@ export default function ModifyPurchase(props:{
         </DialogContent>
         <DialogActions>
             <Button autoFocus type="submit">확인</Button>
-            <Button onClick={() => {  
-                setPurchaseForm(initPurchaseForm); }}>
+            <Button onClick={props.handleCloseModifyPurchase}>
                 취소
             </Button>
         </DialogActions>

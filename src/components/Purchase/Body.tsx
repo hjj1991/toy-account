@@ -40,6 +40,21 @@ const MenuProps = {
     },
 };
 
+function getTotalPrice(purchaseList:any):number{
+    let totalValue = 0;
+    for (let purchase of purchaseList) {
+
+        if (purchase.purchaseType === "OUTGOING") {
+            totalValue -= purchase.price;
+        }
+        if (purchase.purchaseType === "INCOME") {
+            totalValue += purchase.price;
+        }
+    }
+
+    return totalValue;
+}
+
 
 
 
@@ -180,7 +195,8 @@ export default function Body(props: {
 
         setPurchaseCollection({
             ...purchaseCollection,
-            filterPurchaseList: tempPurchaseList
+            filterPurchaseList: tempPurchaseList,
+            totalPrice: getTotalPrice(tempPurchaseList)
         });
 
     }
@@ -192,16 +208,7 @@ export default function Body(props: {
             const res = await service.getPurchaseList(startDate, endDate, props.accountBookNo, page);
             if (res.status === 200 && res.data.success) {
 
-                let totalValue = 0;
-                for (let purchase of res.data.response.content) {
 
-                    if (purchase.purchaseType === "OUTGOING") {
-                        totalValue -= purchase.price;
-                    }
-                    if (purchase.purchaseType === "INCOME") {
-                        totalValue += purchase.price;
-                    }
-                }
 
                 /* 처음 로딩 첫페이지 인 경우 */
                 if(!purchaseCollection.readMore && purchaseCollection.purchaseList.length === 0){
@@ -211,7 +218,7 @@ export default function Body(props: {
                         filterPurchaseList: res.data.response.content,
                         currentPage: res.data.response.number,
                         navSelect: 0,
-                        totalPrice: totalValue,
+                        totalPrice: getTotalPrice(res.data.response.content),
                         searchForm: {
                             categoryName: "ALL",
                             searchValue: ""
@@ -224,7 +231,7 @@ export default function Body(props: {
                         currentPage: page,
                         filterPurchaseList: [...purchaseCollection.purchaseList, ...res.data.response.content],
                         navSelect: 0,
-                        totalPrice: totalValue,
+                        totalPrice: getTotalPrice([...purchaseCollection.purchaseList, ...res.data.response.content]),
                         searchForm: {
                             categoryName: "ALL",
                             searchValue: ""
@@ -649,7 +656,7 @@ export default function Body(props: {
                         </Grid>
                     ))}
                     </Box>
-                    {purchaseCollection.readMore && <Button fullWidth size='large' variant="outlined" color='success'
+                    {purchaseCollection.readMore && purchaseCollection.searchForm.searchValue.trim() === "" && purchaseCollection.navSelect === 0 && <Button fullWidth size='large' variant="outlined" color='success'
                     sx={{
                         mt:1
                     }}
