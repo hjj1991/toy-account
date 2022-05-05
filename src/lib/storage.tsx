@@ -1,28 +1,28 @@
 // 로컬 스토리지에 JSON 형태로 저장 / 불러오기 / 삭제 헬퍼
 const storage = {
     set: (key: string, object: any) => {
-        if(!sessionStorage) return;
-        sessionStorage[key] = (typeof object) === 'string' ? object : JSON.stringify(object);
+        if(!localStorage) return;
+        localStorage[key] = (typeof object) === 'string' ? object : JSON.stringify(object);
     },
     get: (key: string) => {
-        if(!sessionStorage) return null;
+        if(!localStorage) return null;
 
-        if(!sessionStorage[key]) {
+        if(!localStorage[key]) {
             return null;
         }
 
         try {
-            const parsed = JSON.parse(sessionStorage[key]);
+            const parsed = JSON.parse(localStorage[key]);
             return parsed;
         } catch(e) {
-            return sessionStorage[key];
+            return localStorage[key];
         }
     },
     remove: (key: string) => {
-        if(!sessionStorage) return null;
+        if(!localStorage) return null;
 
-        if(sessionStorage[key]) {
-            sessionStorage.removeItem(key);
+        if(localStorage[key]) {
+            localStorage.removeItem(key);
         }
     }
 };
