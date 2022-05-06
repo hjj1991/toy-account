@@ -9,7 +9,7 @@ export function HeaderMenu(props:any){
     const resetAuthenticated = useResetRecoilState(authenticatedState);
     const open = Boolean(props.anchorEl);
     const handleClickLogout = () => {
-        sessionStorage.clear();
+        localStorage.clear();
         resetAuthenticated();
     }
 
