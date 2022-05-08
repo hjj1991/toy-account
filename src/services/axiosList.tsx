@@ -9,7 +9,7 @@ axios.defaults.baseURL = siteUrl;
 
 export const authAxios = () => {
     const tempAxios = axios.create({
-        headers:  { 'access_token': storage.get('accessToken') }
+        headers:  { 'Authorization': "Bearer " + storage.get('accessToken') }
     });
 
     tempAxios.interceptors.request.use(refreshConfig);
@@ -24,7 +24,7 @@ export const refreshConfig = async (config: AxiosRequestConfig): Promise<AxiosRe
             if (config.headers === undefined) {
                 config.headers = {};
               }
-            config.headers['access_token'] = res.data.response.accessToken;
+            config.headers['Authorization'] = "Bearer " + res.data.response.accessToken;
             storage.set('accessToken', res.data.response.accessToken);
             storage.set('refreshToken', res.data.response.refreshToken);
             storage.set('expireTime', res.data.response.expireTime);
