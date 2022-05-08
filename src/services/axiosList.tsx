@@ -29,7 +29,7 @@ export const refreshConfig = async (config: AxiosRequestConfig): Promise<AxiosRe
             storage.set('refreshToken', res.data.response.refreshToken);
             storage.set('expireTime', res.data.response.expireTime);
         }else{
-            sessionStorage.clear();
+            localStorage.clear();
             alert("세션이 만료되었습니다. \n 다시 로그인해주세요.");
             window.location.href = '/';
         }
