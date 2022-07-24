@@ -27,8 +27,8 @@ const categories = [
     val: false,
     uri: '/invest',
     children: [
-      { id: '예금', icon: <StoreIcon />, uri: "" },
-      { id: '적금', icon: <StoreIcon />, uri: "" }
+      { id: '예금', icon: <StoreIcon />, uri: "/deposit" },
+      { id: '적금', icon: <StoreIcon />, uri: "/saving" }
     ],
   },
 ];
