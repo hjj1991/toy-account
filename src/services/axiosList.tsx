@@ -339,3 +339,8 @@ export function postPurchaseDelete(purchaseNo: number) {
 }
 
 
+/* 적금 목록 불러오기 API */
+export function getSavings() {
+    return axios.get('/saving');
+}
+

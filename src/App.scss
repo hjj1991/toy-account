@@ -189,10 +189,93 @@
         justify-content: right;
     }
 
+    .basic-filter {
+        cursor: default;
+        display: none;
+    }
+
+    .basic-sort {
+        cursor: default;
+        display: none;
+    }
+
+    .basic-table {
+        border-radius: 0em;
+    }
+
+}
+
+@media (max-width: 640px) {
+    .basic-filter {
+        cursor: default;
+        display: none;
+    }
+
+    .basic-sort {
+        cursor: default;
+        display: none;
+    }
+
+    .basic-table {
+        border-radius: 0em!important;
+    }
+
 }
 
 @media (max-width: 900px) {
     /* 카테고리 목록 테이블 */
 
 
+}
+
+
+/* 적금, 예금 테이블 */
+.row-expend-contents {
+    white-space: pre-wrap;
+}
+
+.basic-table {
+    border-radius: 0.4em;
+    border-collapse: collapse;
+    overflow:hidden;
+}
+
+.basic-table thead tr:first-child {
+    border-top: none;
+    background: #7A997A;
+    color: #fff;
+  }
+  
+
+.basic-table tbody tr {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background-color: #E6FFE6;
+}
+  
+.basic-table tbody tr:nth-child(odd) {
+    background-color: #ebf3f9;
+    
+}
+
+.basic-select {
+    border-radius: 5px;
+    border: none;
+    height: 1.5rem;
+}
+
+.basic-input {
+    border-radius: 5px;
+    border: none;
+    height: 1.5rem;  
+}
+
+.basic-filter {
+    cursor: pointer;
+    display: '';
+}
+
+.basic-sort {
+    cursor: pointer;
+    display: '';
 }

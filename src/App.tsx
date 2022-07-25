@@ -25,6 +25,7 @@ import { Footer } from './components/layout/Footer';
 import {  useEffect } from 'react';
 import { AccountBook } from './pages/AccountBook';
 import { AccountBookDetail } from './pages/AccountBookDetail';
+import Saving from './pages/Saving';
 
 const BASIC_BACKGROUND_COLOR = '#a3cca3';
 
@@ -283,6 +284,7 @@ function App() {
                             <Route path={"/policy"} element={<Policy />} />
                             <Route path={"/social/signup"} element={<SocialSignUp />} />
                             <Route path={"/signup"} element={<SignUp />} />
+                            <Route path={"/saving"} element={<Saving />} />
                             <Route path='/' element={<PrivateRoute/>}>
                                 <Route path="/account/account-book" element={<AccountBook />} />
                                 <Route path="/account/account-book/:accountBookNo" element={<AccountBookDetail />} />
