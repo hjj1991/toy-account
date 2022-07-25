@@ -11,28 +11,23 @@ import {
     getFacetedUniqueValues,
     getFacetedMinMaxValues,
     getPaginationRowModel,
-    sortingFns,
     getSortedRowModel,
     FilterFn,
-    SortingFn,
     ColumnDef,
     flexRender,
     ExpandedState,
   } from '@tanstack/react-table'
 import {
     RankingInfo,
-    rankItem,
-    compareItems,
+    rankItem
   } from '@tanstack/match-sorter-utils'
 import { Table as ResponseTable, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 import Container from '@mui/material/Container';
 import * as service from '../../services/axiosList';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { useMediaQuery } from 'react-responsive'
-import { isAddCardState, isCardListReloadState, isModifyModalShowState, loadingState, SnackBarInfo, snackBarState } from '../../recoil/recoil';
-import { RawOff } from '@mui/icons-material';
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { useSetRecoilState } from 'recoil';
+import { loadingState } from '../../recoil/recoil';
+import { Box, Button, Grid, TextField } from '@mui/material';
 
 
 declare module '@tanstack/table-core' {
@@ -54,20 +49,6 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     return itemRank.passed
 }
 
-const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
-    let dir = 0
-
-    // Only sort by rank if the column has ranking information
-    if (rowA.columnFiltersMeta[columnId]) {
-    dir = compareItems(
-        rowA.columnFiltersMeta[columnId]?.itemRank!,
-        rowB.columnFiltersMeta[columnId]?.itemRank!
-    )
-    }
-
-    // Provide an alphanumeric fallback for when the item ranks are equal
-    return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir
-}
 
 function Filter({
     column,
@@ -87,6 +68,7 @@ function Filter({
         typeof firstValue === 'number'
           ? []
           : Array.from(column.getFacetedUniqueValues().keys()).sort(),
+          // eslint-disable-next-line react-hooks/exhaustive-deps 
       [column.getFacetedUniqueValues()]
     )
 
@@ -126,16 +108,26 @@ function Filter({
         </div>
         <div className="h-1" />
       </div>)
-    }else if(column.id === 'bankType' || column.id === 'korCoNm'){
+    }else if(column.id === 'bankType'){
+
         return (
             <>
             <DebouncedSelect
               type="text"
               value={(columnFilterValue ?? '') as string}
-              onChange={value => column.setFilterValue(value)}
+              onChange={value => {
+
+                
+                
+                column.setFilterValue(value)
+                if(table.getState().pagination.pageIndex + 1 > table.getPageCount()){
+                  table.resetPageIndex();
+                }
+              
+              }}
               placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
               className="w-36 border shadow rounded"
-              optionList = {sortedUniqueValues}
+              optionList ={['은행', '저축은행']}
             />
             <div className="h-1" />
           </>
@@ -187,6 +179,7 @@ function DebouncedInput({
       }, debounce)
   
       return () => clearTimeout(timeout)
+      // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [value])
   
     return (
@@ -224,6 +217,7 @@ function DebouncedSelect({
       }, debounce)
   
       return () => clearTimeout(timeout)
+      // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [value])
     return (
         <select className='basic-select' onChange={(e:any) => setValue(e.target.value)}>
@@ -232,7 +226,6 @@ function DebouncedSelect({
                 <option value={value} key={value} >{value}</option>
               ))}
         </select>
-    //   <input {...props} value={value} onChange={e => setValue(e.target.value)} />
     )
 }
 
@@ -275,7 +268,7 @@ function ExpandRow(props:any){
                 <Grid container spacing={2} columns={12}>
                     <Grid item xs={12} sm={6} xl={4}>
                         <div className='row-expend-title'>상품문의</div>
-                        <div>대표사이트: <a href={props.row.hompUrl} target='_blank'>{props.row.korCoNm}</a></div>
+                        <div>대표사이트: <a href={props.row.hompUrl} target="_blank" rel="noopener noreferrer">{props.row.korCoNm}</a></div>
                         <div>대표번호: {props.row.calTel}</div>
                     </Grid>
                     <Grid item xs={12} sm={6} xl={4}>
@@ -302,7 +295,7 @@ function ExpandRow(props:any){
                         <div className='row-expend-title'>가입 정보</div>
                         <ResponseTable>
                             <Thead>
-                                <Tr>
+                                <Tr style={{backgroundColor: 'black'}}>
                                     <Th>타입</Th>
                                     <Th>계산방식</Th>
                                     <Th>금리</Th>
@@ -334,7 +327,14 @@ function ExpandRow(props:any){
 export default function Body() {
     const [data, setData] = React.useState<any>([]);
     const setLoading = useSetRecoilState<boolean>(loadingState);
-    const isTabletOrMobile = useMediaQuery({  query: "(min-width:0px) and (max-width:640px)", })
+    const [isMobile, setIsMobile] = React.useState<boolean>();
+    const resizingHandler = () => {
+      if (window.innerWidth <= 640) {
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+      }
+    };
     const [expanded, setExpanded] = React.useState<ExpandedState>({})
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -350,6 +350,7 @@ export default function Body() {
                 cell: info => info.getValue(),
                 header: () => <span>타입</span>,
                 footer: props => props.column.id,
+                filterFn: 'equalsString'
               },
               {
                 accessorFn: row => row.korCoNm,
@@ -463,6 +464,7 @@ export default function Body() {
         getFacetedUniqueValues: getFacetedUniqueValues(),
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
         getExpandedRowModel: getExpandedRowModel(),
+        autoResetPageIndex: false,
         debugTable: true,
         debugHeaders: true,
         debugColumns: false
@@ -486,6 +488,7 @@ export default function Body() {
 
     React.useEffect(() => {
         getSavings();
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
     },[]);
 
     function intrRateSorting(){
@@ -499,8 +502,24 @@ export default function Body() {
               table.setSorting([{ id: 'fullName', desc: false }])
             }
           }
-        }, [table.getState().columnFilters[0]?.id])
+          // eslint-disable-next-line react-hooks/exhaustive-deps 
+    }, [table.getState().columnFilters[0]?.id])
 
+
+    // 우선 맨 처음 640이하면 모바일 처리
+    React.useEffect(() => {
+      if (window.innerWidth <= 642) {
+        setIsMobile(true);
+      }
+
+      
+      window.addEventListener("resize", resizingHandler);
+      return () => {
+        // 메모리 누수를 줄이기 위한 removeEvent
+        window.removeEventListener("resize", resizingHandler);
+      };
+    }, []);
+  
         
     return (
         <Container style={{ paddingTop: 20 }}>
@@ -513,14 +532,9 @@ export default function Body() {
                   <Th key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder ? null : (
                       <>
-                        <div
-                          {...{
-                            className: header.column.getCanSort()
-                              ? 'cursor-pointer select-none'
-                              : '',
-                            onClick: isTabletOrMobile? ()=>{} : header.column.getToggleSortingHandler(),
-                          }}
-                        >
+                      {isMobile?
+                      (
+                        <div {...{className: header.column.getCanSort()? 'basic-table-header': ''}}>
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
@@ -530,9 +544,22 @@ export default function Body() {
                             desc: ' 🔽',
                           }[header.column.getIsSorted() as string] ?? null}
                         </div>
-                        {header.column.getCanFilter() && !isTabletOrMobile?
+                      ):( 
+                        <div {...{className: header.column.getCanSort()? 'basic-table-header': '', onClick: header.column.getToggleSortingHandler() }}>                        
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {{
+                            asc: ' 🔼',
+                            desc: ' 🔽',
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </div>
+                        )}
+
+                        {header.column.getCanFilter()?
                         (
-                            <div>
+                            <div className='basic-filter'>
                                 <Filter column={header.column} table={table} />
                             </div>
                         ): null
@@ -573,6 +600,68 @@ export default function Body() {
           })}
         </Tbody>
       </ResponseTable>
+
+      <div className="flex items-center gap-2">
+        <button
+          className="border rounded p-1"
+          onClick={() => table.setPageIndex(0)}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {'<<'}
+        </button>
+        <button
+          className="border rounded p-1"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {'<'}
+        </button>
+        <button
+          className="border rounded p-1"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          {'>'}
+        </button>
+        <button
+          className="border rounded p-1"
+          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+          disabled={!table.getCanNextPage()}
+        >
+          {'>>'}
+        </button>
+        <span className="flex items-center gap-1">
+          <div>Page</div>
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getPageCount()}
+          </strong>
+        </span>
+        <span className="flex items-center gap-1">
+          | Go to page:
+          <input
+            type="number"
+            defaultValue={table.getState().pagination.pageIndex + 1}
+            onChange={e => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0
+              table.setPageIndex(page)
+            }}
+            className="border p-1 rounded w-16"
+          />
+        </span>
+        <select
+          value={table.getState().pagination.pageSize}
+          onChange={e => {
+            table.setPageSize(Number(e.target.value))
+          }}
+        >
+          {[10, 20, 30, 40, 50].map(pageSize => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
         </Container>
 
     );

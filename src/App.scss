@@ -189,6 +189,37 @@
         justify-content: right;
     }
 
+    .basic-filter {
+        cursor: default;
+        display: none;
+    }
+
+    .basic-sort {
+        cursor: default;
+        display: none;
+    }
+
+    .basic-table {
+        border-radius: 0em;
+    }
+
+}
+
+@media (max-width: 640px) {
+    .basic-filter {
+        cursor: default;
+        display: none;
+    }
+
+    .basic-sort {
+        cursor: default;
+        display: none;
+    }
+
+    .basic-table {
+        border-radius: 0em!important;
+    }
+
 }
 
 @media (max-width: 900px) {
@@ -237,4 +268,14 @@
     border-radius: 5px;
     border: none;
     height: 1.5rem;  
+}
+
+.basic-filter {
+    cursor: pointer;
+    display: '';
+}
+
+.basic-sort {
+    cursor: pointer;
+    display: '';
 }
