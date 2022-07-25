@@ -32,7 +32,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useMediaQuery } from 'react-responsive'
 import { isAddCardState, isCardListReloadState, isModifyModalShowState, loadingState, SnackBarInfo, snackBarState } from '../../recoil/recoil';
 import { RawOff } from '@mui/icons-material';
-import { Box, Button, Grid, Typography } from '@mui/material';
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 
 
 declare module '@tanstack/table-core' {
@@ -89,9 +89,9 @@ function Filter({
           : Array.from(column.getFacetedUniqueValues().keys()).sort(),
       [column.getFacetedUniqueValues()]
     )
-  
-    return typeof firstValue === 'number' ? (
-      <div>
+
+    if(typeof firstValue === 'number'){
+        return (<div>
         <div className="flex space-x-2">
           <DebouncedInput
             type="number"
@@ -125,28 +125,46 @@ function Filter({
           />
         </div>
         <div className="h-1" />
-      </div>
-    ) : (
-      <>
-        <datalist id={column.id + 'list'}>
-          {sortedUniqueValues.slice(0, 5000).map((value: any) => (
-            <option value={value} key={value} />
-          ))}
-        </datalist>
-        <DebouncedInput
-          type="text"
-          value={(columnFilterValue ?? '') as string}
-          onChange={value => column.setFilterValue(value)}
-          placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
-          className="w-36 border shadow rounded"
-          list={column.id + 'list'}
-        />
-        <div className="h-1" />
-      </>
-    )
+      </div>)
+    }else if(column.id === 'bankType' || column.id === 'korCoNm'){
+        return (
+            <>
+            <DebouncedSelect
+              type="text"
+              value={(columnFilterValue ?? '') as string}
+              onChange={value => column.setFilterValue(value)}
+              placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
+              className="w-36 border shadow rounded"
+              optionList = {sortedUniqueValues}
+            />
+            <div className="h-1" />
+          </>
+        )
+
+    }else{
+        return (
+                <>
+                <datalist id={column.id + 'list'}>
+                {sortedUniqueValues.slice(0, 5000).map((value: any) => (
+                    <option value={value} key={value} />
+                ))}
+                </datalist>
+                <DebouncedInput
+                type="text"
+                value={(columnFilterValue ?? '') as string}
+                onChange={value => column.setFilterValue(value)}
+                placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
+                className="w-36 border shadow rounded"
+                list={column.id + 'list'}
+                />
+                <div className="h-1" />
+            </>
+      )
+    }
+
   }
   
-  // A debounced input react component
+// A debounced input react component
 function DebouncedInput({
     value: initialValue,
     onChange,
@@ -172,7 +190,49 @@ function DebouncedInput({
     }, [value])
   
     return (
-      <input {...props} value={value} onChange={e => setValue(e.target.value)} />
+        <TextField placeholder='검색어입력' color='warning' variant="standard" size='small' value={value} onChange={e => setValue(e.target.value)}
+        sx={{
+            input: {
+                '&::placeholder':{
+                color: 'gold'
+            }
+        }
+        }} />
+    )
+  }
+
+function DebouncedSelect({
+    value: initialValue,
+    onChange,
+    debounce = 500,
+    optionList
+  }: {
+    value: string | number
+    onChange: (value: string | number) => void
+    debounce?: number
+    optionList: any
+  } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>) {
+    const [value, setValue] = React.useState(initialValue)
+  
+    React.useEffect(() => {
+      setValue(initialValue)
+    }, [initialValue])
+  
+    React.useEffect(() => {
+      const timeout = setTimeout(() => {
+        onChange(value)
+      }, debounce)
+  
+      return () => clearTimeout(timeout)
+    }, [value])
+    return (
+        <select className='basic-select' onChange={(e:any) => setValue(e.target.value)}>
+          <option value="">전체</option>
+          {optionList.slice(0, 5000).map((value: any) => (
+                <option value={value} key={value} >{value}</option>
+              ))}
+        </select>
+    //   <input {...props} value={value} onChange={e => setValue(e.target.value)} />
     )
 }
 
@@ -213,18 +273,58 @@ function ExpandRow(props:any){
     return (
             <Box component="div" sx={{ p: 2, border: '1px dashed grey' }}>
                 <Grid container spacing={2} columns={12}>
-                <Grid item xs={12}>
-                    <div className='row-expend-title'>상품문의</div>
-                    <div>대표사이트: <a href={props.row.hompUrl} target='_blank'>{props.row.korCoNm}</a></div>
-                    <div>대표번호: {props.row.calTel}</div>
-                </Grid>
-                <Grid item xs={12}>
-                    <div className='row-expend-title'>우대조건</div>
-                    <div>{props.row.spclCnd}</div>
-                </Grid>
-                <Grid item xs={8}>
-                <Typography noWrap>xs=8</Typography>
-                </Grid>
+                    <Grid item xs={12} sm={6} xl={4}>
+                        <div className='row-expend-title'>상품문의</div>
+                        <div>대표사이트: <a href={props.row.hompUrl} target='_blank'>{props.row.korCoNm}</a></div>
+                        <div>대표번호: {props.row.calTel}</div>
+                    </Grid>
+                    <Grid item xs={12} sm={6} xl={4}>
+                        <div className='row-expend-title'>우대조건</div>
+                        <div className='row-expend-contents'>{props.row.spclCnd}</div>
+                    </Grid>
+                    <Grid item xs={12} sm={6} xl={4}>
+                        <div className='row-expend-title'>가입대상</div>
+                        <div className='row-expend-contents'>{props.row.joinMember}</div>
+                    </Grid>
+                    <Grid item xs={12} sm={6} xl={4}>
+                        <div className='row-expend-title'>가입방법</div>
+                        <div className='row-expend-contents'>{props.row.joinWay}</div>
+                    </Grid>
+                    <Grid item xs={12} sm={6} xl={4}>
+                        <div className='row-expend-title'>만기후 이자율</div>
+                        <div className='row-expend-contents'>{props.row.mtrtInt}</div>
+                    </Grid>
+                    <Grid item xs={12} sm={6} xl={4}>
+                        <div className='row-expend-title'>기타 유의사항</div>
+                        <div className='row-expend-contents'>{props.row.etcNote}</div>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <div className='row-expend-title'>가입 정보</div>
+                        <ResponseTable>
+                            <Thead>
+                                <Tr>
+                                    <Th>타입</Th>
+                                    <Th>계산방식</Th>
+                                    <Th>금리</Th>
+                                    <Th>우대금리</Th>
+                                    <Th>기간</Th>
+                                </Tr>
+                            </Thead>
+                            <Tbody>
+                                {props.row.options.map((option:any, index:number) => {
+                                    return (
+                                    <Tr key={index}>
+                                        <Td>{option.rsrvTypeNm}</Td>
+                                        <Td>{option.intrRateTypeNm}</Td>
+                                        <Td>{option.intrRate}</Td>
+                                        <Td>{option.intrRate2}</Td>
+                                        <Td>{option.saveTrm}개월</Td>                                     
+                                    </Tr>
+                                    )
+                                })}
+                            </Tbody>
+                        </ResponseTable>
+                    </Grid>
                 </Grid>
             </Box>
         )
@@ -232,17 +332,10 @@ function ExpandRow(props:any){
   
 
 export default function Body() {
-
-    const [isCardListReload, setIsCardListReload] = useRecoilState<boolean>(isCardListReloadState);
     const [data, setData] = React.useState<any>([]);
-    const [isOpenRemoveCardModal, setIsOpenRemoveCardModal] = React.useState<boolean>(false);
-    const [selectedIndx, setSelectedIndx] = React.useState<number>(0);
     const setLoading = useSetRecoilState<boolean>(loadingState);
-    const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const isTabletOrMobile = useMediaQuery({  query: "(min-width:0px) and (max-width:640px)", })
     const [expanded, setExpanded] = React.useState<ExpandedState>({})
-
-    const rerender = React.useReducer(() => ({}), {})[1]
 
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
       []
@@ -270,8 +363,7 @@ export default function Body() {
                 id: 'finPrdtNm',
                 cell: info => info.getValue(),
                 header: () => <span>상품명</span>,
-                footer: props => props.column.id,
-                enableColumnFilter: false
+                footer: props => props.column.id
               },
               {
                 accessorFn: row => {
@@ -413,7 +505,7 @@ export default function Body() {
     return (
         <Container style={{ paddingTop: 20 }}>
             <Button onClick={intrRateSorting}>ㅎㅇㅎㅇ</Button>
-  <ResponseTable>
+    <ResponseTable className='basic-table'>
         <Thead>
             <Tr>
               {table.getHeaderGroups()[0].headers.map(header => {
