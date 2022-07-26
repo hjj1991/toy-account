@@ -27,7 +27,7 @@ import Container from '@mui/material/Container';
 import * as service from '../../services/axiosList';
 import { useSetRecoilState } from 'recoil';
 import { loadingState } from '../../recoil/recoil';
-import { Box, Button, Grid, TextField } from '@mui/material';
+import { Box, Button, Grid, Pagination, Stack, SxProps, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 
 declare module '@tanstack/table-core' {
@@ -49,6 +49,27 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
     return itemRank.passed
 }
 
+function Pagintaion({table, siblingCount}: {table:Table<any>, siblingCount:number}){
+
+  let currentPage = table.getState().pagination.pageIndex;
+
+  return (
+    <>
+      <Stack spacing={2} alignItems={'center'}>
+      <Pagination count={table.getPageCount()} page={currentPage+1} onChange={(e: any, currentPage:number) => table.setPageIndex(currentPage-1)}
+      hidePrevButton hideNextButton showFirstButton showLastButton  siblingCount={siblingCount}
+      sx={{
+        '& .Mui-selected':{
+          backgroundColor: '#a3cca3'
+        },
+        '.MuiPaginationItem-root:hover':{
+          backgroundColor: '#a3cca3'
+        }
+      }} />
+    </Stack>
+  </>
+  )
+}
 
 function Filter({
     column,
@@ -148,6 +169,13 @@ function Filter({
                 placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
                 className="w-36 border shadow rounded"
                 list={column.id + 'list'}
+                sxStyle={{
+                  input: {
+                          '&::placeholder':{
+                          color: 'gold'
+                      }
+                  }
+              }}
                 />
                 <div className="h-1" />
             </>
@@ -161,11 +189,12 @@ function DebouncedInput({
     value: initialValue,
     onChange,
     debounce = 500,
-    ...props
+    sxStyle = {}
   }: {
     value: string | number
     onChange: (value: string | number) => void
-    debounce?: number
+    debounce?: number,
+    sxStyle?: SxProps
   } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>) {
     const [value, setValue] = React.useState(initialValue)
   
@@ -184,13 +213,7 @@ function DebouncedInput({
   
     return (
         <TextField placeholder='검색어입력' color='warning' variant="standard" size='small' value={value} onChange={e => setValue(e.target.value)}
-        sx={{
-            input: {
-                '&::placeholder':{
-                color: 'gold'
-            }
-        }
-        }} />
+        sx={sxStyle} />
     )
   }
 
@@ -327,9 +350,9 @@ function ExpandRow(props:any){
 export default function Body() {
     const [data, setData] = React.useState<any>([]);
     const setLoading = useSetRecoilState<boolean>(loadingState);
-    const [isMobile, setIsMobile] = React.useState<boolean>();
+    const [isMobile, setIsMobile] = React.useState<boolean>(window.innerWidth <= 642? true: false);
     const resizingHandler = () => {
-      if (window.innerWidth <= 640) {
+      if (window.innerWidth <= 642) {
         setIsMobile(true);
       } else {
         setIsMobile(false);
@@ -357,7 +380,7 @@ export default function Body() {
                 id: 'korCoNm',
                 cell: info => info.getValue(),
                 header: () => <span>회사명</span>,
-                footer: props => props.column.id,
+                footer: props => props.column.id
               },
               {
                 accessorFn: row => row.finPrdtNm,
@@ -491,10 +514,6 @@ export default function Body() {
         // eslint-disable-next-line react-hooks/exhaustive-deps 
     },[]);
 
-    function intrRateSorting(){
-        table.setSorting([{id: 'intrRate', desc: false}]);
-    }
-
     React.useEffect(() => {
 
         if (table.getState().columnFilters[0]?.id === 'fullName') {
@@ -506,13 +525,7 @@ export default function Body() {
     }, [table.getState().columnFilters[0]?.id])
 
 
-    // 우선 맨 처음 640이하면 모바일 처리
     React.useEffect(() => {
-      if (window.innerWidth <= 642) {
-        setIsMobile(true);
-      }
-
-      
       window.addEventListener("resize", resizingHandler);
       return () => {
         // 메모리 누수를 줄이기 위한 removeEvent
@@ -520,10 +533,57 @@ export default function Body() {
       };
     }, []);
   
+    let seletedButton = '';
+    if(table.getColumn('intrRate').getIsSorted() === "desc"){
+      seletedButton = 'intrRate';
+    }else if(table.getColumn('intrRate2').getIsSorted() === "desc"){
+      seletedButton = 'intrRate2';
+    }else{
+      seletedButton = '';
+    }
+
+    function handleChangeIntrRateButton(e: any){
+        let selectedValue = e.target.value;
+
+        if((selectedValue === 'intrRate' && table.getColumn(selectedValue).getIsSorted()) || (selectedValue === 'intrRate2' && table.getColumn(selectedValue).getIsSorted())){
+          table.resetSorting();
+        }else {
+          table.setSorting([{id: selectedValue, desc: true}]);
+        }
+
+    }
         
     return (
         <Container style={{ paddingTop: 20 }}>
-            <Button onClick={intrRateSorting}>ㅎㅇㅎㅇ</Button>
+          <Grid container spacing={2} mb={1}>
+            <Grid item xs={6} className='basic-filter-intrate'>
+              <ToggleButtonGroup
+                value={seletedButton}
+                onChange={handleChangeIntrRateButton}
+                color={'success'}
+                size={'small'}
+                exclusive
+              >
+                <ToggleButton value="intrRate">
+                  기본금리순
+                </ToggleButton>
+                <ToggleButton value="intrRate2">
+                  최고금리순
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Grid>
+            <Grid item xs={6}>
+              <DebouncedInput
+              value={globalFilter ?? ''}
+              onChange={value => setGlobalFilter(String(value))}
+              className="p-2 font-lg shadow border border-block"
+              placeholder="Search all columns..."
+              sxStyle={{
+
+              }}
+            />
+            </Grid>
+          </Grid>
     <ResponseTable className='basic-table'>
         <Thead>
             <Tr>
@@ -534,18 +594,14 @@ export default function Body() {
                       <>
                       {isMobile?
                       (
-                        <div {...{className: header.column.getCanSort()? 'basic-table-header': ''}}>
+                        <div>
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                          {{
-                            asc: ' 🔼',
-                            desc: ' 🔽',
-                          }[header.column.getIsSorted() as string] ?? null}
                         </div>
                       ):( 
-                        <div {...{className: header.column.getCanSort()? 'basic-table-header': '', onClick: header.column.getToggleSortingHandler() }}>                        
+                        <div onClick={header.column.getToggleSortingHandler()} >                        
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
@@ -601,67 +657,11 @@ export default function Body() {
         </Tbody>
       </ResponseTable>
 
-      <div className="flex items-center gap-2">
-        <button
-          className="border rounded p-1"
-          onClick={() => table.setPageIndex(0)}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {'<<'}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {'<'}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {'>'}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          disabled={!table.getCanNextPage()}
-        >
-          {'>>'}
-        </button>
-        <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{' '}
-            {table.getPageCount()}
-          </strong>
-        </span>
-        <span className="flex items-center gap-1">
-          | Go to page:
-          <input
-            type="number"
-            defaultValue={table.getState().pagination.pageIndex + 1}
-            onChange={e => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0
-              table.setPageIndex(page)
-            }}
-            className="border p-1 rounded w-16"
-          />
-        </span>
-        <select
-          value={table.getState().pagination.pageSize}
-          onChange={e => {
-            table.setPageSize(Number(e.target.value))
-          }}
-        >
-          {[10, 20, 30, 40, 50].map(pageSize => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
-      </div>
+
+          <Pagintaion 
+            table={table} 
+            siblingCount={isMobile? 1: 3}
+            />
         </Container>
 
     );

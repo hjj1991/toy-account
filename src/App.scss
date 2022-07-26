@@ -220,6 +220,9 @@
         border-radius: 0em!important;
     }
 
+    .basic-filter-intrate {
+        display: block!important;
+    }
 }
 
 @media (max-width: 900px) {
@@ -278,4 +281,8 @@
 .basic-sort {
     cursor: pointer;
     display: '';
+}
+
+.basic-filter-intrate {
+    display: none;
 }
