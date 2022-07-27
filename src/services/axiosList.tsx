@@ -344,3 +344,14 @@ export function getSavings() {
     return axios.get('/saving');
 }
 
+/* 예금 목록 불러오기 API */
+export function getDeposits() {
+    return axios.get('/deposit');
+}
+
+
+/* 메인 화면 API */
+export function getHome() {
+    return axios.get("/main");
+}
+

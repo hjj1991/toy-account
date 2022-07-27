@@ -6,7 +6,10 @@
     font-family: "원모바일POP";
     src: url("assets/fonts/ONE_Mobile_POP.ttf") format("truetype");
 }
-
+@font-face {
+    font-family: "마비노기클래식";
+    src: url("assets/fonts/Mabinogi_Classic_TTF.ttf") format("truetype");
+}
 
 
 // * {
@@ -20,6 +23,11 @@
     font-size: 18px;
     line-height: 1.6;
     background: lightgray;
+}
+
+.nav-menu-title > span {
+    color: #fff;
+    font-weight: bold!important;
 }
 
 .topBtn {
@@ -220,8 +228,38 @@
         border-radius: 0em!important;
     }
 
-    .basic-filter-intrate {
+    .basic-filter-intrRate {
         display: block!important;
+    }
+}
+
+@media (min-width: 641px) {
+
+    .basic-table.saving_deposit > thead > tr > th:nth-child(1) {
+        width: 5%;
+    }
+    .basic-table.saving_deposit > thead > tr > th:nth-child(2) {
+        width: 20%;
+    }
+    .basic-table.saving_deposit > tbody > tr > td:nth-child(2) {
+        text-align: center;
+    }
+    .basic-table.saving_deposit > thead > tr > th:nth-child(3) {
+        width: 30%;
+    }
+    .basic-table.saving_deposit > thead > tr > th:nth-child(4), th:nth-child(5) {
+        width: 15%;
+    }
+    .basic-table.saving_deposit > tbody > tr > td:nth-child(4), td:nth-child(5) {
+        text-align: center;
+    }
+
+    .basic-table.saving_deposit > thead > tr > th:last-child {
+        width: 5%;
+    }
+
+    .basic-table.saving_deposit > tbody > tr > td:first-child {
+        text-align: center;
     }
 }
 
@@ -283,6 +321,11 @@
     display: '';
 }
 
-.basic-filter-intrate {
+.basic-filter-intrRate {
     display: none;
+}
+
+
+.basic-table-detail-body > tr{
+    text-align: center;
 }

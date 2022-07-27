@@ -102,7 +102,7 @@ function Filter({
             max={Number(column.getFacetedMinMaxValues()?.[1] ?? '')}
             value={(columnFilterValue as [number, number])?.[0] ?? ''}
             onChange={value =>{
-              column.setFilterValue((old: [number, number]) => [value, old?.[1]])
+              column.setFilterValue((old: [number, number]) => [value, old?.[1]]);
               if(table.getState().pagination.pageIndex + 1 > table.getPageCount()){
                 table.resetPageIndex();
               }
@@ -119,7 +119,7 @@ function Filter({
             min={Number(column.getFacetedMinMaxValues()?.[0] ?? '')}
             max={Number(column.getFacetedMinMaxValues()?.[1] ?? '')}
             value={(columnFilterValue as [number, number])?.[1] ?? ''}
-            onChange={value => {
+            onChange={value =>{
               column.setFilterValue((old: [number, number]) => [old?.[0], value]);
               if(table.getState().pagination.pageIndex + 1 > table.getPageCount()){
                 table.resetPageIndex();
@@ -143,10 +143,14 @@ function Filter({
               type="text"
               value={(columnFilterValue ?? '') as string}
               onChange={value => {
+
+                
+                
                 column.setFilterValue(value)
                 if(table.getState().pagination.pageIndex + 1 > table.getPageCount()){
                   table.resetPageIndex();
                 }
+              
               }}
               placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
               className="w-36 border shadow rounded"
@@ -169,6 +173,7 @@ function Filter({
                 value={(columnFilterValue ?? '') as string}
                 onChange={value => {
                   column.setFilterValue(value)
+
                   if(table.getState().pagination.pageIndex + 1 > table.getPageCount()){
                     table.resetPageIndex();
                   }
@@ -179,10 +184,10 @@ function Filter({
                 sxStyle={{
                   input: {
                         textAlign:'center',
-                        '&::placeholder':{
-                        color: 'gold',
-                        textAlign: 'center'
-                    }
+                          '&::placeholder':{
+                          color: 'gold',
+                          textAlign: 'center'
+                      }
                   }
               }}
                 />
@@ -263,7 +268,7 @@ function DebouncedSelect({
 
   
 
-interface Saving {
+interface Deposit {
     bankType: string
     calTel: string
     dclsChargMan: string
@@ -281,16 +286,14 @@ interface Saving {
     korCoNm: string
     maxLimit: number
     mtrtInt: string
-    options: Array<SavingOption>
+    options: Array<DepositOption>
     spclCnd: string
   }
-interface SavingOption {
+interface DepositOption {
     intrRate: number
     intrRate2: number
     intrRateType: string
     intrRateTypeNm: string
-    rsrvType: string
-    rsrvTypeNm: string
     saveTrm: string
 }
 
@@ -329,7 +332,6 @@ function ExpandRow(props:any){
                             <Thead>
                                 <Tr style={{backgroundColor: 'black'}}>
                                     <Th>타입</Th>
-                                    <Th>계산방식</Th>
                                     <Th>금리</Th>
                                     <Th>우대금리</Th>
                                     <Th>기간</Th>
@@ -339,7 +341,6 @@ function ExpandRow(props:any){
                                 {props.row.options.map((option:any, index:number) => {
                                     return (
                                     <Tr key={index}>
-                                        <Td>{option.rsrvTypeNm}</Td>
                                         <Td>{option.intrRateTypeNm}</Td>
                                         <Td>{option.intrRate}%</Td>
                                         <Td>{option.intrRate2}%</Td>
@@ -374,7 +375,7 @@ export default function Body() {
     )
     const [globalFilter, setGlobalFilter] = React.useState('')
 
-    const columns = React.useMemo<ColumnDef<Saving>[]>(
+    const columns = React.useMemo<ColumnDef<Deposit>[]>(
         () => [
               {
                 accessorFn: row => row.bankType,
@@ -503,10 +504,10 @@ export default function Body() {
 
       })
 
-    async function getSavings(){
+    async function getDeposits(){
         try{
             setLoading(true);
-            const res = await service.getSavings();
+            const res = await service.getDeposits();
 
             if (res.status === 200 && res.data.success) {
                 setData(res.data.response);
@@ -519,19 +520,10 @@ export default function Body() {
     }
 
     React.useEffect(() => {
-        getSavings();
+      getDeposits();
         // eslint-disable-next-line react-hooks/exhaustive-deps 
     },[]);
 
-    React.useEffect(() => {
-
-        if (table.getState().columnFilters[0]?.id === 'fullName') {
-            if (table.getState().sorting[0]?.id !== 'fullName') {
-              table.setSorting([{ id: 'fullName', desc: false }])
-            }
-          }
-          // eslint-disable-next-line react-hooks/exhaustive-deps 
-    }, [table.getState().columnFilters[0]?.id])
 
 
     React.useEffect(() => {
