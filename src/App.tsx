@@ -26,6 +26,7 @@ import {  useEffect } from 'react';
 import { AccountBook } from './pages/AccountBook';
 import { AccountBookDetail } from './pages/AccountBookDetail';
 import Saving from './pages/Saving';
+import Deposit from './pages/Deposit';
 
 const BASIC_BACKGROUND_COLOR = '#a3cca3';
 
@@ -38,7 +39,7 @@ let theme = createTheme({
         },
     },
     typography: {
-        fontFamily: '원모바일POP',
+        fontFamily: '마비노기클래식',
         h5: {
             fontWeight: 500,
             fontSize: 26,
@@ -168,9 +169,10 @@ theme = {
                         backgroundColor: 'rgba(255, 255, 255, 0.08)',
                     },
                     '&.Mui-selected, &.Mui-selected:hover': {
-                        color: '#CCBC99',
-                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                    },
+                        color: '#FFFFFF',
+                        fontWeight: 'bold!important',
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    }
                 },
             },
         },
@@ -285,6 +287,7 @@ function App() {
                             <Route path={"/social/signup"} element={<SocialSignUp />} />
                             <Route path={"/signup"} element={<SignUp />} />
                             <Route path={"/saving"} element={<Saving />} />
+                            <Route path={"/deposit"} element={<Deposit />} />
                             <Route path='/' element={<PrivateRoute/>}>
                                 <Route path="/account/account-book" element={<AccountBook />} />
                                 <Route path="/account/account-book/:accountBookNo" element={<AccountBookDetail />} />

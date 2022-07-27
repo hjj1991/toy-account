@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
-import PeopleIcon from '@mui/icons-material/People';
-import StoreIcon from '@mui/icons-material/Store';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import SavingsIcon from '@mui/icons-material/Savings';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import HomeIcon from '@mui/icons-material/Home';
 import { useRecoilValue } from 'recoil';
 import { menuState } from '../../recoil/recoil';
@@ -17,8 +19,8 @@ const categories = [
     val: false,
     uri: '/account',
     children: [
-      { id: '가계부목록', icon: <PeopleIcon />, uri: "/account/account-book" },
-      { id: '카드목록', icon: <PeopleIcon />, uri: "/account/card" }
+      { id: '가계부목록', icon: <EventNoteIcon />, uri: "/account/account-book" },
+      { id: '카드목록', icon: <CreditCardIcon />, uri: "/account/card" }
     ],
   },
   {
@@ -27,8 +29,8 @@ const categories = [
     val: false,
     uri: '/invest',
     children: [
-      { id: '예금', icon: <StoreIcon />, uri: "/deposit" },
-      { id: '적금', icon: <StoreIcon />, uri: "/saving" }
+      { id: '예금', icon: <AttachMoneyIcon />, uri: "/deposit" },
+      { id: '적금', icon: <SavingsIcon />, uri: "/saving" }
     ],
   },
 ];
@@ -63,7 +65,7 @@ function Navigator(props: DrawerProps) {
     <Drawer variant="permanent" {...other}>
       <List disablePadding>
         <ListItem sx={{ ...itemCategory, fontSize: 22, color: '#fff' }}>
-          뜨끔한 가계부
+          <img width={'50px'} src='/menu_logo.png' alt='메뉴로고' /><span style={{alignSelf: 'end'}}>뜨끔한 가계부</span>
         </ListItem>
         <Link component={RouterLink} to="/">
           <ListItem sx={{ ...itemCategory }}>
@@ -76,7 +78,7 @@ function Navigator(props: DrawerProps) {
         {categories.map(({ id, children, indx }) => (
           <Box key={id} sx={{cursor: 'pointer'}} >
             <ListItem sx={{ py: 2, px: 3 }} onClick={() => handleClick(indx)}>
-              <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
+              <ListItemText className={'nav-menu-title'}>{id}</ListItemText>
               {categoryOpen[indx] ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
             <Collapse key={id} in={categoryOpen[indx]} timeout="auto" unmountOnExit>
@@ -84,7 +86,7 @@ function Navigator(props: DrawerProps) {
               return (
                 <Link key={childId} component={RouterLink} to={uri}>
                   <ListItem disablePadding >
-                    <ListItemButton selected={activeMenuValue.activeNav === uri ? true : false}>
+                    <ListItemButton selected={activeMenuValue.activeNav.indexOf(uri) !== -1? true : false}>
                       <ListItemIcon>{icon}</ListItemIcon>
                       <ListItemText>{childId}</ListItemText>
                     </ListItemButton>
