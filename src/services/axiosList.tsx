@@ -350,3 +350,8 @@ export function getDeposits() {
 }
 
 
+/* 메인 화면 API */
+export function getHome() {
+    return axios.get("/main");
+}
+

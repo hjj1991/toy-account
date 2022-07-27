@@ -335,7 +335,7 @@ function ExpandRow(props:any){
                                     <Th>기간</Th>
                                 </Tr>
                             </Thead>
-                            <Tbody>
+                            <Tbody className='basic-table-detail-body'>
                                 {props.row.options.map((option:any, index:number) => {
                                     return (
                                     <Tr key={index}>
@@ -598,7 +598,7 @@ export default function Body() {
             />
             </Grid>
           </Grid>
-    <ResponseTable className='basic-table'>
+    <ResponseTable className='basic-table saving_deposit'>
         <Thead>
             <Tr>
               {table.getHeaderGroups()[0].headers.map(header => {

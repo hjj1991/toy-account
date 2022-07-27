@@ -39,7 +39,7 @@ let theme = createTheme({
         },
     },
     typography: {
-        fontFamily: '마비노기클래식',
+        fontFamily: '원모바일POP',
         h5: {
             fontWeight: 500,
             fontSize: 26,
