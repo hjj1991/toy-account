@@ -234,6 +234,9 @@
 }
 
 @media (min-width: 641px) {
+    .basic-table.basic-table.saving_deposit > thead {
+        cursor: pointer;
+    }
 
     .basic-table.saving_deposit > thead > tr > th:nth-child(1) {
         width: 5%;
@@ -273,6 +276,7 @@
 /* 적금, 예금 테이블 */
 .row-expend-contents {
     white-space: pre-wrap;
+    color: #B37D98;
 }
 
 .basic-table {
@@ -328,4 +332,8 @@
 
 .basic-table-detail-body > tr{
     text-align: center;
+}
+
+.row-expend-title {
+    font-weight: bold;
 }

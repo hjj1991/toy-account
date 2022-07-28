@@ -303,8 +303,8 @@ function ExpandRow(props:any){
                 <Grid container spacing={2} columns={12}>
                     <Grid item xs={12} sm={6} xl={4}>
                         <div className='row-expend-title'>상품문의</div>
-                        <div>대표사이트: <a href={props.row.hompUrl} target="_blank" rel="noopener noreferrer">{props.row.korCoNm}</a></div>
-                        <div>대표번호: {props.row.calTel}</div>
+                        <div className='row-expend-contents'>대표사이트: <a href={props.row.hompUrl} target="_blank" rel="noopener noreferrer">{props.row.korCoNm}</a></div>
+                        <div className='row-expend-contents'>대표번호: {props.row.calTel}</div>
                     </Grid>
                     <Grid item xs={12} sm={6} xl={4}>
                         <div className='row-expend-title'>우대조건</div>
