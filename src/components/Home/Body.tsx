@@ -117,17 +117,16 @@ export function Body() {
                     }
                 }
             }}>
-                <Tab label="적금Top10"  />
+                <Tab label="적금Top10" />
                 <Tab label="예금Top10" />
             </Tabs>
             <TabPanel value={selectedTab} index={0}>
+            <Link component={RouterLink} to="/saving" sx={{ color: '#A69480', float: 'right', borderBottom: 'groove'}}><img src="/images/move.png" style={{ verticalAlign: 'middle', width: '30px' }}alt="move" />전체보기</Link>
                 <MainTop10Table mainTop10Arr={data.savings} />
             </TabPanel>
             <TabPanel value={selectedTab} index={1}>
+            <Link component={RouterLink} to="/deposit" sx={{ color: '#A69480', float: 'right', borderBottom: 'groove'}}><img src="/images/move.png" style={{ verticalAlign: 'middle', width: '30px' }}alt="move" />전체보기</Link>
                 <MainTop10Table mainTop10Arr={data.deposits} />
-            </TabPanel>
-            <TabPanel value={selectedTab} index={2}>
-            Item Three
             </TabPanel>
         </>
     )
