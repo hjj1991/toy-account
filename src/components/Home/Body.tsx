@@ -121,11 +121,11 @@ export function Body() {
                 <Tab label="예금Top10" />
             </Tabs>
             <TabPanel value={selectedTab} index={0}>
-            <Link component={RouterLink} to="/saving" sx={{ color: '#A69480', float: 'right', borderBottom: 'groove'}}><img src="/images/move.png" style={{ verticalAlign: 'middle', width: '30px' }}alt="move" />전체보기</Link>
+            <Link component={RouterLink} to="/saving" sx={{ color: '#A69480', float: 'right', borderBottom: 'groove'}}><img src="/move.png" style={{ verticalAlign: 'middle', width: '30px' }}alt="move" />전체보기</Link>
                 <MainTop10Table mainTop10Arr={data.savings} />
             </TabPanel>
             <TabPanel value={selectedTab} index={1}>
-            <Link component={RouterLink} to="/deposit" sx={{ color: '#A69480', float: 'right', borderBottom: 'groove'}}><img src="/images/move.png" style={{ verticalAlign: 'middle', width: '30px' }}alt="move" />전체보기</Link>
+            <Link component={RouterLink} to="/deposit" sx={{ color: '#A69480', float: 'right', borderBottom: 'groove'}}><img src="/move.png" style={{ verticalAlign: 'middle', width: '30px' }}alt="move" />전체보기</Link>
                 <MainTop10Table mainTop10Arr={data.deposits} />
             </TabPanel>
         </>
@@ -137,14 +137,14 @@ export function Body() {
             <Grid item xs={6}>
                 <div>
                     <div style={{float: 'left', fontSize: '28px', fontWeight: 'bold'}}>적금 Top10</div>
-                    <Link component={RouterLink} to="/saving" sx={{ color: '#A69480', float: 'right', borderBottom: 'groove'}}><img src="/images/move.png" style={{ verticalAlign: 'middle', width: '30px' }}alt="move" />전체보기</Link>
+                    <Link component={RouterLink} to="/saving" sx={{ color: '#A69480', float: 'right', borderBottom: 'groove'}}><img src="/move.png" style={{ verticalAlign: 'middle', width: '30px' }}alt="move" />전체보기</Link>
                 </div>
                 <MainTop10Table mainTop10Arr={data.savings} />
             </Grid>
             <Grid item xs={6}>
                 <div>
                     <div style={{float: 'left', fontSize: '28px', fontWeight: 'bold'}}>예금 Top10</div>
-                    <Link component={RouterLink} to="/deposit" sx={{ color: '#A69480', float: 'right', borderBottom: 'groove'}}><img src="/images/move.png" style={{ verticalAlign: 'middle', width: '30px' }}alt="move" />전체보기</Link>
+                    <Link component={RouterLink} to="/deposit" sx={{ color: '#A69480', float: 'right', borderBottom: 'groove'}}><img src="/move.png" style={{ verticalAlign: 'middle', width: '30px' }}alt="move" />전체보기</Link>
                 </div>
                 <MainTop10Table mainTop10Arr={data.deposits} />
             </Grid>
