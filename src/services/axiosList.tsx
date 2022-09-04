@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import moment from 'moment';
 import storage from '../lib/storage';
+import jwtDecode from "jwt-decode";
 
 const siteUrl = process.env.REACT_APP_API_HOST;
 
@@ -18,16 +19,18 @@ export const authAxios = () => {
 
 export const refreshConfig = async (config: AxiosRequestConfig): Promise<AxiosRequestConfig> => {
     let expireTime = storage.get('expireTime');
-    if(expireTime < moment().valueOf()){
+    if(expireTime < moment().unix()){
         const res = await postReIssueeToken();
         if(res.status === 200 && res.data.success){
             if (config.headers === undefined) {
                 config.headers = {};
               }
+              
+            const parsingToken:any = jwtDecode(res.data.response.accessToken)
             config.headers['Authorization'] = "Bearer " + res.data.response.accessToken;
             storage.set('accessToken', res.data.response.accessToken);
             storage.set('refreshToken', res.data.response.refreshToken);
-            storage.set('expireTime', res.data.response.expireTime);
+            storage.set('expireTime', parsingToken.exp);
         }else{
             localStorage.clear();
             alert("세션이 만료되었습니다. \n 다시 로그인해주세요.");
@@ -229,7 +232,7 @@ export function postCategoryAdd(categoryAddForm: CategoryForm){
 }
 
 /* 카테고리 목록 불러오기 API */
-export function getCategoryList(accountBookNo:number){
+export function getCategories(accountBookNo:number){
     return authAxios().get('/category',{
         params:{
             accountBookNo:accountBookNo

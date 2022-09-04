@@ -281,10 +281,10 @@ export default function ChildCategory(props: {
     categoryName: "",
     categoryDesc: "",
     categoryIcon: "",
-    childCategoryList: []
+    childCategories: []
   }
   const [categoryDetail, setCategoryDetail] = useState<CategoryDetail>(initCategoryDetail);
-  const [childCategoryList, setChildCategoryList] = useState<Array<ChildCategoryDetail>>([]);
+  const [childCategories, setChildCategories] = useState<Array<ChildCategoryDetail>>([]);
   const [reload, setReload] = useState<boolean>(false);
 
   const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
@@ -303,8 +303,8 @@ export default function ChildCategory(props: {
             categoryIcon: data.categoryIcon
           })
 
-          let childCategoryList = [];
-          for (let child of data.childCategoryList) {
+          let childCategories = [];
+          for (let child of data.childCategories) {
             let childCategory: ChildCategoryDetail;
             childCategory = {
               categoryNo: child.categoryNo,
@@ -312,9 +312,9 @@ export default function ChildCategory(props: {
               categoryDesc: child.categoryDesc,
               categoryIcon: child.categoryIcon
             }
-            childCategoryList.push(childCategory);
+            childCategories.push(childCategory);
           }
-          setChildCategoryList(childCategoryList);
+          setChildCategories(childCategories);
         }
       } catch {
         setSnackBarInfo({
@@ -480,7 +480,7 @@ export default function ChildCategory(props: {
               Container: (props) => <Paper className="category-table" {...props} />
             }}
             columns={columns}
-            data={childCategoryList}
+            data={childCategories}
 
             editable={props.accountRole === "OWNER" ? authProps : undefined}
             localization={{

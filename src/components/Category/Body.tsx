@@ -17,7 +17,7 @@ interface CategoryDetailForm {
 export default function Body(props: { setAccountBookName?: Function, accountBookNo: number }) {
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const [accountRole, setAccountRole] = useState<string>("");
-    const [categoryList, setCategoryList] = useState<any>([]);
+    const [categories, setCategories] = useState<any>([]);
     const [categoryDetail, setCategoryDetail] = useState<CategoryDetailForm>({
         categoryNo: 0,
         isCategoryDetailOpen: false
@@ -50,12 +50,12 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
         })
     }
 
-    const getCategoryList: any = async (accountBookNo: number) => {
+    const getCategories: any = async (accountBookNo: number) => {
         try {
             setLoading(true);
-            const res = await service.getCategoryList(accountBookNo);
+            const res = await service.getCategories(accountBookNo);
             if (res.status === 200 && res.data.success) {
-                setCategoryList(res.data.response.categoryList);
+                setCategories(res.data.response.categories);
                 setAccountRole(res.data.response.accountRole);
                 if(props.setAccountBookName !== undefined){
                     props.setAccountBookName(res.data.response.accountBookName);
@@ -147,17 +147,17 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
 
 
     useEffect(() => {
-        getCategoryList(props.accountBookNo);
+        getCategories(props.accountBookNo);
         // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [props.accountBookNo, reload]);
 
     return <>
-    {accountRole === "OWNER" && <AddCategory accountBookNo={props.accountBookNo} categoryList={categoryList} reloadFunction={changeReload} />}
+    {accountRole === "OWNER" && <AddCategory accountBookNo={props.accountBookNo} categories={categories} reloadFunction={changeReload} />}
     {accountRole === "OWNER" && isModifyModalOpen && <ModifyCategory modifyCategoryNo={modifyCategoryNo} modfiyClose={handleModfiyClose} categoryDetail={categoryModifyForm} accountBookNo={props.accountBookNo} reloadFunction={changeReload} />}
     {accountRole === "OWNER" && isDeleteModalOpen && <CommonModal showModal={isDeleteModalOpen} selectedIndx={deleteCategoryNo} title="카테고리 삭제" contents="삭제시 하위 카테고리는 전부 삭제됩니다." clickOkHandle={handleClickCategoryDeleteOk} clickCancelHandle={handleClickCategoryDeleteCancel} />}
     {categoryDetail.isCategoryDetailOpen && <ChildCategory accountRole={accountRole} categoryNo={categoryDetail.categoryNo} accountBookNo={props.accountBookNo} isCategoryDetailOpen={categoryDetail.isCategoryDetailOpen} handleCloseCategoryDetail={handleCloseCategoryDetail} /> }
     <Grid container spacing={2} p={3} alignItems={'center'}>
-        {categoryList.map((category: any) => (
+        {categories.map((category: any) => (
             <Grid key={category.categoryNo} xs={4} sm={6} md={4} lg={3} xl={2} item sx={{
                 textAlign: 'center',
                 '& .MuiTypography-root':{
@@ -189,7 +189,7 @@ export default function Body(props: { setAccountBookName?: Function, accountBook
                                 {category.categoryDesc}
                             </Typography>
                             <Typography component="div" color="#CCBC99" sx={{position:'absolute', bottom: 0, top: '40%',left: '50%', transform: 'translate(-50%, 50%)'}}>
-                            <div>하위 <span style={{color: 'yellowgreen'}}>{category.childCategoryList.length}</span> 개 </div>
+                            <div>하위 <span style={{color: 'yellowgreen'}}>{category.childCategories.length}</span> 개 </div>
                             <div>카테고리</div>
                             </Typography>
                         </CardContent>

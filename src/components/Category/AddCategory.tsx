@@ -21,7 +21,7 @@ function PaperComponent(props: PaperProps) {
     );
 }
 
-export function AddCategory(props: {accountBookNo:number, categoryList:any, reloadFunction: Function}) {
+export function AddCategory(props: {accountBookNo:number, categories:any, reloadFunction: Function}) {
     const imageList = require.context('/public/images/', false, /\.(png|jpe?g|svg)$/);
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const [isOpenAddCategoryModal, setIsOpenAddCategoryModal] = useState<boolean>(false);
@@ -87,8 +87,8 @@ export function AddCategory(props: {accountBookNo:number, categoryList:any, relo
     const handleChangeFormValue = (e:any) => {
 
         if (e.target.name === "categoryName") {
-            if(_.find(_.flatten(_.map(props.categoryList, 'childCategoryList')), { categoryName: e.target.value }) === undefined 
-            && _.find(props.categoryList, {'categoryName': e.target.value}) === undefined){
+            if(_.find(_.flatten(_.map(props.categories, 'childCategories')), { categoryName: e.target.value }) === undefined 
+            && _.find(props.categories, {'categoryName': e.target.value}) === undefined){
                 setFormValidation({
                     categoryNameCheck: true,
                     categoryNameHelpText: ""

@@ -66,7 +66,7 @@ export default function Body(props: {
     const [categoryCollection, setCategoryCollection] = React.useState<any>({
         category: [],
         subCategory: [],
-        subCategoryList: []
+        subCategories: []
     })
     const [purchaseCollection, setPurchaseCollection] = React.useState<any>({
         readMore: false,
@@ -83,8 +83,8 @@ export default function Body(props: {
 
     })
     const [accountInfo, setAccountInfo] = React.useState<any>({
-        cardList: [],
-        categoryList: []
+        cards: [],
+        categories: []
     })
     const [selectedIndx, setSelectedIndx] = React.useState<number>(0);
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
@@ -125,18 +125,18 @@ export default function Body(props: {
         if (type === 'category') {
 
             let totalCategory = categoryCollection.category.filter((item:any) => item !== value);
-            let childCategoryList: any = [];
+            let childCategories: any = [];
             for (let selectName of totalCategory) {
-                for (let tempCategory of accountInfo.categoryList.categoryList) {
-                    if (tempCategory.categoryName === selectName && tempCategory.childCategoryList.length > 0) {
-                        childCategoryList.push(...tempCategory.childCategoryList);
+                for (let tempCategory of accountInfo.categories) {
+                    if (tempCategory.categoryName === selectName && tempCategory.childCategories.length > 0) {
+                        childCategories.push(...tempCategory.childCategories);
                     }
                 }
             }
 
             let selectedSubCategory = [];
             /* 현재 선택된 부모 카테고리에 현재 선택된 세부 카테고리가 있을 경우 넣어주고 없는 경우 초기화를 해줘야하기 때문 */
-            for (let tempCategory of childCategoryList) {
+            for (let tempCategory of childCategories) {
                 for (let selectSubCategory of categoryCollection.subCategory) {
                     if (selectSubCategory === tempCategory.categoryName) {
                         selectedSubCategory.push(selectSubCategory);
@@ -147,7 +147,7 @@ export default function Body(props: {
             setCategoryCollection({
                 category: categoryCollection.category.filter((item:any) => item !== value),
                 subCategory: selectedSubCategory,
-                subCategoryList: childCategoryList
+                subCategories: childCategories
             });
         }
     }
@@ -257,11 +257,11 @@ export default function Body(props: {
             const value = e.target.value;
 
             let totalCategory = typeof value === 'string' ? value.split(',') : value;
-            let childCategoryList: any = [];
+            let childCategories: any = [];
             for (let selectName of totalCategory) {
-                for (let tempCategory of accountInfo.categoryList.categoryList) {
-                    if (tempCategory.categoryName === selectName && tempCategory.childCategoryList.length > 0) {
-                        childCategoryList.push(...tempCategory.childCategoryList);
+                for (let tempCategory of accountInfo.categories) {
+                    if (tempCategory.categoryName === selectName && tempCategory.childCategories.length > 0) {
+                        childCategories.push(...tempCategory.childCategories);
                     }
                 }
             }
@@ -269,7 +269,7 @@ export default function Body(props: {
             setCategoryCollection({
                 ...categoryCollection,
                 category: typeof value === 'string' ? value.split(',') : value,
-                subCategoryList: childCategoryList
+                subCategories: childCategories
             });
         }
 
@@ -368,8 +368,8 @@ export default function Body(props: {
                 }
                 
                 setAccountInfo({
-                    cardList: res.data.response.cardList,
-                    categoryList: res.data.response.categoryList
+                    cards: res.data.response.cards,
+                    categories: res.data.response.categories
                 });
 
             }
@@ -405,7 +405,7 @@ export default function Body(props: {
             reloadPurchaseListFunction={reloadPurchaseListFunction}
             handleCloseModifyPurchase={handleCloseModifyPurchase}
             purchaseNo={selectedIndx}
-            categoryList={accountInfo.categoryList}
+            categories={accountInfo.categories}
             cardList={accountInfo.cardList} />}
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -505,7 +505,7 @@ export default function Body(props: {
                                                 <MenuItem disabled value="">
                                                     <span>전체</span>
                                                 </MenuItem>
-                                                {accountInfo.categoryList.categoryList.map((category: any) => (
+                                                {accountInfo.categories.map((category: any) => (
                                                     <MenuItem
                                                         key={category.categoryNo} value={category.categoryName}
                                                     >
@@ -556,7 +556,7 @@ export default function Body(props: {
                                                 <MenuItem disabled value="">
                                                     <span>전체</span>
                                                 </MenuItem>
-                                                {categoryCollection.subCategoryList.map((tempCategory: any) => (
+                                                {categoryCollection.subCategories.map((tempCategory: any) => (
                                                     <MenuItem
                                                         key={tempCategory.categoryNo} value={tempCategory.categoryName}
                                                     >
@@ -671,8 +671,8 @@ export default function Body(props: {
             <AddPurchase
                 accountBookNo={props.accountBookNo!}
                 reloadPurchaseListFunction={reloadPurchaseListFunction}
-                categoryList={accountInfo.categoryList}
-                cardList={accountInfo.cardList}
+                categories={accountInfo.categories}
+                cards={accountInfo.cards}
             />
             <CommonModal
                 showModal={isOpenDeleteModal}

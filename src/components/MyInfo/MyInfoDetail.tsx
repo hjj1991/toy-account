@@ -4,6 +4,7 @@ import * as service from '../../services/axiosList';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snackBarState } from '../../recoil/recoil';
 import storage from '../../lib/storage';
+import jwtDecode from "jwt-decode";
 
 export interface updateValidationForm {
     userPwCheckMessage: string,
@@ -87,10 +88,11 @@ export function MyInfoDetail(props:any) {
                     ...updateUserForm,
                     userPw: ""
                 });
+                const parsingToken:any = jwtDecode(res.data.response.accessToken)
                 storage.set('loginInfo', { isAuthenticated: true, data: { ...res.data.response, lastLoginDateTime: authenticated.data!.lastLoginDateTime }});
                 storage.set('accessToken', res.data.response.accessToken);
                 storage.set('refreshToken', res.data.response.refreshToken);
-                storage.set('expireTime', res.data.response.expireTime);
+                storage.set('expireTime', parsingToken.exp);
                 setSnackBarInfo({
                     ...snackBarInfo,
                     message: "수정 완료되었습니다.",

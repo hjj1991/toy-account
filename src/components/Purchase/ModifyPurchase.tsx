@@ -16,7 +16,7 @@ export default function ModifyPurchase(props:{
     reloadPurchaseListFunction: any,
     purchaseNo: number,
     accountBookNo: number,
-    categoryList: any,
+    categories: any,
     handleCloseModifyPurchase: any,
     cardList: []
 }) {
@@ -67,11 +67,11 @@ export default function ModifyPurchase(props:{
                 }
 
                 /* 세부카테고리목록을 셋팅해준다 */
-                const categoryInfo = props.categoryList.categoryList.find((value:any) => value.categoryNo === res.data.response.parentCategoryNo);
+                const categoryInfo = props.categories.find((value:any) => value.categoryNo === res.data.response.parentCategoryNo);
                 if(categoryInfo !== undefined){
                     setCategoryCollection({
                         selectedSubCategoryNo: selectedSubCategoryNo,
-                        childCategories: categoryInfo.childCategoryList
+                        childCategories: categoryInfo.childCategories
                     })
                 }else{
                     setCategoryCollection({
@@ -133,11 +133,11 @@ export default function ModifyPurchase(props:{
             })
         }
         if(e.target.name === "categorySelect"){
-            const categoryInfo = props.categoryList.categoryList.find((value:any) => value.categoryNo === e.target.value);
+            const categoryInfo = props.categories.find((value:any) => value.categoryNo === e.target.value);
 
             setCategoryCollection({
                 selectedSubCategoryNo: 0,
-                childCategories: categoryInfo !== undefined? categoryInfo.childCategoryList: []
+                childCategories: categoryInfo !== undefined? categoryInfo.childCategories: []
             })
 
             setPurchaseForm({
@@ -312,7 +312,7 @@ export default function ModifyPurchase(props:{
                         onChange={handleChangeFormValue}
                     >
                         <MenuItem value={0}>--항목 선택--</MenuItem>
-                        {props.categoryList.categoryList.map((category: any)=>(
+                        {props.categories.map((category: any)=>(
                             <MenuItem key={category.categoryNo} value={category.categoryNo}>
                                 <img style={{ width: '20px', marginRight: '10px' }} alt={category.categoryName} src={category.categoryIcon} />{category.categoryName}
                             </MenuItem>

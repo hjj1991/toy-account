@@ -16,14 +16,15 @@ import _ from "lodash";
 export function AddPurchase(props:{
     reloadPurchaseListFunction: any,
     accountBookNo: number,
-    categoryList: any,
-    cardList: []
+    categories: any,
+    cards: []
 }) {
+    const {accountBookNo, categories, cards} = props
     const [isAddPurchase, setIsAddPurchase] = useState<boolean>(false);
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const initPurchaseForm = {
-        accountBookNo: props.accountBookNo,
+        accountBookNo: accountBookNo,
         price: "",
         purchaseDate: moment().format("YYYY-MM-DD"),
         purchaseType: "",
@@ -78,9 +79,9 @@ export function AddPurchase(props:{
             })
         }
         if(e.target.name === "categorySelect"){
-            const categoryInfo = props.categoryList.categoryList.find((value:any) => value.categoryNo === e.target.value);
+            const categoryInfo = categories.find((category:any) => category.categoryNo === e.target.value);
             if(categoryInfo !== undefined){
-                setChildCategories(categoryInfo.childCategoryList);
+                setChildCategories(categoryInfo.childCategories);
             }else{
                 setChildCategories([]);
             }
@@ -237,7 +238,7 @@ export function AddPurchase(props:{
                         onChange={handleChangeFormValue}
                     >
                             <MenuItem value={0}>현금</MenuItem>
-                        {props.cardList.map((card: any)=>(
+                        {cards.map((card: any)=>(
                             <MenuItem key={card.cardNo} value={card.cardNo}>{card.cardName}</MenuItem>
                         ))}
                     </Select>
@@ -256,7 +257,7 @@ export function AddPurchase(props:{
                         onChange={handleChangeFormValue}
                     >
                         <MenuItem value={0}>--항목 선택--</MenuItem>
-                        {props.categoryList.categoryList.map((category: any)=>(
+                        {categories.map((category: any)=>(
                             <MenuItem key={category.categoryNo} value={category.categoryNo}>
                                 <img style={{ width: '20px', marginRight: '10px' }} alt={category.categoryName} src={category.categoryIcon} />{category.categoryName}
                                 </MenuItem>
