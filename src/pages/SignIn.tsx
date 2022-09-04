@@ -16,6 +16,7 @@ import kakaoLogin from '../assets/img/kakao_login.png'
 import naverLogin from '../assets/img/naver_login.png'
 import { Divider } from '@mui/material';
 import { Navigate } from 'react-router-dom';
+import jwtDecode from "jwt-decode";
 
 export default function SignIn() {
 
@@ -24,11 +25,12 @@ export default function SignIn() {
         const receiveMessage = (e:any) =>{
             if(e.data.hasOwnProperty('isAuthenticated') && e.data.isAuthenticated){
                 const data = e.data;
+                const parsingToken:any = jwtDecode(data.data.accessToken)
                 storage.set('loginInfo', data);
                 storage.set('isAuthenticated', true);
                 storage.set('accessToken', data.data.accessToken);
                 storage.set('refreshToken', data.data.refreshToken);
-                storage.set('expireTime', data.data.expireTime);
+                storage.set('expireTime', parsingToken.exp);
                 setAuthenticated({isLoading: true, isAuthenticated: true, data: data });
             }
         }
@@ -68,12 +70,13 @@ export default function SignIn() {
         await service.postSignIn(newSignInForm)
             .then((res) => {
                 if (res.data.success) {
+                    const parsingToken:any = jwtDecode(res.data.response.accessToken)
                     setAuthenticated({isLoading: true, isAuthenticated: true, data: res.data.response });
                     storage.set('loginInfo', { isAuthenticated: true, data: res.data.response });
                     storage.set('isAuthenticated', true);
                     storage.set('accessToken', res.data.response.accessToken);
                     storage.set('refreshToken', res.data.response.refreshToken);
-                    storage.set('expireTime', res.data.response.expireTime);
+                    storage.set('expireTime', parsingToken.exp);
                 }else{
                     setSnackBarInfo({
                         ...snackBarInfo,

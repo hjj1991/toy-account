@@ -100,15 +100,15 @@ export function Body() {
                         <Grid container spacing={0}>
                             <Grid item xs={4}>
                                 <AvatarGroup max={4} sx={{justifyContent: 'left'}}>
-                                    {elevation.joinedUserList.map((user: any) => (
+                                    {elevation.joinedUsers.map((user: any) => (
                                         <Avatar key={user.userNo} alt={user.nickName} src={user.picture} />
                                     ))}
                                 </AvatarGroup>
                             </Grid>
                             <Grid item xs={8} sx={{textAlign: 'right', lineHeight: '40px'}}>
-                                 {elevation.joinedUserList.map((user: any, indx:number) => (
+                                 {elevation.joinedUsers.map((user: any, indx:number) => (
                                     <Typography key={user.userNo} component="span" sx={{verticalAlign: 'bottom'}}>
-                                        {user.nickName}{indx < elevation.joinedUserList.length - 1? ', ': ''}
+                                        {user.nickName}{indx < elevation.joinedUsers.length - 1? ', ': ''}
                                     </Typography>
                                 ))}
                             </Grid>
