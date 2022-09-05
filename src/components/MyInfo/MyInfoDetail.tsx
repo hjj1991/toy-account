@@ -126,7 +126,7 @@ export function MyInfoDetail(props:any) {
     const getCheckExistsNickName = (nickName: string) => {
         return service.getCheckNickNameDuplicate(nickName, true)
             .then((res) => {
-                return res.data.success;
+                return res.data.response;
             }).catch((error) => {
                 return false;
             });

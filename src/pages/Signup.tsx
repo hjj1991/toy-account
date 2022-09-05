@@ -20,7 +20,7 @@ import { Navigate } from 'react-router-dom';
 const getCheckExistsUserId = (userId: string) => {
   return service.getCheckUserIdDuplicate(userId)
     .then((res) => {
-      return res.data.success;
+      return res.data.response;
     }).catch((error) => {
       return false;
     });
@@ -29,7 +29,7 @@ const getCheckExistsUserId = (userId: string) => {
 const getCheckExistsNickName = (nickName: string) => {
   return service.getCheckNickNameDuplicate(nickName, false)
     .then((res) => {
-      return res.data.success;
+      return res.data.response;
     }).catch((error) => {
       return false;
     });
