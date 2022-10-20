@@ -25,11 +25,11 @@ export default function SignIn() {
         const receiveMessage = (e:any) =>{
             if(e.data.hasOwnProperty('isAuthenticated') && e.data.isAuthenticated){
                 const data = e.data;
+                data.data.accessToken = storage.get("accessToken");
+                data.data.refreshToken = storage.get("refreshToken");
                 const parsingToken:any = jwtDecode(data.data.accessToken)
                 storage.set('loginInfo', data);
                 storage.set('isAuthenticated', true);
-                storage.set('accessToken', data.data.accessToken);
-                storage.set('refreshToken', data.data.refreshToken);
                 storage.set('expireTime', parsingToken.exp);
                 setAuthenticated({isLoading: true, isAuthenticated: true, data: data });
             }
@@ -46,14 +46,13 @@ export default function SignIn() {
     const setLoading = useSetRecoilState<boolean>(loadingState);
     const handleSocialLogin = (e:any) => {
          // 랜덤이기 때문에 결과값이 다를 수 있음.
-        let state = Math.random().toString(36).substring(2,11); // "twozs5xfni"
-        const redirectUri = process.env.REACT_APP_SOCIAL_HOST;
+        const hostUrl = process.env.REACT_APP_API_HOST;
         window.name = 'parentForm'; 
         if(e.currentTarget.id === "socialNaver"){
-            window.open(`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sUyp7Y2KoOfRvdsAEdCc&redirect_uri=${redirectUri}?provider=NAVER&state=${state}`, "popup", "location=no,resizable=no");
+            window.open(`${hostUrl}/oauth2/authorization/naver`, "popup", "location=no,resizable=no");
         }
         if(e.currentTarget.id === "socialKakao"){
-            window.open(`https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=656c5afa5455de8f5ad9eb51e09e3720&redirect_uri=${redirectUri}?provider=KAKAO&state=${state}`, "popup", "location=no,resizable=no");
+            window.open(`${hostUrl}/oauth2/authorization/kakao`, "popup", "location=no,resizable=no");
         }
         
     }

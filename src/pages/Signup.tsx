@@ -10,11 +10,13 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import SignUpImg from '../assets/img/signup.png'
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { loadingState, SnackBarInfo, snackBarState } from '../recoil/recoil';
+import { AuthenticatedInfo, authenticatedState, loadingState, SnackBarInfo, snackBarState } from '../recoil/recoil';
 import { Checkbox, Chip, FormControlLabel } from '@mui/material';
 import kakaoLogin from '../assets/img/kakao_login.png'
 import naverLogin from '../assets/img/naver_login.png'
 import { Navigate } from 'react-router-dom';
+import storage from '../lib/storage';
+import jwtDecode from 'jwt-decode';
 
 
 const getCheckExistsUserId = (userId: string) => {
@@ -73,6 +75,7 @@ export default function SignUp() {
     nickName: ""
   });
   const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
+  const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
   const setLoading = useSetRecoilState<boolean>(loadingState);
   const [userPw2, setUserPw2] = React.useState<string>("");
   const [signUpOk, setSignUpOk] = React.useState<boolean>(false);
@@ -134,25 +137,16 @@ export default function SignUp() {
 
   React.useEffect(() => {
     const receiveMessage = (e: any) => {
-      if (e.data.hasOwnProperty('success') && e.data.success) {
-        if (e.data.success) {
-          setSnackBarInfo({
-            ...snackBarInfo,
-            message: "회원가입에 성공하였습니다.",
-            severity: 'success',
-            title: "환영합니다.",
-            open: true
-          })
-          setSignUpOk(true);
-        } else {
-          setSnackBarInfo({
-            ...snackBarInfo,
-            message: e.data.message,
-            severity: 'error',
-            title: "실패",
-            open: true
-          })
-        }
+      if(e.data.hasOwnProperty('isAuthenticated') && e.data.isAuthenticated){
+        const data = e.data;
+        data.data.accessToken = storage.get("accessToken");
+        data.data.refreshToken = storage.get("refreshToken");
+        const parsingToken:any = jwtDecode(data.data.accessToken)
+        storage.set('loginInfo', data);
+        storage.set('isAuthenticated', true);
+        storage.set('expireTime', parsingToken.exp);
+        setAuthenticated({isLoading: true, isAuthenticated: true, data: data });
+
       }
     }
 
@@ -172,15 +166,13 @@ export default function SignUp() {
       })
       return;
     }
-    // 랜덤이기 때문에 결과값이 다를 수 있음.
-    let state = Math.random().toString(36).substr(2, 11); // "twozs5xfni"
-    const redirectUri = process.env.REACT_APP_HOST + "/social/signup";
+    const hostUrl = process.env.REACT_APP_API_HOST;
     window.name = 'parentForm';
     if (e.currentTarget.id === "socialNaver") {
-      window.open(`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sUyp7Y2KoOfRvdsAEdCc&redirect_uri=${redirectUri}?provider=NAVER&state=${state}`, "popup", "location=no,resizable=no");
+      window.open(`${hostUrl}/oauth2/authorization/naver`, "popup", "location=no,resizable=no");
     }
     if (e.currentTarget.id === "socialKakao") {
-      window.open(`https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=656c5afa5455de8f5ad9eb51e09e3720&redirect_uri=${redirectUri}?provider=KAKAO&state=${state}`, "popup", "location=no,resizable=no");
+      window.open(`${hostUrl}/oauth2/authorization/kakao`, "popup", "location=no,resizable=no");
     }
 
   }
@@ -374,6 +366,10 @@ export default function SignUp() {
     }
 
 
+  }
+
+  if (authenticated.isAuthenticated) {
+    return <Navigate replace to='/' />
   }
 
   return signUpOk ?
