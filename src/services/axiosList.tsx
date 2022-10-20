@@ -138,12 +138,7 @@ export function postSignUp(data: SignInForm) {
 
 /* 소셜 로그인 API */
 export function postSocialSignIn(data: URLSearchParams) {
-    return axios.post('/user/social/signin',
-        {
-            provider: data.get("provider"),
-            code: data.get("code"),
-            state: data.get("state")
-        });
+    return axios.get('/oauth2/authorization/' + data.get("provider"));
 }
 
 /* 소셜 회원가입 API */
@@ -186,6 +181,11 @@ export function patchUserProfileModify(data: FormData) {
                 "Content-Type": "multipart/form-data"
             }
         });
+}
+
+/* 유저상세정보 API */
+export function getUserDetail(){
+    return authAxios().get('/user');
 }
 
 /* 유저정보 수정 API */
