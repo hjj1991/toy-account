@@ -8,6 +8,7 @@ import { DataURIToBlob, getCroppedImg } from '../common/canvasUtils';
 import * as service from '../../services/axiosList';
 import kakaoLogin from '../../assets/img/kakao_login.png'
 import naverLogin from '../../assets/img/naver_login.png'
+import storage from '../../lib/storage';
 
 export function Profile(props: any) {
     const [authenticated, setAuthenticated] = useRecoilState<AuthenticatedInfo>(authenticatedState);
@@ -119,15 +120,13 @@ export function Profile(props: any) {
     };
 
     const handleSocialMapping = (e: any) => {
-        // 랜덤이기 때문에 결과값이 다를 수 있음.
-        let state = Math.random().toString(36).substr(2, 11); // "twozs5xfni"
-        const redirectUri = process.env.REACT_APP_HOST + "/social/mapping";
+        const hostUrl = process.env.REACT_APP_API_HOST;
         window.name = 'parentForm';
         if (e.currentTarget.id === "socialNaver") {
-            window.open(`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sUyp7Y2KoOfRvdsAEdCc&redirect_uri=${redirectUri}?provider=NAVER&state=${state}`, "popup", "location=no,resizable=no");
+            window.open(`${hostUrl}/oauth2/authorization/naver?accessToken=${storage.get("accessToken")}`, "popup", "location=no,resizable=no");
         }
         if (e.currentTarget.id === "socialKakao") {
-            window.open(`https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=656c5afa5455de8f5ad9eb51e09e3720&redirect_uri=${redirectUri}?provider=KAKAO`, "popup", "location=no,resizable=no");
+            window.open(`${hostUrl}/oauth2/authorization/kakao?accessToken=${storage.get("accessToken")}`, "popup", "location=no,resizable=no");
         }
 
     }

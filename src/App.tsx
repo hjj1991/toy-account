@@ -284,7 +284,6 @@ function App() {
                             <Route path={"/social/signup"} element={<SocialSignUp />} />
                             <Route path={"/privacy"} element={<Privacy />} />
                             <Route path={"/policy"} element={<Policy />} />
-                            <Route path={"/social/signup"} element={<SocialSignUp />} />
                             <Route path={"/signup"} element={<SignUp />} />
                             <Route path={"/saving"} element={<Saving />} />
                             <Route path={"/deposit"} element={<Deposit />} />
