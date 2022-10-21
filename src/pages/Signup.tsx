@@ -22,18 +22,18 @@ import jwtDecode from 'jwt-decode';
 const getCheckExistsUserId = (userId: string) => {
   return service.getCheckUserIdDuplicate(userId)
     .then((res) => {
-      return res.data.response;
+      return res.data.response ?? true;
     }).catch((error) => {
-      return false;
+      return true;
     });
 }
 
 const getCheckExistsNickName = (nickName: string) => {
   return service.getCheckNickNameDuplicate(nickName, false)
     .then((res) => {
-      return res.data.response;
+      return res.data.response ?? true;
     }).catch((error) => {
-      return false;
+      return true;
     });
 }
 
@@ -243,7 +243,7 @@ export default function SignUp() {
 
     if (targetId === "userId") {
       if (re.test(event.currentTarget.value) && event.type === "blur") {
-        if (await getCheckExistsUserId(event.currentTarget.value)) {
+        if (await getCheckExistsUserId(event.currentTarget.value) === false) {
           setSignUpValidationForm({
             ...signUpValidationForm,
             userIdCheckMessage: "사용가능한 아이디입니다.",
@@ -332,7 +332,7 @@ export default function SignUp() {
       let name = event.currentTarget.value;
 
       if ((!pattern.test(name)) && name.length >= 2 && name.length <= 10 && !blank_pattern.test(name) && event.type === "blur") {
-        if (await getCheckExistsNickName(event.currentTarget.value)) {
+        if (await !getCheckExistsNickName(event.currentTarget.value) === false) {
           setSignUpValidationForm({
             ...signUpValidationForm,
             nickNameCheck: true,

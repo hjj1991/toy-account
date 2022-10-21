@@ -39,7 +39,7 @@ export function MyInfoDetail(props:any) {
     useEffect(() =>{
         const receiveMessage = (e:any) =>
         {
-            if(e.data.hasOwnProperty('isAuthenticated')){
+            if(e.data.hasOwnProperty('returnData')){
                 patchUserModify();
             }
         }
@@ -54,16 +54,14 @@ export function MyInfoDetail(props:any) {
         if(!updateValidationForm.nickNameCheck || updateUserForm.userEmail!.trim() === ""){
             return;
         } 
-        // 랜덤이기 때문에 결과값이 다를 수 있음.
-        let state = Math.random().toString(36).substr(2,11); // "twozs5xfni"
-        const redirectUri = process.env.REACT_APP_SOCIAL_HOST;
+        const hostUrl = process.env.REACT_APP_API_HOST;
         window.name = 'parentForm'; 
         switch(authenticated.data?.provider){
             case "NAVER":
-                window.open(`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=sUyp7Y2KoOfRvdsAEdCc&redirect_uri=${redirectUri}?provider=NAVER&state=${state}`, "popup", "location=no,resizable=no");
+                window.open(`${hostUrl}/oauth2/authorization/naver?accessToken=${storage.get("accessToken")}&modify=true`, "popup", "location=no,resizable=no");
                 break;
             case "KAKAO":
-                window.open(`https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=656c5afa5455de8f5ad9eb51e09e3720&redirect_uri=${redirectUri}?provider=KAKAO&state=${state}`, "popup", "location=no,resizable=no");
+                window.open(`${hostUrl}/oauth2/authorization/kakao?accessToken=${storage.get("accessToken")}&modify=true`, "popup", "location=no,resizable=no");
                 break;
             default:
                 if(!updateValidationForm.userPwCheck){
@@ -175,7 +173,7 @@ export function MyInfoDetail(props:any) {
             let name = event.currentTarget.value;
 
             if ((!pattern.test(name)) && name.length >= 2 && name.length <= 10 && !blank_pattern.test(name) && event.type === "blur"){
-                if (await getCheckExistsNickName(event.currentTarget.value)) {
+                if (await getCheckExistsNickName(event.currentTarget.value) === false) {
                     setUpdateValidationForm({
                         ...updateValidationForm,
                         nickNameCheck: true,
