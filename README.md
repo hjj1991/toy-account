@@ -4,6 +4,15 @@
 
 🏠 [사이트 바로가기](https://cash.sundry.ninja)
 
+## 🔨 Tech Stacks
+
+<img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
+<img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white">
+<img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black">
+<img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=black">
+
+<Br/>
+
 ## 📄Description
 ```sh
 뜨끔한 가계부는 재테크가 중요한 시대의 다양한 금융정보를 사용자에게 제공 하며, 가계부 작성을 통한 소비습관 증진에 도움을 주기위한 사이트 제작을 목표로 하고 있으며 끊임없이 업데이트 할 예정입니다.
@@ -20,6 +29,7 @@
 |N/A|카테고리 CRUD| 지출 내역 작성시 사용할 카테고리의 조회/등록/수정/삭제 구현
 |N/A|소비 입출 CRUD| 날짜, 금액, 소비, 지출 상세 내역을 조회/등록/수정/삭제 구현
 |N/A|가계부 CRUD| 용도에 따라 개인의 다양한 가계부 조회/등록/수정/삭제 구현
+|N/A|마이페이지| 사용자 정보 수정 및 소셜 계정 연동 프로필 이미지 크롭 기능
 
 <br/>
 
@@ -38,6 +48,11 @@
 
 ![Main_view](info/main_mobile.gif)
 
+- 마이페이지
+  - 크롭 라이브러리를 이용하여 프로필 사진 꾸미기 기능
+
+![profile](info/profile_image.gif)
+
 - 카드 목록화면
   - 개인 사용자의 카드 조회/추가/수정/삭제 기능 
 
@@ -48,3 +63,39 @@
   - 개인 사용자의 가게부 추가/수정/삭제 기능
 
 ![accountbook_add](info/add_accountbook.gif)
+
+- 가계부 상세화면
+  - 가계부 항목 추가
+  - 지출 목록 검색 필터링
+
+![accountbookDetail_add](info/add_raw.gif)
+![search_raw](info/search_raw.gif)
+
+- 카테고리 화면
+  - 카테고리 항목 추가
+  - 하위 카테고리 추가
+
+![category_Add](info/add_category.gif)
+![category_detail_Add](info/add_categorydetail.gif)
+
+
+- 예금상품 상세 화면
+  - 예금 상품 조회 및 필터링, 정렬 검색
+  
+![deposit_search](info/search_deposit.gif)
+![deposit_web](info/deposit_web.gif)
+
+
+- 적금상품 상세 화면
+  - 적금 상품 조회 및 필터링, 정렬 검색
+  - PC화면의 경우 상세 조회기능 지원
+
+![saving_seach](info/search_saving.gif)
+![saving_web](info/saving_web.gif)
+
+
+## 🏃 Steps to run
+```sh
+$ npm install
+$ npm start
+```
