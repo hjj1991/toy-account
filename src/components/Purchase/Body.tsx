@@ -406,7 +406,7 @@ export default function Body(props: {
             handleCloseModifyPurchase={handleCloseModifyPurchase}
             purchaseNo={selectedIndx}
             categories={accountInfo.categories}
-            cardList={accountInfo.cardList} />}
+            cards={accountInfo.cards} />}
         <Grid container spacing={2}>
             <Grid item xs={12}>
                 <Card
