@@ -18,7 +18,7 @@ export default function ModifyPurchase(props:{
     accountBookNo: number,
     categories: any,
     handleCloseModifyPurchase: any,
-    cardList: []
+    cards: []
 }) {
     const [snackBarInfo, setSnackBarInfo] = useRecoilState<SnackBarInfo>(snackBarState);
     const setLoading = useSetRecoilState<boolean>(loadingState);
@@ -293,7 +293,7 @@ export default function ModifyPurchase(props:{
                         onChange={handleChangeFormValue}
                     >
                             <MenuItem value={0}>현금</MenuItem>
-                        {props.cardList.map((card: any)=>(
+                        {props.cards.map((card: any)=>(
                             <MenuItem key={card.cardNo} value={card.cardNo}>{card.cardName}</MenuItem>
                         ))}
                     </Select>
